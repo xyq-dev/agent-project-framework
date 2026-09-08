@@ -11,6 +11,8 @@
 
 ## 执行与交接
 
+- [模块蓝图与实施顺序](framework/MODULE_ADOPTION_PLAN.md)
+- [选中能力转为项目方案](agent-prompts/MODULE_PLAN.md)
 - [Cursor 执行任务](agent-prompts/CURSOR_TASK.md)
 - [Codex 评审](agent-prompts/CODEX_REVIEW.md)
 - [会话交接](agent-prompts/HANDOFF.md)

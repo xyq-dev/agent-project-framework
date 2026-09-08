@@ -103,6 +103,35 @@ function initialState(map) {
   assert(status.includes('NOT_RUN') && !/M1-[ABC]|TASKS_READY|ST-00[1-7]/.test(status));
   for (const text of map.values()) assert(!/\{\{[A-Z_]+\}\}/.test(text), 'unresolved template parameter');
 }
+function blueprints(map) {
+  const base = 'playbooks/modules';
+  const catalog = load(map.get(`${base}/catalog.yaml`));
+  assert.equal(catalog.schema_version, '0.1');
+  assert.equal(catalog.kind, 'implementation-blueprint-catalog');
+  assert.equal(catalog.is_runtime_inventory, false, 'blueprints are not installed runtimes');
+  assert.equal(catalog.project_gate_status, 'unassessed');
+  assert.equal(catalog.path_base, 'catalog-directory');
+  const ids = catalog.items.map(item => item.id);
+  assert.deepEqual([...ids].sort(), ['audit', 'authorization', 'config', 'identity', 'media', 'notification', 'oss', 'payment', 'storage']);
+  for (const item of catalog.items) {
+    assert(typeof item.name === 'string' && item.name.length > 0);
+    assert(['module-guide', 'adapter-guide'].includes(item.kind));
+    assert(['medium', 'high', 'critical'].includes(item.risk));
+    assert.equal(item.runtime_status, 'not-implemented', `runtime claim in blueprint: ${item.id}`);
+    safe(item.guide);
+    assert(item.guide.endsWith('.md'));
+    const guide = map.get(`${base}/${item.guide}`);
+    assert(guide, `missing blueprint: ${item.guide}`);
+    for (const heading of ['采用前确认', '最小范围与契约', '实施任务', '必须验证', '完成条件']) {
+      assert(guide.includes(`## ${heading}\n`), `missing ${heading}: ${item.id}`);
+    }
+    assert(Array.isArray(item.prerequisite_capabilities) && item.prerequisite_capabilities.length > 0);
+    for (const input of item.prerequisite_capabilities) assert(typeof input === 'string' && input.length > 0);
+    assert(Array.isArray(item.related_guides));
+    for (const related of item.related_guides) assert(ids.includes(related), `unknown related guide: ${related}`);
+  }
+  assert(map.has('framework/MODULE_ADOPTION_PLAN.md') && map.has('agent-prompts/MODULE_PLAN.md'));
+}
 
 check('YAML/JSON syntax and Issue template metadata', () => {
   for (const [name, text] of files) {
@@ -136,6 +165,19 @@ check('bootstrap expansion and safe parameter rendering', () => {
 check('new project state, contracts and relative links', () => {
   initialState(target); contracts(target); links(target);
 });
+check('module blueprints remain unassessed design inputs in source and adopted project', () => {
+  blueprints(files); blueprints(target);
+});
+check('blueprints reject missing guides and false runtime completion', () => {
+  const missing = new Map(target);
+  missing.delete('playbooks/modules/oss.md');
+  assert.throws(() => blueprints(missing), /missing blueprint/);
+  const completed = new Map(target);
+  const catalog = load(completed.get('playbooks/modules/catalog.yaml'));
+  catalog.items.find(item => item.id === 'identity').runtime_status = 'implemented';
+  completed.set('playbooks/modules/catalog.yaml', yaml.dump(catalog));
+  assert.throws(() => blueprints(completed), /runtime claim/);
+});
 check('bootstrap rejects missing, duplicate, escaping and Git metadata paths', () => {
   const changes = [
     m => { m.copies[0].source = 'nonexistent-source.md'; },
@@ -161,5 +203,5 @@ check('prompt execution labels', () => {
     if (text.startsWith('【执行工具：Codex')) assert(text.split('\n')[0].includes('推理等级：'));
   }
 });
-console.log(`STANDARD_CHECKS=${checks}; NEGATIVE_FIXTURES=6; BOOTSTRAP_FILES=${target.size}`);
+console.log(`STANDARD_CHECKS=${checks}; NEGATIVE_FIXTURES=8; BOOTSTRAP_FILES=${target.size}`);
 console.log('STANDARD_VALIDATION=PASS; BOOTSTRAP=IN_MEMORY_ONLY; BUSINESS_TESTS=NOT_RUN');

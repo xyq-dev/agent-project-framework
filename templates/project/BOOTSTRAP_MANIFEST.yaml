@@ -31,10 +31,13 @@ copies:
   - {source: framework/STATUS_STANDARD.md, target: framework/STATUS_STANDARD.md, kind: file}
   - {source: framework/PROJECT_PLAYBOOK.md, target: framework/PROJECT_PLAYBOOK.md, kind: file}
   - {source: framework/GITHUB_WORKFLOW.md, target: framework/GITHUB_WORKFLOW.md, kind: file}
+  - {source: framework/MODULE_ADOPTION_PLAN.md, target: framework/MODULE_ADOPTION_PLAN.md, kind: file}
+  - {source: playbooks/modules, target: playbooks/modules, kind: directory}
   - {source: schemas/module.schema.json, target: schemas/module.schema.json, kind: file}
   - {source: templates/module, target: templates/module, kind: directory}
   - {source: .github/ISSUE_TEMPLATE, target: .github/ISSUE_TEMPLATE, kind: directory}
   - {source: .github/pull_request_template.md, target: .github/pull_request_template.md, kind: file}
+  - {source: agent-prompts/MODULE_PLAN.md, target: agent-prompts/MODULE_PLAN.md, kind: file}
   - {source: agent-prompts/CURSOR_TASK.md, target: agent-prompts/CURSOR_TASK.md, kind: file}
   - {source: agent-prompts/CODEX_REVIEW.md, target: agent-prompts/CODEX_REVIEW.md, kind: file}
   - {source: agent-prompts/HANDOFF.md, target: agent-prompts/HANDOFF.md, kind: file}
@@ -57,4 +60,5 @@ acceptance:
   - all required contracts and local Markdown links resolve in the destination
   - project workflow starts with pending stages and empty evidence
   - no preselected runtime modules or fabricated capability support
+  - implementation blueprints remain design inputs with unassessed project gates
   - actual source commit is recorded and template parameters are resolved

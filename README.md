@@ -9,6 +9,7 @@ APF 是技术栈中立的项目标准仓库。当前优先交付可直接采用�
 - **新项目、目录为空**：按 [START_HERE.md](START_HERE.md) 初始化。
 - **已经有代码的项目**：按启动指南的渐进接入流程补标准，保留现有目录与代码。
 - **想知道每一步做什么**：查看 [项目开发手册](framework/PROJECT_PLAYBOOK.md)。
+- **想开发登录、权限、OSS 等能力**：查看 [模块实施方案](framework/MODULE_ADOPTION_PLAN.md) 与 9 类蓝图。
 - **想把任务和评审放在 GitHub**：查看 [GitHub 协作流程](framework/GITHUB_WORKFLOW.md)。
 - **让 Agent 帮忙初始化**：使用 [新项目启动提示词](agent-prompts/NEW_PROJECT.md)。
 
@@ -37,6 +38,7 @@ APF 是技术栈中立的项目标准仓库。当前优先交付可直接采用�
 | [framework/](framework/) | 生命周期、开发手册、模块、风险、Gate 与交接标准 |
 | [templates/project/](templates/project/) | 新项目启动模板与复制清单 |
 | [templates/module/](templates/module/) | 按实际需要创建模块契约 |
+| [playbooks/modules/](playbooks/modules/) | 9 类能力的边界、实施任务与验收要求 |
 | [agent-prompts/](agent-prompts/) | 初始化、执行、评审与交接提示词 |
 | [.github/ISSUE_TEMPLATE/](.github/ISSUE_TEMPLATE/) | 立项、开发任务、缺陷模板 |
 | [.github/pull_request_template.md](.github/pull_request_template.md) | 变更与验收证据模板 |
@@ -44,7 +46,7 @@ APF 是技术栈中立的项目标准仓库。当前优先交付可直接采用�
 
 ## 能力按项目需要选择
 
-登录/身份、权限、存储/OSS、配置、审计、媒体、通知、支付等，在立项时决定采用、延后或不适用。选择一种能力后，定义契约、选用已有组件或安排实现，并按风险验证。
+登录/身份、权限、存储/OSS、配置、审计、媒体、通知、支付等，在立项时决定采用、延后或不适用。选择一种能力后，按[实施蓝图](framework/MODULE_ADOPTION_PLAN.md)定义项目契约、选用已有组件或安排实现，并按风险验证。
 
 **能力清单不代表本仓库已经提供这些功能代码。**目前 [Storage](modules/storage/STATUS.md) 只有规格与测试计划，保留为可选参考案例；M1-B/C 尚未实施，当前主线优先完善项目标准采用流程。
 

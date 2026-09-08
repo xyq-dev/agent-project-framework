@@ -25,6 +25,8 @@ contracts:
   module_standard: framework/MODULE_STANDARD.md
   module_schema: schemas/module.schema.json
   module_template: templates/module
+  module_adoption_plan: framework/MODULE_ADOPTION_PLAN.md
+  module_blueprint_catalog: playbooks/modules/catalog.yaml
 catalog_roots:
   infrastructure_modules: modules
   business_modules: business-modules
