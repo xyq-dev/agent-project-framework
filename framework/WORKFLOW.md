@@ -101,6 +101,9 @@ RELEASED
 
 ### Transition Rules
 
+- `TASKS_READY → IMPLEMENTING` 只评估 Implementation Gate 的 **entry criteria**（批准输入和可执行任务）；不要求代码已经完成。
+- `IMPLEMENTING → TESTING` 评估同 Gate 的 **exit criteria**（变更、范围对应和自检）。入场合格不能记成 Implementation Gate 最终 PASS。
+- `ARCHITECTURE_READY → TASKS_READY` 在 Architecture Review 下做 task-readiness 子检查（范围、顺序、测试和授权），不新增第八个顶层 Gate。
 - 状态默认顺序推进，不允许用一次状态修改伪造多个 Gate 的证据。
 - 无 Spec Gate 不得进入正式实现。
 - `medium`、`high`、`critical` 无 Architecture Gate 不得进入 `IMPLEMENTING`。
@@ -197,4 +200,3 @@ Analyze → Plan → Implement → Test → Review → Accept → Handoff
 5. 由风险等级要求的角色批准。
 
 例外不是永久标准；反复出现的例外应转化为 Framework 改进提案。
-

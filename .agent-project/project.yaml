@@ -5,7 +5,7 @@ project:
   id: agent-project-framework
   name: Agent Project Framework
   kind: framework
-  lifecycle_profile: framework-kernel
+  lifecycle_profile: storage-reference
   risk_baseline: medium
   technology_neutral: true
 
@@ -32,4 +32,3 @@ policies:
   require_status_handoff: true
   allow_project_specific_code_in_core: false
   runtime_implementation_coupled_to_contract: false
-

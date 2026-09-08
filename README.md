@@ -160,7 +160,9 @@ V0.1 定义七个 Gate：
         └── STATUS.md
 ```
 
-`modules/`、`business-modules/`、`presets/` 和 `examples/` 会在出现首个真实内容时创建，不使用占位文件伪造进度。
+`modules/storage/` 已建立首个真实模块规格，见 [Storage SPEC](modules/storage/SPEC.md)、[状态](modules/storage/STATUS.md) 和 [Cursor 执行任务](modules/storage/agents/CURSOR_IMPLEMENTATION.md)。当前没有 Runtime；providers/runtimes 的空列表表示尚未验证支持。
+
+`business-modules/`、`presets/` 和 `examples/` 仍在出现真实内容时才创建，不使用占位文件伪造进度。
 
 ## Using the Framework
 
@@ -202,4 +204,3 @@ CLI 必须建立在稳定的 Module Standard、多模块实践和 Dependency Res
 - **M4 — Project Generator and CLI**：把稳定协议自动化。
 
 详细范围见 [`framework/ROADMAP.md`](framework/ROADMAP.md)，动态进度见 [`CURRENT_STATUS.md`](CURRENT_STATUS.md)。
-

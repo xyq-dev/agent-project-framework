@@ -1,0 +1,91 @@
+schema_version: "0.1"
+name: storage
+version: 0.1.0-dev
+category: infrastructure
+description: Provider-neutral object storage contracts for byte content, metadata, bounded listing and explicitly negotiated extensions.
+risk: medium
+status: TASKS_READY
+
+# These are experimental CONTRACT capabilities, not implemented/runtime support.
+capabilities:
+  - id: put
+    description: Write a complete object with explicit overwrite intent and bounded input.
+    stability: experimental
+  - id: get
+    description: Read one consistent object version as a cancellable byte stream.
+    stability: experimental
+  - id: head
+    description: Read object information without consuming its content.
+    stability: experimental
+  - id: exists
+    description: Distinguish confirmed absence from permission or provider failures.
+    stability: experimental
+  - id: delete
+    description: Delete one exact key without recursive or prefix deletion.
+    stability: experimental
+  - id: list
+    description: List a bounded page within the configured namespace and prefix.
+    stability: experimental
+  - id: metadata
+    description: Preserve user metadata separately from object integrity and revision information.
+    stability: experimental
+  - id: capability-negotiation
+    description: Discover implemented operations and limits without side effects.
+    stability: experimental
+  - id: copy
+    description: Copy within one storage binding and preserve approved metadata.
+    stability: experimental
+  - id: move
+    description: Move with guarded source deletion and explicit partial or unknown outcomes.
+    stability: experimental
+  - id: range-read
+    description: Read one inclusive byte range from a single consistent object version.
+    stability: experimental
+  - id: conditional-read
+    description: Read only if the requested revision still identifies the current object.
+    stability: experimental
+  - id: conditional-write
+    description: Atomically enforce destination absence or a matching revision when writing.
+    stability: experimental
+  - id: conditional-delete
+    description: Delete only if the exact requested revision is still current.
+    stability: experimental
+  - id: signed-upload-url
+    description: Issue a scoped expiring upload grant only through a verified signing adapter.
+    stability: experimental
+  - id: signed-download-url
+    description: Issue a scoped expiring download grant without publishing a bucket or object.
+    stability: experimental
+  - id: multipart
+    description: Negotiate multipart as unavailable until a separate session contract is approved.
+    stability: experimental
+
+# M1 consumes a validated configuration value, not an unavailable config package.
+# Future config/audit integrations are proposals in ARCHITECTURE.md, not graph edges.
+dependencies: []
+optional_dependencies: []
+providers: []
+
+compatibility:
+  framework: ">=0.1.0-dev <0.2.0"
+  runtimes: []
+  modules: []
+
+gates:
+  required: [spec, architecture, implementation, test, security, acceptance, release]
+
+artifacts:
+  spec: SPEC.md
+  architecture: ARCHITECTURE.md
+  data_model: DATA_MODEL.md
+  api: API.md
+  security: SECURITY.md
+  tasks: TASKS.md
+  tests: TESTS.md
+  acceptance: ACCEPTANCE.md
+  status: STATUS.md
+
+ownership:
+  maintainers: [xyq-dev]
+  source_repository: https://github.com/xyq-dev/agent-project-framework
+tags: [object-storage, provider-neutral, reference-module]

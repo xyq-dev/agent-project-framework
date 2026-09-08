@@ -1,5 +1,5 @@
 schema_version: "0.1"
-profile: framework-kernel
+profile: storage-reference
 
 semantics:
   allowed_modes:
@@ -22,73 +22,70 @@ project_lifecycle:
     mode: required
     status: complete
     evidence:
-      - PROJECT_CONTEXT.md
-      - README.md
+      - modules/storage/SPEC.md
   - id: product
     name: Product
     mode: optional
     status: complete
     evidence:
       - framework/ROADMAP.md
+    reason: M1 uses a module capability scope rather than a separate product specification.
   - id: ux-user-flows
     name: UX / User Flows
     mode: not-applicable
     status: complete
-    reason: M0 is a specification kernel with no end-user interface.
+    reason: Storage is a library contract with no end-user interface.
   - id: design
     name: Design
     mode: not-applicable
     status: complete
-    reason: M0 has no visual product surface.
+    reason: Storage has no visual product surface.
   - id: architecture
     name: Architecture
     mode: required
     status: complete
     evidence:
-      - PROJECT_CONTEXT.md
-      - framework/MODULE_STANDARD.md
+      - modules/storage/ARCHITECTURE.md
+      - modules/storage/REVIEW.md
   - id: database
     name: Database
     mode: not-applicable
     status: complete
-    reason: M0 defines no persistence runtime.
+    reason: Storage owns object bytes, not a database schema; local record format is specified separately.
   - id: api
     name: API
-    mode: optional
+    mode: required
     status: complete
     evidence:
-      - schemas/module.schema.json
-    reason: M0 exposes file contracts rather than a network API.
+      - modules/storage/API.md
+    reason: Storage exposes a library API, not HTTP endpoints.
   - id: implementation
     name: Implementation
     mode: required
-    status: complete
-    evidence:
-      - .agent-project/project.yaml
-      - templates/module/module.yaml
+    status: pending
+    evidence: []
   - id: testing
     name: Testing
     mode: required
-    status: complete
-    evidence:
-      - CURRENT_STATUS.md
+    status: pending
+    evidence: []
+    reason: M1-A static specification validation is not Runtime Test Gate evidence.
   - id: security
     name: Security
-    mode: optional
-    status: complete
-    evidence:
-      - framework/RISK_MODEL.md
-      - templates/module/SECURITY.md
+    mode: required
+    status: pending
+    evidence: []
+    reason: Threat design exists; implemented controls and Local independent review remain pending.
   - id: deployment
     name: Deployment
-    mode: skipped
+    mode: not-applicable
     status: complete
-    reason: M0 delivers repository contracts only; no deployable runtime exists.
+    reason: M1 reference work has no service deployment; package publishing is a separate authorization.
   - id: production-gate
     name: Production Gate
     mode: not-applicable
     status: complete
-    reason: M0 has no production runtime or service.
+    reason: M1 does not target production data or services; Module Release Gate still applies to future distribution.
 
 module_lifecycle:
   states:
@@ -119,9 +116,11 @@ module_lifecycle:
     - from: TASKS_READY
       to: IMPLEMENTING
       gate: implementation
+      evaluation: entry-criteria
     - from: IMPLEMENTING
       to: TESTING
       gate: implementation
+      evaluation: exit-criteria
     - from: TESTING
       to: REVIEW
       gate: test
@@ -140,4 +139,3 @@ agent_flow:
   - Review
   - Accept
   - Handoff
-

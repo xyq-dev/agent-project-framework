@@ -1,5 +1,5 @@
 schema_version: "0.1"
-profile: framework-kernel
+profile: storage-reference
 evidence_must_be_repository_addressable: true
 
 gates:
@@ -127,4 +127,3 @@ risk_requirements:
     independent_review: true
     human_release_approval: true
     automatic_release: false
-
