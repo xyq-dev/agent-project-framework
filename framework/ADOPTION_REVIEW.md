@@ -46,6 +46,6 @@ P1-001～007 在本次标准与模板范围内满足；真实项目应用与线�
 
 ## 交付边界
 
-基线 main：`7dd1fff7b2e3b1f3aa44bfc762ab559e9dfa44d8`。变更分支：`docs/project-standards-v0.1`。提交 SHA 与远端回读在交付报告绑定。
+原基线 main：`7dd1fff7b2e3b1f3aa44bfc762ab559e9dfa44d8`。来源分支 `docs/project-standards-v0.1`，来源提交 `8a1645bbbeea8b85e6b1fb351051fd72291a93bf`；[PR #1](https://github.com/xyq-dev/agent-project-framework/pull/1) 已按用户明确授权合并，合并提交为 `5283bfafd69768009a45598746e71c5d41b8989d`。合并后的交接同步仅修改 CURRENT_STATUS 与本记录，不改变标准内容或业务范围。
 
-模板位于专题分支时可阅读和评审；进入目标仓库默认分支后才会成为 GitHub 默认 Issue/PR 入口。当前没有业务项目验收、GitHub Actions 运行或生产部署证据。
+本仓库的指南与模板已进入 main；新项目复制后仍需让 Issue/PR 模板进入自己的默认分支。当前没有业务项目验收、GitHub Actions 运行或生产部署证据。

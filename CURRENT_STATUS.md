@@ -14,7 +14,7 @@ P1 — GitHub 项目开发标准与新项目采用入口
 
 ## Current Task
 
-P1 标准采用包已完成并通过校验；以专题分支交付评审，下一步将标准应用到具体新项目。
+P1 标准采用包已完成并通过校验，PR #1 已按用户授权合并到 main；下一步将标准应用到具体新项目。
 
 ## Completed
 
@@ -22,10 +22,11 @@ P1 标准采用包已完成并通过校验；以专题分支交付评审，下�
 - M1-A：Storage 规格已合并，保持 TASKS_READY；Runtime 尚未实现。
 - P1 启动指南、项目模板/复制清单、完整流程、GitHub 模板与 Agent 提示词已完成。
 - 新项目采用模拟通过：34 个目标文件，7 组检查和 6 个拒绝用例；原 Storage 静态回归通过。
+- PR #1 已合并，启动指南、项目模板及 GitHub 协作模板已进入 main；合并记录见 Handoff。
 
 ## In Progress
 
-P1 专题分支待合并；P2 实际项目尚未开始。当前完成的是标准与模板，不代表业务项目需求、实现或部署完成。
+P2 实际项目尚未开始。P1 标准与模板已合并；业务项目需求、实现和部署将在各项目独立推进。
 
 ## Blocked
 
@@ -67,4 +68,4 @@ AGENTS、Module Schema、原 Module 模板、Storage API/设计与 Runtime Gate 
 
 先读 AGENTS、PROJECT_CONTEXT、本文件，再读 START_HERE、开发手册与复制清单。当前主线为 P1 项目标准，不能按旧提示词自动启动 Storage。
 
-基线 `main`=`7dd1fff7b2e3b1f3aa44bfc762ab559e9dfa44d8`；当前变更分支 `docs/project-standards-v0.1`。提交后的真实 SHA 与远端回读在交付报告绑定，本次不自动合并 main。
+P1 来源提交 `8a1645bbbeea8b85e6b1fb351051fd72291a93bf`，经 [PR #1](https://github.com/xyq-dev/agent-project-framework/pull/1) 合并到 main；合并提交 `5283bfafd69768009a45598746e71c5d41b8989d`。本次合并同时同步本文件与 ADOPTION_REVIEW 的交接记录，后续从 main 的 START_HERE 进入。新项目采用时记录实际选用的完整标准 commit SHA。
