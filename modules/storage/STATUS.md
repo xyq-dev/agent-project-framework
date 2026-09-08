@@ -30,7 +30,7 @@ ST-000 规格/设计与任务就绪；下一任务 ST-001（由 Cursor 开始 Me
 
 ## In Progress
 
-None（本分支为规格交接快照；Runtime 尚未开始）。Git 发布/回读以提交后最终报告为准。
+None（M1-A 规格已合并到 main；Runtime 尚未开始）。
 
 ## Blocked
 
@@ -72,6 +72,7 @@ None（本分支为规格交接快照；Runtime 尚未开始）。Git 发布/回
 
 - `modules/storage/` manifest、九份标准文档、REVIEW、Cursor 任务包、validation cases 与静态验证脚本。
 - 项目 README/CURRENT_STATUS、active lifecycle、Roadmap 的 M1 说明；Kernel 入场/出场语义澄清。
+- 本次用户授权的合并仅另行同步项目与模块 STATUS；Runtime 与 Gate 状态不变。
 
 ## Tests
 
@@ -93,4 +94,4 @@ License 由 `xyq-dev` 在分发前决定；未来 cloud Provider 和实际兼容
 
 ## Handoff
 
-基线 main=`32f0072e386a6d0763e0a40b2584a159f3957be9`；提交分支 `feat/storage-spec-v0.1`，不是 main。远端实际 SHA 由提交后最终报告绑定（不自填当前 commit hash）。下一执行从 ST-001 开始，不重复架构分析、不触碰 Local/云权限。
+M0 历史检查点=`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交 `c969474e4c05f0f50fb2d90646e0864bdbdc9e99` 已随 `feat/storage-spec-v0.1` 合并到 `main`，合并时同步项目与模块 STATUS；来源分支保留，后续以 `main` 为交接基线。下一执行从 ST-001 开始，不重复架构分析、不触碰 Local/云权限。

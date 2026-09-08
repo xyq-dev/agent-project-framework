@@ -14,7 +14,7 @@ M1 — Storage Reference Module（IN PROGRESS；Runtime 尚未实现）
 
 ## Current Task
 
-M1-A 契约、静态验证与设计 Gate 已通过，Storage=TASKS_READY。下一执行单元为 M1-B / ST-001..004（Memory）；本规格快照的提交/回读以最终报告绑定。
+M1-A 契约、静态验证与设计 Gate 已通过，Storage=TASKS_READY，规格已合并到 main。下一执行单元为 M1-B / ST-001..004（Memory）。
 
 ## Completed
 
@@ -28,6 +28,7 @@ M1-A 契约、静态验证与设计 Gate 已通过，Storage=TASKS_READY。下�
 - TASK-008 — Prepared the Storage Reference Module milestone and its boundaries.
 - M1-A artifacts — Storage manifest、九份标准文档、设计 Review、Cursor 任务包、14 条计划 Runtime 用例与只读静态验证脚本。
 - Kernel feedback — 区分 Implementation Gate 的 entry/exit evaluation，解决入场需要“已完成实现”的循环；未改变 Module Schema。
+- M1-A merge — 按用户明确授权，将 `feat/storage-spec-v0.1` 快进合并至 `main`，并同步项目与模块交接状态；来源分支保留。
 
 ## In Progress
 
@@ -54,13 +55,14 @@ M1-A / Memory 任务无产品决策阻塞。Local ST-006 被 ST-005 独立安全
 - M1：config/audit 尚无真实契约，采用注入配置/Observer，暂不写任何虚假依赖版本。
 - 选择 Node 24.x + TypeScript strict 作为首个 Reference Profile，Memory→Local；不强制其它语言或项目采用。
 - move/signed URL/multipart 当前 false；云 Adapter 必须另外验收，providers/runtimes 暂空。
-- 当前工作在 `feat/storage-spec-v0.1`，main 保留 M0；没有自动合并/发布。
+- M1-A 规格已纳入 `main`，来源分支 `feat/storage-spec-v0.1` 保留。此次用户授权的合并不改变 Runtime 状态或各项待完成 Gate。
 
 ## Changed Files
 
 - 新增 `modules/storage/`：14 个实质文件（含验证脚本，不含 Runtime）。
 - 修改 `README.md`、本文件、`.agent-project/{project,workflow,gates}.yaml`、`framework/{WORKFLOW,ROADMAP}.md`。
 - 未修改 AGENTS、稳定 PROJECT_CONTEXT、Module Schema 或原模板；未增加 DB/CLI/空模块目录。
+- 合并交接同步仅修改 `CURRENT_STATUS.md` 与 `modules/storage/STATUS.md`，规格和实现范围不变。
 
 ## Validation
 
@@ -87,4 +89,4 @@ M1-A / Memory 任务无产品决策阻塞。Local ST-006 被 ST-005 独立安全
 
 先读 AGENTS、PROJECT_CONTEXT、本文件和四个配置，再读 modules/storage 的 SPEC/API/ARCHITECTURE/TASKS/STATUS/REVIEW；无需旧聊天。Runtime 只按已通过 Gate 的 ST-001..004 执行，Local 另需安全审查。
 
-M0 checkpoint/main base：`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 分支 `feat/storage-spec-v0.1`，当前提交 SHA 由提交后最终报告绑定。Cursor 默认本地 commit 可、push/main/pack/Tag/Release 不可，除非用户新授权。
+M0 历史检查点：`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交：`c969474e4c05f0f50fb2d90646e0864bdbdc9e99`，已随 `feat/storage-spec-v0.1` 合并至 `main`；合并时另有项目与模块交接状态同步提交。`main` 为后续交接基线，来源分支保留。Cursor 后续任务默认本地 commit 可、push/main/pack/Tag/Release 不可，除非用户对该任务新授权。
