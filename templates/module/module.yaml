@@ -1,0 +1,51 @@
+# Replace the example values when creating a real module.
+schema_version: "0.1"
+name: module-name
+version: 0.1.0
+category: infrastructure
+description: A technology-neutral description of the reusable responsibility owned by this module.
+risk: medium
+status: DRAFT
+
+capabilities:
+  - id: primary-capability
+    description: Describe one observable behavior exposed to module consumers.
+    stability: experimental
+
+dependencies: []
+
+optional_dependencies: []
+
+providers: []
+
+compatibility:
+  framework: ">=0.1.0-dev <0.2.0"
+  runtimes: []
+  modules: []
+
+gates:
+  required:
+    - spec
+    - architecture
+    - implementation
+    - test
+    - security
+    - acceptance
+    - release
+
+artifacts:
+  spec: SPEC.md
+  architecture: ARCHITECTURE.md
+  data_model: DATA_MODEL.md
+  api: API.md
+  security: SECURITY.md
+  tasks: TASKS.md
+  tests: TESTS.md
+  acceptance: ACCEPTANCE.md
+  status: STATUS.md
+
+ownership:
+  maintainers: []
+
+tags: []
+

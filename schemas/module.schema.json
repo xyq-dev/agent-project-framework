@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/xyq-dev/agent-project-framework/main/schemas/module.schema.json",
+  "title": "Agent Project Framework Module Metadata",
+  "description": "Technology-neutral metadata contract for an APF module.yaml file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "name",
+    "version",
+    "category",
+    "description",
+    "risk",
+    "status",
+    "capabilities",
+    "dependencies",
+    "optional_dependencies",
+    "providers",
+    "compatibility",
+    "gates",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 80
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "category": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "description": "Extensible catalog category; common values include infrastructure, identity, communication, commerce, platform and business."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 500
+    },
+    "risk": {
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "status": {
+      "enum": [
+        "DRAFT",
+        "SPEC_READY",
+        "ARCHITECTURE_READY",
+        "TASKS_READY",
+        "IMPLEMENTING",
+        "TESTING",
+        "REVIEW",
+        "ACCEPTED",
+        "RELEASED"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dependency"
+      }
+    },
+    "optional_dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/optionalDependency"
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/provider"
+      }
+    },
+    "compatibility": {
+      "$ref": "#/$defs/compatibility"
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "spec",
+              "architecture",
+              "implementation",
+              "test",
+              "security",
+              "acceptance",
+              "release"
+            ]
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spec",
+        "architecture",
+        "data_model",
+        "api",
+        "security",
+        "tasks",
+        "tests",
+        "acceptance",
+        "status"
+      ],
+      "properties": {
+        "spec": { "$ref": "#/$defs/artifactPath" },
+        "architecture": { "$ref": "#/$defs/artifactPath" },
+        "data_model": { "$ref": "#/$defs/artifactPath" },
+        "api": { "$ref": "#/$defs/artifactPath" },
+        "security": { "$ref": "#/$defs/artifactPath" },
+        "tasks": { "$ref": "#/$defs/artifactPath" },
+        "tests": { "$ref": "#/$defs/artifactPath" },
+        "acceptance": { "$ref": "#/$defs/artifactPath" },
+        "status": { "$ref": "#/$defs/artifactPath" }
+      }
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maintainers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "source_repository": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 80
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "stability"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "stability": {
+          "enum": ["experimental", "stable", "deprecated"]
+        }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "required_capabilities"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "required_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "optionalDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "required_capabilities", "reason"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "required_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 300
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "capabilities"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "kind": { "const": "adapter" },
+        "capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "compatibility": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "runtimeCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "version"],
+      "properties": {
+        "profile": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["framework", "runtimes", "modules"],
+      "properties": {
+        "framework": { "type": "string", "minLength": 1 },
+        "runtimes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/runtimeCompatibility" }
+        },
+        "modules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dependency" }
+        }
+      }
+    },
+    "artifactPath": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+\\.md$"
+    }
+  }
+}

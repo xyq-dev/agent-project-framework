@@ -1,0 +1,130 @@
+schema_version: "0.1"
+profile: framework-kernel
+evidence_must_be_repository_addressable: true
+
+gates:
+  spec:
+    purpose: Confirm the problem, capabilities, boundaries and acceptance outcomes before implementation.
+    entry_criteria:
+      - owner-and-scope-identified
+      - risk-initially-classified
+    required_evidence:
+      - completed-spec
+      - explicit-out-of-scope
+      - measurable-acceptance-criteria
+    pass_criteria:
+      - no-material-requirement-ambiguity
+      - capabilities-and-boundaries-consistent
+    failure_behavior: Return to analysis; implementation remains blocked.
+    required_reviewer: analyst
+    risk_override_rule: No silent override; medium or higher requires recorded reviewer approval.
+
+  architecture:
+    purpose: Confirm boundaries, dependencies, compatibility and operational design.
+    entry_criteria:
+      - spec-gate-passed
+      - dependency-impact-known
+    required_evidence:
+      - architecture-document
+      - dependency-and-compatibility-decisions
+      - failure-and-recovery-design
+    pass_criteria:
+      - design-satisfies-approved-spec
+      - risks-have-controls
+    failure_behavior: Return to architecture; implementation remains blocked for medium or higher risk.
+    required_reviewer: architect
+    risk_override_rule: High and critical changes require an independent reviewer; critical cannot bypass.
+
+  implementation:
+    purpose: Confirm implementation starts and ends within approved contracts and tasks.
+    entry_criteria:
+      - required-upstream-gates-passed
+      - tasks-are-atomic-and-testable
+    required_evidence:
+      - change-set
+      - scope-traceability
+      - implementation-self-check
+    pass_criteria:
+      - approved-tasks-complete
+      - no-unapproved-scope-expansion
+    failure_behavior: Return incomplete work to implementation and record deviations.
+    required_reviewer: implementer
+    risk_override_rule: Overrides cannot waive required architecture or security controls.
+
+  test:
+    purpose: Demonstrate behavior and compatibility at the risk-appropriate depth.
+    entry_criteria:
+      - implementation-gate-passed
+      - test-plan-maps-to-acceptance
+    required_evidence:
+      - test-results
+      - coverage-of-critical-paths
+      - unresolved-failure-list
+    pass_criteria:
+      - required-tests-pass
+      - no-unaccepted-blocking-failure
+    failure_behavior: Return to implementation; Acceptance Gate remains blocked.
+    required_reviewer: reviewer
+    risk_override_rule: Failed required tests cannot be overridden; unavailable tests need explicit risk acceptance and replacement evidence.
+
+  security:
+    purpose: Confirm threats, permissions, sensitive data and provider risks are controlled.
+    entry_criteria:
+      - architecture-available
+      - data-and-access-boundaries-known
+    required_evidence:
+      - security-review
+      - threat-and-control-record
+      - unresolved-security-risk-list
+    pass_criteria:
+      - no-unaccepted-high-or-critical-vulnerability
+      - least-privilege-and-data-controls-verified
+    failure_behavior: Block acceptance or release according to risk level.
+    required_reviewer: security-reviewer
+    risk_override_rule: High requires accountable approval; critical security failures cannot be overridden for release.
+
+  acceptance:
+    purpose: Confirm the delivered result meets the approved outcome rather than only compiling.
+    entry_criteria:
+      - test-gate-passed
+      - required-security-gate-passed
+    required_evidence:
+      - acceptance-checklist
+      - known-limitations
+      - status-update
+    pass_criteria:
+      - every-required-acceptance-item-passed
+      - residual-risks-owned
+    failure_behavior: Return to the responsible stage and keep the module out of ACCEPTED.
+    required_reviewer: acceptor
+    risk_override_rule: Implementer cannot self-accept high or critical work.
+
+  release:
+    purpose: Confirm an accepted change is versioned, recoverable and safe to distribute.
+    entry_criteria:
+      - acceptance-gate-passed
+      - release-scope-and-version-known
+    required_evidence:
+      - release-notes
+      - compatibility-statement
+      - rollback-or-recovery-plan
+    pass_criteria:
+      - release-artifact-traceable-to-accepted-source
+      - required-human-approval-recorded
+    failure_behavior: Keep the accepted result unreleased.
+    required_reviewer: acceptor
+    risk_override_rule: Critical changes never auto-release; missing recovery evidence cannot be overridden.
+
+risk_requirements:
+  low:
+    required_gates: [spec, implementation, test, acceptance]
+  medium:
+    required_gates: [spec, architecture, implementation, test, acceptance, release]
+  high:
+    required_gates: [spec, architecture, implementation, test, security, acceptance, release]
+  critical:
+    required_gates: [spec, architecture, implementation, test, security, acceptance, release]
+    independent_review: true
+    human_release_approval: true
+    automatic_release: false
+

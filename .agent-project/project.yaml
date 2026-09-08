@@ -1,0 +1,35 @@
+schema_version: "0.1"
+framework_version: "0.1.0-dev"
+
+project:
+  id: agent-project-framework
+  name: Agent Project Framework
+  kind: framework
+  lifecycle_profile: framework-kernel
+  risk_baseline: medium
+  technology_neutral: true
+
+contracts:
+  agent_instructions: AGENTS.md
+  stable_context: PROJECT_CONTEXT.md
+  dynamic_status: CURRENT_STATUS.md
+  workflow: .agent-project/workflow.yaml
+  agents: .agent-project/agents.yaml
+  gates: .agent-project/gates.yaml
+  module_standard: framework/MODULE_STANDARD.md
+  module_schema: schemas/module.schema.json
+  module_template: templates/module
+
+catalog_roots:
+  infrastructure_modules: modules
+  business_modules: business-modules
+  presets: presets
+  examples: examples
+
+policies:
+  create_empty_catalog_directories: false
+  require_explicit_dependencies: true
+  require_status_handoff: true
+  allow_project_specific_code_in_core: false
+  runtime_implementation_coupled_to_contract: false
+

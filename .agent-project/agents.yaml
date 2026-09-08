@@ -1,0 +1,89 @@
+schema_version: "0.1"
+profile: codex-cursor-default
+replaceable: true
+
+principle:
+  framework_roles_are_vendor_neutral: true
+  execution_bindings_are_project_configuration: true
+
+roles:
+  analyst:
+    responsibilities:
+      - requirements-analysis
+      - scope-and-risk-classification
+      - dependency-impact-analysis
+    required_inputs:
+      - project-context
+      - current-status
+  architect:
+    responsibilities:
+      - architecture
+      - module-contracts
+      - api-and-data-design
+      - task-breakdown
+  implementer:
+    responsibilities:
+      - approved-code-and-file-changes
+      - tests
+      - build-and-pack
+      - authorized-git-operations
+  reviewer:
+    responsibilities:
+      - correctness-review
+      - compatibility-review
+      - risk-and-gate-review
+  security-reviewer:
+    responsibilities:
+      - threat-review
+      - sensitive-data-and-access-review
+      - release-security-evidence
+  acceptor:
+    responsibilities:
+      - acceptance-evidence-review
+      - final-gate-decision
+
+execution_bindings:
+  analysis_low:
+    tool: Codex
+    model: GPT-5.6 Luna
+    reasoning: medium
+  architecture_medium_high:
+    tool: Codex
+    model: GPT-5.6 Terra
+    reasoning: high
+  critical_review:
+    tool: Codex
+    model: GPT-5.6 Sol
+    reasoning: extreme
+  implementation_default:
+    tool: Cursor
+    model: Grok 4.6 High Fast
+    reasoning: implementation-focused
+
+routing:
+  low:
+    analysis: analysis_low
+    implementation: implementation_default
+    independent_review_required: false
+  medium:
+    analysis: architecture_medium_high
+    implementation: implementation_default
+    independent_review_required: recommended
+  high:
+    analysis: architecture_medium_high
+    implementation: implementation_default
+    independent_review_required: true
+    security_review_required: true
+  critical:
+    analysis: critical_review
+    implementation: implementation_default
+    independent_review_required: true
+    security_review_required: true
+    human_release_approval_required: true
+    single_agent_acceptance_allowed: false
+
+handoff:
+  update_project_status_on_milestone_change: true
+  update_module_status_on_material_change: true
+  evidence_required: true
+
