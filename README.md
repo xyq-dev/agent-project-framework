@@ -1,206 +1,59 @@
 # Agent Project Framework
 
-Agent Project Framework（APF）是一套技术栈中立的项目组装规范。它把项目生命周期、模块契约、Agent 协作、风险路由、质量门禁和交接状态统一成可读取、可审查、可逐步自动化的 Framework Kernel。
+**把项目开发标准放在 GitHub，让每个新项目按同一套流程启动、开发、验收和交接。**
 
-> 以后不是从零开发项目，而是组装项目。
+APF 是技术栈中立的项目标准仓库。当前优先交付可直接采用的流程、文档模板与 Agent 工作约定；项目可以从空目录开始，无需先实现 Storage、OSS 或登录模块。
 
-```text
-项目 = 通用开发流程 + 通用技术模块 + 可选业务模块 + 项目特有代码
-```
+## 从这里开始
 
-当前版本为 `0.1.0-dev`。V0.1 先稳定规范与机器可读契约，不提前实现完整 CLI、依赖解析器或大批空模块。
+- **新项目、目录为空**：按 [START_HERE.md](START_HERE.md) 初始化。
+- **已经有代码的项目**：按启动指南的渐进接入流程补标准，保留现有目录与代码。
+- **想知道每一步做什么**：查看 [项目开发手册](framework/PROJECT_PLAYBOOK.md)。
+- **想把任务和评审放在 GitHub**：查看 [GitHub 协作流程](framework/GITHUB_WORKFLOW.md)。
+- **让 Agent 帮忙初始化**：使用 [新项目启动提示词](agent-prompts/NEW_PROJECT.md)。
 
-## What is Agent Project Framework
+## 一套项目流程
 
-APF 同时面向人和 Agent：
+需求 → 产品范围 → UX/UI（适用时）→ 架构 → 数据与 API（适用时）→ 任务拆解 → 开发 → 测试与安全审查 → 验收 → 发布 → 维护与交接。
 
-- 人使用生命周期、风险模型和验收证据控制质量。
-- Agent 读取稳定上下文、动态状态和模块任务后再开始工作。
-- 工具未来可读取 YAML/JSON 契约，解析依赖、生成任务并执行验证。
-- Runtime Implementation 与 Framework Contract 分离，可按 TypeScript、Go、Python 等 Implementation Profile 演进。
+每个阶段明确输入、产物、负责人和通过条件。小项目可以裁剪；跳过或不适用需要理由，不能把未做的工作标记为通过。
 
-APF 不是某个业务项目，也不把数据库、云厂商、语言或前后端框架写死在 Core 中。
+## 两个仓库各放什么
 
-## Why it exists
-
-软件项目反复消耗时间在相同的初始化、基础设施、协作约定和交接工作上。APF 通过标准模块和可裁剪流程减少重复，同时避免“复制代码却丢失约束、测试和决策”的问题。
-
-目标是让一个新项目能够从已验证的能力中选择和组合，而不是重新发明全部基础设施。
-
-## Core Philosophy
-
-1. **小而完整优于大而空**：只建立当前有契约、有证据的内容。
-2. **规格先于实现**：Module 在满足相应 Gate 前不得进入下一状态。
-3. **流程可以裁剪**：阶段可标记为 `required`、`optional`、`skipped` 或 `not-applicable`，但跳过必须有理由。
-4. **风险决定控制强度**：风险越高，审查、测试、安全和发布约束越严格。
-5. **可恢复优于聊天记忆**：状态、决策、证据和下一步必须留在 Repository。
-6. **契约与实现分离**：通用规范不依赖单一语言、框架或 Provider。
-7. **模块化优于复制粘贴**：代码只是 Module 的一部分；规格、兼容性、测试和验收同样属于 Module。
-
-## Conceptual Project Flow
-
-```text
-Define requirements
-→ Select project profile
-→ Select modules
-→ Resolve dependencies
-→ Generate specifications
-→ Generate Agent tasks
-→ Implement
-→ Test
-→ Review
-→ Accept
-→ Release
-```
-
-## Project Lifecycle
-
-默认生命周期如下，但项目可以通过 [`.agent-project/workflow.yaml`](.agent-project/workflow.yaml) 裁剪：
-
-| Stage | Purpose |
+| 仓库 | 保存内容 |
 | --- | --- |
-| Requirements | 明确目标、约束、范围和验收结果 |
-| Product | 定义产品行为、优先级和边界 |
-| UX / User Flows | 定义用户路径与异常路径 |
-| Design | 定义需要的视觉与交互设计 |
-| Architecture | 定义系统边界、依赖与关键决策 |
-| Database | 定义持久化模型和变更策略 |
-| API | 定义接口契约和兼容性 |
-| Implementation | 按已批准任务实现 |
-| Testing | 形成风险匹配的验证证据 |
-| Security | 评估威胁、权限和数据保护 |
-| Deployment | 定义可回滚的交付方式 |
-| Production Gate | 在证据齐全后批准生产发布 |
+| 本标准仓库 | 通用流程、质量标准、项目/模块模板、Agent 提示词、标准演进记录 |
+| 每个新项目仓库 | 采用的标准快照、本项目需求和设计、任务、代码、测试、发布和交接记录 |
 
-详细规则见 [`framework/WORKFLOW.md`](framework/WORKFLOW.md)。
+采用时按 [复制清单](templates/project/BOOTSTRAP_MANIFEST.yaml) 选择文件并记录标准来源 commit；新项目不会继承 APF 的 Storage 进度。以后升级标准，也通过项目自己的变更评审处理。
 
-## Module System
+## 仓库导航
 
-Module 是 APF 的核心复用单位，不只是代码。一个成熟 Module 包含：
+| 入口 | 用途 |
+| --- | --- |
+| [AGENTS.md](AGENTS.md) | Agent 工作约定 |
+| [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) | 本标准仓库的稳定定位 |
+| [CURRENT_STATUS.md](CURRENT_STATUS.md) | 本标准仓库当前进度 |
+| [framework/](framework/) | 生命周期、开发手册、模块、风险、Gate 与交接标准 |
+| [templates/project/](templates/project/) | 新项目启动模板与复制清单 |
+| [templates/module/](templates/module/) | 按实际需要创建模块契约 |
+| [agent-prompts/](agent-prompts/) | 初始化、执行、评审与交接提示词 |
+| [.github/ISSUE_TEMPLATE/](.github/ISSUE_TEMPLATE/) | 立项、开发任务、缺陷模板 |
+| [.github/pull_request_template.md](.github/pull_request_template.md) | 变更与验收证据模板 |
+| [schemas/module.schema.json](schemas/module.schema.json) | Module 元数据校验规则 |
 
-- Requirements、Capabilities 与 Boundaries
-- Dependencies 与 Compatibility
-- Architecture、Data Model 与 API
-- Security、Implementation 与 Provider/Adapter
-- Tests、Acceptance 与 Release Evidence
-- Agent Instructions、Status、Version 与 Risk
+## 能力按项目需要选择
 
-`module.yaml` 是机器可读协议。V0.1 的规范、Schema 和起始模板分别位于：
+登录/身份、权限、存储/OSS、配置、审计、媒体、通知、支付等，在立项时决定采用、延后或不适用。选择一种能力后，定义契约、选用已有组件或安排实现，并按风险验证。
 
-- [`framework/MODULE_STANDARD.md`](framework/MODULE_STANDARD.md)
-- [`schemas/module.schema.json`](schemas/module.schema.json)
-- [`templates/module/module.yaml`](templates/module/module.yaml)
+**能力清单不代表本仓库已经提供这些功能代码。**目前 [Storage](modules/storage/STATUS.md) 只有规格与测试计划，保留为可选参考案例；M1-B/C 尚未实施，当前主线优先完善项目标准采用流程。
 
-## Agent Workflow
+## Agent 分工与证据
 
-```text
-Analyze → Plan → Implement → Test → Review → Accept → Handoff
-```
+默认 Codex 做需求、方案和评审，Cursor 执行已批准任务、测试与本地构建。具体工具和模型放在可替换的 [Agent 配置](.agent-project/agents.yaml)，不绑定通用标准。
 
-Agent 开工前必须读取 `AGENTS.md`、`PROJECT_CONTEXT.md`、`CURRENT_STATUS.md` 以及相关 Module 的 `SPEC.md`、`TASKS.md`、`STATUS.md`。实现不是分析的替代品，聊天记录也不是 Repository 状态的替代品。
+文档、Issue、PR 和状态文件共同保存工作上下文。格式检查、业务测试、验收、发布是不同证据，不能互相替代。授权按当前任务记录，模板本身不授予生产或发布权限。
 
-## Quality Gates
+## 版本与后续
 
-V0.1 定义七个 Gate：
-
-1. Spec Gate
-2. Architecture Gate
-3. Implementation Gate
-4. Test Gate
-5. Security Gate
-6. Acceptance Gate
-7. Release Gate
-
-每个 Gate 都必须说明目的、入口条件、证据、通过条件、失败行为、审查者和风险覆盖规则。规范见 [`framework/QUALITY_GATES.md`](framework/QUALITY_GATES.md)，本项目启用的配置见 [`.agent-project/gates.yaml`](.agent-project/gates.yaml)。
-
-## Risk Model
-
-| Risk | Typical change | Minimum control |
-| --- | --- | --- |
-| `low` | 文档、简单 UI、局部非关键调整 | Spec、测试证据、验收 |
-| `medium` | 普通 API、Storage、跨文件功能 | Architecture Review、集成验证 |
-| `high` | Auth、Security、敏感权限 | 独立安全审查、集成测试、人工发布批准 |
-| `critical` | Payment、Refund、Migration、生产数据 | 全 Gate、独立复核、回滚证据、禁止自动发布 |
-
-完整规则见 [`framework/RISK_MODEL.md`](framework/RISK_MODEL.md)。
-
-## Repository Structure
-
-```text
-.
-├── README.md
-├── AGENTS.md
-├── PROJECT_CONTEXT.md
-├── CURRENT_STATUS.md
-├── .agent-project/
-│   ├── project.yaml
-│   ├── workflow.yaml
-│   ├── agents.yaml
-│   └── gates.yaml
-├── framework/
-│   ├── WORKFLOW.md
-│   ├── MODULE_STANDARD.md
-│   ├── QUALITY_GATES.md
-│   ├── RISK_MODEL.md
-│   ├── STATUS_STANDARD.md
-│   └── ROADMAP.md
-├── schemas/
-│   └── module.schema.json
-└── templates/
-    └── module/
-        ├── module.yaml
-        ├── SPEC.md
-        ├── ARCHITECTURE.md
-        ├── DATA_MODEL.md
-        ├── API.md
-        ├── SECURITY.md
-        ├── TASKS.md
-        ├── TESTS.md
-        ├── ACCEPTANCE.md
-        └── STATUS.md
-```
-
-`modules/storage/` 已建立首个真实模块规格，见 [Storage SPEC](modules/storage/SPEC.md)、[状态](modules/storage/STATUS.md) 和 [Cursor 执行任务](modules/storage/agents/CURSOR_IMPLEMENTATION.md)。当前没有 Runtime；providers/runtimes 的空列表表示尚未验证支持。
-
-`business-modules/`、`presets/` 和 `examples/` 仍在出现真实内容时才创建，不使用占位文件伪造进度。
-
-## Using the Framework
-
-在自动化工具完成前，新项目可以按以下最小流程采用 APF：
-
-1. 复制 `.agent-project/` 配置并声明项目生命周期裁剪。
-2. 从 `templates/module/` 创建所需 Module，填写 `module.yaml`。
-3. 解析并审查必选与可选依赖，记录兼容性约束。
-4. 完成 SPEC、ARCHITECTURE 和 TASKS Gate 后再实现。
-5. 按风险等级收集测试、安全和验收证据。
-6. 更新状态文件，确保下一位 Agent 无需旧聊天即可继续。
-
-## Future Presets
-
-未来 Preset 将声明一类项目的默认 Module Set，例如 SaaS、Ecommerce、Booking、Mini Program、Admin System、API Service 和 Content Platform。V0.1 只保留契约方向，不建立未验证的 Preset 清单文件。
-
-## Future CLI
-
-未来 CLI 可能提供：
-
-```text
-agent-project create
-agent-project add-module
-agent-project remove-module
-agent-project doctor
-agent-project status
-agent-project validate
-agent-project generate-tasks
-```
-
-CLI 必须建立在稳定的 Module Standard、多模块实践和 Dependency Resolver 之上；V0.1 不实现 CLI。
-
-## Roadmap
-
-- **M0 — Framework Core**：生命周期、Module Standard、Agent Workflow、Gate、Risk、Status 与模板。
-- **M1 — Storage Reference Module**：用第一个真实 Infrastructure Module 验证契约、Provider Adapter、依赖和测试体系。
-- **M2 — Identity / Media Modules**：验证高风险路由与跨模块分层。
-- **M3 — Presets and Dependency Resolution**：在多模块证据充分后形成组合能力。
-- **M4 — Project Generator and CLI**：把稳定协议自动化。
-
-详细范围见 [`framework/ROADMAP.md`](framework/ROADMAP.md)，动态进度见 [`CURRENT_STATUS.md`](CURRENT_STATUS.md)。
+当前规范版本 `0.1.0-dev`。手动或由 Agent 按清单初始化的流程可先采用；自动生成器、依赖解析、完整可复用 Runtime 属于后续增量。详见 [路线图](framework/ROADMAP.md)。

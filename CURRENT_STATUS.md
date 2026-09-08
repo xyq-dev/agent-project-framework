@@ -6,87 +6,65 @@
 
 ## Phase
 
-M1-A Storage specification and implementation handoff
+P1 — GitHub 项目开发标准与新项目采用入口
 
 ## Milestone
 
-M1 — Storage Reference Module（IN PROGRESS；Runtime 尚未实现）
+优先建立可供新项目采用的完整开发流程；Storage Runtime 参考工作暂缓。
 
 ## Current Task
 
-M1-A 契约、静态验证与设计 Gate 已通过，Storage=TASKS_READY，规格已合并到 main。下一执行单元为 M1-B / ST-001..004（Memory）。
+P1 标准采用包已完成并通过校验；以专题分支交付评审，下一步将标准应用到具体新项目。
 
 ## Completed
 
-- TASK-001 — Initialized Agent Project Framework V0.1 Core.
-- TASK-002 — Defined Module Standard V0.1 and machine-readable `module.yaml` Schema.
-- TASK-003 — Defined configurable Project and Module Lifecycle V0.1.
-- TASK-004 — Defined Agent Workflow V0.1.
-- TASK-005 — Defined Quality Gates and Risk Model V0.1.
-- TASK-006 — Created reusable Module Templates.
-- TASK-007 — Established Status and Handoff Standard.
-- TASK-008 — Prepared the Storage Reference Module milestone and its boundaries.
-- M1-A artifacts — Storage manifest、九份标准文档、设计 Review、Cursor 任务包、14 条计划 Runtime 用例与只读静态验证脚本。
-- Kernel feedback — 区分 Implementation Gate 的 entry/exit evaluation，解决入场需要“已完成实现”的循环；未改变 Module Schema。
-- M1-A merge — 按用户明确授权，将 `feat/storage-spec-v0.1` 快进合并至 `main`，并同步项目与模块交接状态；来源分支保留。
+- M0：生命周期、Module Schema/模板、Agent、风险/Gate 和状态标准已完成。
+- M1-A：Storage 规格已合并，保持 TASKS_READY；Runtime 尚未实现。
+- P1 启动指南、项目模板/复制清单、完整流程、GitHub 模板与 Agent 提示词已完成。
+- 新项目采用模拟通过：34 个目标文件，7 组检查和 6 个拒绝用例；原 Storage 静态回归通过。
 
 ## In Progress
 
-M1 整体 IN PROGRESS：M1-A 已完成；Runtime 开发尚未开始，Implementation/Test/Security/Acceptance Gate 均 PENDING。
+P1 专题分支待合并；P2 实际项目尚未开始。当前完成的是标准与模板，不代表业务项目需求、实现或部署完成。
 
 ## Blocked
 
-M1-A / Memory 任务无产品决策阻塞。Local ST-006 被 ST-005 独立安全设计审查阻塞；云 signer/搬迁/multipart 属于延后范围。
+当前标准整理无用户决策阻塞。实际新项目需求在该项目立项时确认；Storage Runtime 不阻塞标准采用。
 
 ## Next
 
-1. 使用 [Cursor 任务包](modules/storage/agents/CURSOR_IMPLEMENTATION.md) 执行 ST-001..004：Node/TypeScript Core + Memory。
-2. Memory 证据完成后，审查 Local 路径/锁/恢复设计，再进行 ST-006..007。
-3. 两种 Adapter 测试/安全/验收完成后，才决定 M1 是否可结束；禁止因为 SPEC 完成就宣布 Runtime 完成。
+1. 从 [START_HERE.md](START_HERE.md) 进入，使用新项目启动提示词按需求初始化独立项目。
+2. 在实际项目中记录需求、裁剪、设计、任务、测试、验收与发布，反馈标准缺口。
+3. 根据真实需要选择登录、OSS 等能力的来源和实现任务；不默认恢复 Storage M1-B。
 
-## Current Decisions
+## Decisions
 
-- Framework Core remains technology, language, database and provider neutral.
-- Module metadata uses YAML; V0.1 ships a JSON Schema for `module.yaml`.
-- Lifecycle tailoring separates stage `mode` from execution `status`.
-- Empty catalog, preset and example directories are not tracked.
-- Storage is the first Reference Module; Media remains a separate higher-level module.
-- CLI, Dependency Resolver and complete Storage Runtime are deferred beyond M0.
-- M1：config/audit 尚无真实契约，采用注入配置/Observer，暂不写任何虚假依赖版本。
-- 选择 Node 24.x + TypeScript strict 作为首个 Reference Profile，Memory→Local；不强制其它语言或项目采用。
-- move/signed URL/multipart 当前 false；云 Adapter 必须另外验收，providers/runtimes 暂空。
-- M1-A 规格已纳入 `main`，来源分支 `feat/storage-spec-v0.1` 保留。此次用户授权的合并不改变 Runtime 状态或各项待完成 Gate。
+- 2026-09-08 用户明确定位为 GitHub 项目标准仓库；标准采用优先于实现参考 Runtime。
+- 标准源与业务项目分开；新项目按显式清单复制，并固定来源 commit，不继承 APF 进度。
+- 阶段默认 pending；文档/格式检查、行为测试、验收、发布分别记录。
+- 原 M0～M4 路线保留；Storage 规格和 Gate 证据保留，M1-B/C 暂缓。
+- 不绑定技术栈；登录、OSS、支付等按项目需求选择，能力目录不冒充可安装代码。
 
 ## Changed Files
 
-- 新增 `modules/storage/`：14 个实质文件（含验证脚本，不含 Runtime）。
-- 修改 `README.md`、本文件、`.agent-project/{project,workflow,gates}.yaml`、`framework/{WORKFLOW,ROADMAP}.md`。
-- 未修改 AGENTS、稳定 PROJECT_CONTEXT、Module Schema 或原模板；未增加 DB/CLI/空模块目录。
-- 合并交接同步仅修改 `CURRENT_STATUS.md` 与 `modules/storage/STATUS.md`，规格和实现范围不变。
+启动指南、README/定位/路线图、项目模板与复制清单、开发/GitHub 手册、Agent 提示词、Issue/PR 模板、标准验证及交接状态。
 
-## Validation
+AGENTS、Module Schema、原 Module 模板、Storage API/设计与 Runtime Gate 保持原契约。
 
-- `node --check modules/storage/validation/validate-spec.cjs`：PASS。
-- `node modules/storage/validation/validate-spec.cjs`：PASS（Node 24.19.0、Ajv 8.20.0、js-yaml 4.1.1；环境已有依赖通过 NODE_PATH 解析）。
-- 10 组静态检查、10 个阴性 fixture、14 条 REQ→TEST→AC 映射；Module/原模板 Schema 皆通过。
-- Runtime tests：NOT_RUN；Static PASS 不等于 Integration/Test/Security Gate PASS。
-- 详细证据与设计 Gate scope 见 [M1-A Review](modules/storage/REVIEW.md)。远端 hash/HEAD 回读在提交后报告绑定。
+## Tests
+
+`node validation/validate-standard.cjs`：PASS（7 组、6 个拒绝用例、34 个目标文件内存模拟）；`node modules/storage/validation/validate-spec.cjs`：PASS（10 组、10 个阴性 fixture）。环境与覆盖见 [ADOPTION_REVIEW.md](framework/ADOPTION_REVIEW.md)。Runtime tests=NOT_RUN；没有实际新项目创建或业务部署。
 
 ## Risks
 
-- 没有 Storage Runtime，不能接入生产；真正多云兼容、依赖解析仍未验证。
-- Local 跨平台、crash恢复与安全边界需独立复核；未知写入结果不得自动重试。
-- 本次单作者设计检查，不声称独立安全审计；Security Gate 仍 PENDING。
-- 验证脚本是开发检查，不是 Framework CLI/Resolver。
+新项目模板提供开发流程，不提供完整应用功能。GitHub 模板进入各项目默认分支后生效；CI、看板、保护规则与部署需要各项目实际配置。
 
 ## Open Questions
 
-- Repository License：`xyq-dev` 在分发前决定，不阻塞当前设计。
-- 多语言布局、云 Adapter 能力矩阵和真实跨模块依赖还需后续证据。
-- M1-A 尚无必须再次询问用户的产品选择。
+首个采用标准的实际项目名称、需求与约束将在对应项目立项时确认；不阻塞本标准仓库整理。
 
 ## Handoff
 
-先读 AGENTS、PROJECT_CONTEXT、本文件和四个配置，再读 modules/storage 的 SPEC/API/ARCHITECTURE/TASKS/STATUS/REVIEW；无需旧聊天。Runtime 只按已通过 Gate 的 ST-001..004 执行，Local 另需安全审查。
+先读 AGENTS、PROJECT_CONTEXT、本文件，再读 START_HERE、开发手册与复制清单。当前主线为 P1 项目标准，不能按旧提示词自动启动 Storage。
 
-M0 历史检查点：`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交：`c969474e4c05f0f50fb2d90646e0864bdbdc9e99`，已随 `feat/storage-spec-v0.1` 合并至 `main`；合并时另有项目与模块交接状态同步提交。`main` 为后续交接基线，来源分支保留。Cursor 后续任务默认本地 commit 可、push/main/pack/Tag/Release 不可，除非用户对该任务新授权。
+基线 `main`=`7dd1fff7b2e3b1f3aa44bfc762ab559e9dfa44d8`；当前变更分支 `docs/project-standards-v0.1`。提交后的真实 SHA 与远端回读在交付报告绑定，本次不自动合并 main。

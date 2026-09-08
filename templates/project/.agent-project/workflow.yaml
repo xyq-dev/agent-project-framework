@@ -1,5 +1,5 @@
 schema_version: "0.1"
-profile: standards-adoption
+profile: new-project
 
 semantics:
   allowed_modes:
@@ -16,79 +16,68 @@ semantics:
   not_applicable_requires_reason: true
   required_stage_must_complete_before_release: true
 
+# Initial defaults: assess applicability during project initiation; no phase has passed.
 project_lifecycle:
   - id: requirements
     name: "Requirements"
     mode: required
-    status: complete
-    evidence: ["START_HERE.md"]
-    reason: "User clarified that project standards adoption is the current goal."
+    status: pending
+    evidence: []
   - id: product
     name: "Product"
     mode: required
-    status: complete
-    evidence: ["framework/ROADMAP.md"]
-    reason: "Prioritize standards adoption and defer optional runtime work."
+    status: pending
+    evidence: []
   - id: ux-user-flows
     name: "UX / User Flows"
     mode: required
-    status: complete
-    evidence: ["START_HERE.md"]
-    reason: "Document empty-directory and existing-project adoption journeys."
+    status: pending
+    evidence: []
   - id: design
     name: "Design"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/PROJECT_PLAYBOOK.md"]
-    reason: "This increment delivers text standards without a visual interface."
+    mode: required
+    status: pending
+    evidence: []
   - id: architecture
     name: "Architecture"
     mode: required
-    status: complete
-    evidence: ["templates/project/BOOTSTRAP_MANIFEST.yaml"]
-    reason: "Separate standards source, project snapshot and optional module examples."
+    status: pending
+    evidence: []
   - id: database
     name: "Database"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "No database or migration is changed."
+    mode: required
+    status: pending
+    evidence: []
   - id: api
     name: "API"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "No runtime API is implemented or changed."
+    mode: required
+    status: pending
+    evidence: []
   - id: implementation
     name: "Implementation"
     mode: required
-    status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "This increment implements documentation and templates only."
+    status: pending
+    evidence: []
   - id: testing
     name: "Testing"
     mode: required
-    status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "Validate template paths, initial state, links and retained module contracts."
+    status: pending
+    evidence: []
   - id: security
     name: "Security"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "No runtime controls, credentials, access configuration or production operations change."
+    mode: required
+    status: pending
+    evidence: []
   - id: deployment
     name: "Deployment"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/GITHUB_WORKFLOW.md"]
-    reason: "Repository documentation delivery has no service deployment."
+    mode: required
+    status: pending
+    evidence: []
   - id: production-gate
     name: "Production Gate"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "No production system or runtime release is in scope."
+    mode: required
+    status: pending
+    evidence: []
 
 module_lifecycle:
   states:
