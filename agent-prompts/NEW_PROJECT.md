@@ -15,7 +15,7 @@
 2. 目标已有 AGENTS/状态时先读取；按照清单复制共享规范及项目模板，已存在文件逐项比较合并，保留原项目内容。
 3. 填写清单参数并记录真实源 SHA。对 YAML 使用安全的结构化赋值；目标仓库未知时留空，不能把标准仓库设成业务项目 origin。
 4. 完成后读取目标 AGENTS、PROJECT_CONTEXT、CURRENT_STATUS、四个配置及 docs/PROJECT_PLAN.md；阶段与证据从新项目事实开始。
-5. 在 PROJECT_PLAN 中填写已知需求、范围、验收、阶段裁剪和能力选择。把尚未决定的内容明确记录，不能冒充已经审批。
+5. 在 PROJECT_PLAN 中填写已知需求、范围、验收、阶段裁剪和能力选择。依据 framework/MODULE_ADOPTION_PLAN.md 与 playbooks/modules/catalog.yaml 选择蓝图；未知项保持待定，项目 Gate 不因复制蓝图而通过。需要进一步设计时使用 agent-prompts/MODULE_PLAN.md。
 6. 更新 CURRENT_STATUS 的初始化结果与下一步。需求/架构有实质缺口时先补方案；输入已齐时给 Cursor 第一项原子任务，写明路径、分支、范围、测试和权限。
 
 ## 边界与 Git

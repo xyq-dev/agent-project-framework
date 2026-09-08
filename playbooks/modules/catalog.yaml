@@ -1,0 +1,79 @@
+schema_version: "0.1"
+kind: implementation-blueprint-catalog
+is_runtime_inventory: false
+project_gate_status: unassessed
+path_base: catalog-directory
+selection_policy: Choose capabilities per project; this catalog does not create module dependencies or installed support.
+items:
+  - id: config
+    name: 配置
+    kind: module-guide
+    risk: medium
+    guide: config.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [host-configuration-source]
+    related_guides: [audit]
+  - id: audit
+    name: 审计
+    kind: module-guide
+    risk: high
+    guide: audit.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [event-contract, controlled-event-sink]
+    related_guides: [config, authorization]
+  - id: identity
+    name: 登录身份
+    kind: module-guide
+    risk: high
+    guide: identity.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [identity-provider-or-reviewed-authentication, session-policy]
+    related_guides: [config, audit, authorization, notification]
+  - id: authorization
+    name: 权限
+    kind: module-guide
+    risk: high
+    guide: authorization.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [trusted-principal, resource-ownership-contract]
+    related_guides: [identity, audit]
+  - id: storage
+    name: 通用对象存储
+    kind: module-guide
+    risk: medium
+    guide: storage.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [validated-binding, selected-adapter-contract]
+    related_guides: [config, oss, media]
+  - id: oss
+    name: 阿里云 OSS 适配
+    kind: adapter-guide
+    risk: high
+    guide: oss.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [storage-contract, server-authorization, scoped-credential-source]
+    related_guides: [storage, authorization, config, audit]
+  - id: media
+    name: 媒体
+    kind: module-guide
+    risk: high
+    guide: media.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [object-storage, asset-ownership, media-processing-policy]
+    related_guides: [storage, authorization, audit]
+  - id: notification
+    name: 通知
+    kind: module-guide
+    risk: medium
+    guide: notification.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [message-contract, recipient-and-consent-policy, delivery-channel]
+    related_guides: [config, audit, identity]
+  - id: payment
+    name: 支付退款
+    kind: module-guide
+    risk: critical
+    guide: payment.md
+    runtime_status: not-implemented
+    prerequisite_capabilities: [order-and-amount-contract, trusted-transaction-subject, provider-test-environment]
+    related_guides: [authorization, audit, notification]

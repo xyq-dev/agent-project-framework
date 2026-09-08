@@ -21,14 +21,14 @@ project_lifecycle:
     name: "Requirements"
     mode: required
     status: complete
-    evidence: ["START_HERE.md"]
-    reason: "User clarified that project standards adoption is the current goal."
+    evidence: ["START_HERE.md", "framework/MODULE_ADOPTION_PLAN.md"]
+    reason: "Extend project standards with selectable module implementation blueprints."
   - id: product
     name: "Product"
     mode: required
     status: complete
-    evidence: ["framework/ROADMAP.md"]
-    reason: "Prioritize standards adoption and defer optional runtime work."
+    evidence: ["framework/ROADMAP.md", "framework/MODULE_ADOPTION_PLAN.md"]
+    reason: "Deliver P1.1 blueprints while actual project work and runtimes remain separate."
   - id: ux-user-flows
     name: "UX / User Flows"
     mode: required
@@ -45,38 +45,38 @@ project_lifecycle:
     name: "Architecture"
     mode: required
     status: complete
-    evidence: ["templates/project/BOOTSTRAP_MANIFEST.yaml"]
-    reason: "Separate standards source, project snapshot and optional module examples."
+    evidence: ["templates/project/BOOTSTRAP_MANIFEST.yaml", "framework/MODULE_ADOPTION_PLAN.md"]
+    reason: "Adopt design guides and task inputs without copying runtime claims or project gate approvals."
   - id: database
     name: "Database"
     mode: not-applicable
     status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
+    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
     reason: "No database or migration is changed."
   - id: api
     name: "API"
     mode: not-applicable
     status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
+    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
     reason: "No runtime API is implemented or changed."
   - id: implementation
     name: "Implementation"
     mode: required
     status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "This increment implements documentation and templates only."
+    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
+    reason: "This increment adds nine blueprints, project task prompts, template wiring and read-only validation."
   - id: testing
     name: "Testing"
     mode: required
     status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "Validate template paths, initial state, links and retained module contracts."
+    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
+    reason: "Nine standard checks and eight negative fixtures pass with 46 adopted files; Storage static regression passes."
   - id: security
     name: "Security"
     mode: not-applicable
     status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
-    reason: "No runtime controls, credentials, access configuration or production operations change."
+    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
+    reason: "Generic security design inputs only; no runtime controls or access configuration change, and project security gates remain unassessed."
   - id: deployment
     name: "Deployment"
     mode: not-applicable
@@ -87,7 +87,7 @@ project_lifecycle:
     name: "Production Gate"
     mode: not-applicable
     status: complete
-    evidence: ["framework/ADOPTION_REVIEW.md"]
+    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
     reason: "No production system or runtime release is in scope."
 
 module_lifecycle:

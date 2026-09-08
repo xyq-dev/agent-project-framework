@@ -32,7 +32,7 @@
 初始化后，新项目的入口是 `README.md` 与 `docs/PROJECT_PLAN.md`：
 
 - 写清问题、用户、首版范围、不做什么、可验证验收条件。
-- 填写阶段裁剪表和能力选择表。登录、OSS、支付等按实际需要决定，不能把候选能力当作已实现。
+- 填写阶段裁剪表和能力选择表。按[模块实施方案](framework/MODULE_ADOPTION_PLAN.md)选择登录、权限、OSS 等蓝图，再用[模块方案提示词](agent-prompts/MODULE_PLAN.md)形成项目任务；候选能力不代表已实现。
 - 更新本项目 `.agent-project/workflow.yaml` 的 mode、reason、status 与 evidence。
 - Codex 输出明确设计与有边界的任务；Cursor 从已批准任务执行，避免重复分析。
 
