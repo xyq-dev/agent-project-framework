@@ -2,7 +2,11 @@
 
 ## Framework Mission
 
-Agent Project Framework（APF）旨在建立可用于不同软件项目的通用开发框架、模块契约和 Agent 协作体系，使团队能够通过选择、组合和验证模块来启动项目，而不是反复从零搭建。
+Agent Project Framework（APF）是放在 GitHub 上的项目开发标准仓库。用户于 2026-09-08 明确当前目标：将完整项目开发流程、文档模板和 Agent 工作约定集中维护，让今后的新项目从空目录也能按同一套标准开展。
+
+标准仓库保存可复用流程；每个业务项目仓库保存所采用的标准快照以及本项目的需求、设计、任务、代码、测试、验收、发布和交接记录。采用标准无需等待登录、OSS 或其它 Runtime 模块完成。
+
+当前优先级为标准采用与全流程使用入口。模块契约和可复用实现属于按需扩展；Storage 保留为规格参考案例，M1-B/C 暂缓，不作为新项目初始化的必经步骤。
 
 ## Core Philosophy
 
@@ -68,4 +72,3 @@ Framework Core 不包含：
 - 项目凭据、生产配置或用户数据
 
 Runtime Implementation 可以采用具体技术栈，但必须位于明确的 Implementation Profile 中，并遵守通用 Module Contract。
-

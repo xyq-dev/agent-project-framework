@@ -2,6 +2,8 @@
 
 ## Execution Boundary
 
+调度状态（2026-09-08）：当前主线优先建立 GitHub 项目开发标准。M1-B/C 暂缓，下列实现工作单保留为可选参考；只有用户明确恢复本模块工作时才执行。
+
 M1-A = 本次规格任务。ST-001..007 是**后续**实现/验收工作单，未执行。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
 
 默认只在专题分支工作，保留既有 dirty changes；commit 需任务授权，push/main/Release/Tag/npm 发布/云部署不因本文件而获得授权。
@@ -83,4 +85,4 @@ M1-A = 本次规格任务。ST-001..007 是**后续**实现/验收工作单，�
 
 ## Cursor Start Point
 
-下一次只执行 ST-001..004；完整提示词见 [agents/CURSOR_IMPLEMENTATION.md](agents/CURSOR_IMPLEMENTATION.md)。不要把 ST-005..007 或未来云接入一并展开。
+恢复本模块后的第一轮只执行 ST-001..004；完整提示词见 [agents/CURSOR_IMPLEMENTATION.md](agents/CURSOR_IMPLEMENTATION.md)。不要把 ST-005..007 或未来云接入一并展开。

@@ -10,7 +10,7 @@
 
 ## Phase
 
-M1-A Specification complete / M1-B handoff ready
+M1-A Specification complete / optional reference work paused
 
 ## Milestone
 
@@ -18,7 +18,7 @@ M1 — Storage Reference Module（尚未完成）
 
 ## Current Task
 
-ST-000 规格/设计与任务就绪；下一任务 ST-001（由 Cursor 开始 Memory 增量）。这不是 Runtime 完成。
+ST-000 规格/设计与任务就绪。2026-09-08 用户将当前主线明确为 GitHub 项目开发标准，M1-B/C 暂缓，Storage 作为可选规格案例保留；不再作为新项目启动的前置任务。
 
 ## Completed
 
@@ -39,7 +39,7 @@ None（M1-A 规格已合并到 main；Runtime 尚未开始）。
 
 ## Next
 
-1. 由 Cursor 按 agents/CURSOR_IMPLEMENTATION.md 执行 ST-001..004。
+1. 等待用户明确恢复 Storage 实现任务；届时由 Cursor 按 agents/CURSOR_IMPLEMENTATION.md 执行 ST-001..004。
 2. Memory 完成后回传测试与 Git 报告供 Review。
 3. Memory 完成后再进入 Local 独立审查。
 
@@ -59,6 +59,8 @@ None（M1-A 规格已合并到 main；Runtime 尚未开始）。
 ## Decisions
 
 见 [ARCHITECTURE.md](ARCHITECTURE.md) ADR-001..006。所有设计审查由当前 Codex 作者自检；不声称独立审计。
+
+调度调整不撤销已有设计证据，不提升 Lifecycle 或 Runtime Gate。项目标准采用可独立推进，无需等待本模块。
 
 ## Transition Evidence
 
@@ -94,4 +96,4 @@ License 由 `xyq-dev` 在分发前决定；未来 cloud Provider 和实际兼容
 
 ## Handoff
 
-M0 历史检查点=`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交 `c969474e4c05f0f50fb2d90646e0864bdbdc9e99` 已随 `feat/storage-spec-v0.1` 合并到 `main`，合并时同步项目与模块 STATUS；来源分支保留，后续以 `main` 为交接基线。下一执行从 ST-001 开始，不重复架构分析、不触碰 Local/云权限。
+M0 历史检查点=`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交 `c969474e4c05f0f50fb2d90646e0864bdbdc9e99` 已合并；项目交接基线为 `main`，调度以根 CURRENT_STATUS 为准。当前暂缓 Runtime；恢复任务时从 ST-001 开始，保留已通过设计，不触碰 Local/云权限。

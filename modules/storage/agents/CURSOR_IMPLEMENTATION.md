@@ -1,5 +1,7 @@
 【执行工具：Cursor｜模型：Grok 4.6 High Fast】
 
+调度状态：本任务包暂缓，保留为可选参考；只有用户明确恢复 M1-B 时才执行。新项目采用标准应从根 START_HERE.md 进入，不执行本包。
+
 执行 `agent-project-framework` 的 M1-B，仅 ST-001～ST-004（TypeScript Core + Memory Adapter），不用重新架构分析。
 
 ## Workspace and Branch

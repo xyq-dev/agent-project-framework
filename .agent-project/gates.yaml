@@ -1,5 +1,5 @@
 schema_version: "0.1"
-profile: storage-reference
+profile: standard-v0.1
 evidence_must_be_repository_addressable: true
 
 gates:

@@ -1,0 +1,60 @@
+schema_version: "0.1"
+purpose: Copy a versioned project standard into an empty or existing project without inheriting APF execution state.
+source_repository: https://github.com/xyq-dev/agent-project-framework
+source_ref_policy: Record the actual full commit SHA used at adoption time.
+render_context: target-project-root
+existing_destination_policy: compare-and-merge-never-overwrite
+
+parameters:
+  PROJECT_ID: Required lowercase project identifier.
+  PROJECT_NAME: Required human-readable project name.
+  PROJECT_OWNER: Required accountable owner from project context.
+  PROJECT_REPOSITORY: Verified repository URL or an empty string before a remote exists.
+  STANDARD_COMMIT: Required actual full 40-character Git commit SHA containing this manifest.
+
+# Files are copied once; directory entries recursively include their contents.
+# Relative paths below are resolved from the standard root and project root respectively.
+copies:
+  - {source: templates/project/README.md, target: README.md, kind: file}
+  - {source: templates/project/PROJECT_CONTEXT.md, target: PROJECT_CONTEXT.md, kind: file}
+  - {source: templates/project/CURRENT_STATUS.md, target: CURRENT_STATUS.md, kind: file}
+  - {source: templates/project/docs/PROJECT_PLAN.md, target: docs/PROJECT_PLAN.md, kind: file}
+  - {source: templates/project/.agent-project/project.yaml, target: .agent-project/project.yaml, kind: file}
+  - {source: templates/project/.agent-project/workflow.yaml, target: .agent-project/workflow.yaml, kind: file}
+  - {source: AGENTS.md, target: AGENTS.md, kind: file}
+  - {source: .agent-project/agents.yaml, target: .agent-project/agents.yaml, kind: file}
+  - {source: .agent-project/gates.yaml, target: .agent-project/gates.yaml, kind: file}
+  - {source: framework/WORKFLOW.md, target: framework/WORKFLOW.md, kind: file}
+  - {source: framework/MODULE_STANDARD.md, target: framework/MODULE_STANDARD.md, kind: file}
+  - {source: framework/QUALITY_GATES.md, target: framework/QUALITY_GATES.md, kind: file}
+  - {source: framework/RISK_MODEL.md, target: framework/RISK_MODEL.md, kind: file}
+  - {source: framework/STATUS_STANDARD.md, target: framework/STATUS_STANDARD.md, kind: file}
+  - {source: framework/PROJECT_PLAYBOOK.md, target: framework/PROJECT_PLAYBOOK.md, kind: file}
+  - {source: framework/GITHUB_WORKFLOW.md, target: framework/GITHUB_WORKFLOW.md, kind: file}
+  - {source: schemas/module.schema.json, target: schemas/module.schema.json, kind: file}
+  - {source: templates/module, target: templates/module, kind: directory}
+  - {source: .github/ISSUE_TEMPLATE, target: .github/ISSUE_TEMPLATE, kind: directory}
+  - {source: .github/pull_request_template.md, target: .github/pull_request_template.md, kind: file}
+  - {source: agent-prompts/CURSOR_TASK.md, target: agent-prompts/CURSOR_TASK.md, kind: file}
+  - {source: agent-prompts/CODEX_REVIEW.md, target: agent-prompts/CODEX_REVIEW.md, kind: file}
+  - {source: agent-prompts/HANDOFF.md, target: agent-prompts/HANDOFF.md, kind: file}
+
+# These are target paths. Render YAML values with a parser; preserve strings safely.
+render_files:
+  - README.md
+  - PROJECT_CONTEXT.md
+  - .agent-project/project.yaml
+
+not_inherited:
+  - APF project identity and completed milestones
+  - APF project lifecycle evidence and Storage task priority
+  - modules/storage and any unimplemented provider support
+  - APF roadmap, review history and Git metadata
+
+acceptance:
+  - all copied paths are contained within the destination
+  - no duplicate or conflicting destination paths
+  - all required contracts and local Markdown links resolve in the destination
+  - project workflow starts with pending stages and empty evidence
+  - no preselected runtime modules or fabricated capability support
+  - actual source commit is recorded and template parameters are resolved
