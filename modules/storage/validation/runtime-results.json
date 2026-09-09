@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "subject": "storage@0.1.0-dev",
+  "date_utc": "2026-09-08",
+  "base_commit": "a6556a41ee7bd35007cc9226b40c9679c8bdf3bc",
+  "branch": "feat/storage-runtime-v0.1",
+  "environment": {
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "os": "linux",
+    "arch": "x64",
+    "typescript": "5.9.3",
+    "node_types": "24.13.3",
+    "undici_types": "7.18.2"
+  },
+  "implementation_root": "implementations/typescript",
+  "implemented_scopes": [
+    "core",
+    "memory"
+  ],
+  "not_implemented": [
+    "local",
+    "oss"
+  ],
+  "independent_security_review": "PENDING",
+  "commands": [
+    {
+      "command": "npm ci --ignore-scripts --no-audit --no-fund --fetch-retries=0 --fetch-timeout=15000",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "tests": 43,
+      "pass": 43,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "command": "npm run test:contract",
+      "exit_code": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "command": "npm run test:failure",
+      "exit_code": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "command": "npm run test:security",
+      "exit_code": 0,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "package-lock.json",
+      "sha256": "6a67a50c15765fc79a455e7d0951334bb61e8e97666e2e124d2d08d8bc038237"
+    },
+    {
+      "path": "package.json",
+      "sha256": "e00c2ca7e00d1404982db2c01692fdd85d2cc02760373f966decb2c6ad447909"
+    },
+    {
+      "path": "src/adapters/memory.ts",
+      "sha256": "a148ef00eb4f98605ffe85da262c07e56e6d43144ac50a0d07a96429e936d009"
+    },
+    {
+      "path": "src/context.ts",
+      "sha256": "b4611cb19b273e9d213de9a3233151e24b045cf3e2dc7ddab45020dc876b7eb1"
+    },
+    {
+      "path": "src/core.ts",
+      "sha256": "7c73c6df08f604905c7156ec7ae4fafb0f49f0314e809a4dbde731faa909e8e0"
+    },
+    {
+      "path": "src/errors.ts",
+      "sha256": "cfc5c4c49dcd7d46178e58646e0e4b98bd2bd2db1de32594ccfe6befbfe697d9"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "fa9f497ffb3630c1a4aa02d682cd7d0b53192db4eb049ca110194219436f66b1"
+    },
+    {
+      "path": "src/streams.ts",
+      "sha256": "a656fb6325e785d7ecc6588a327ac91128c9e6627507406cd62358bea32ed025"
+    },
+    {
+      "path": "src/types.ts",
+      "sha256": "d1a92af79891aefd26cef5007702d260f64435765137d341a92768c63b10bf52"
+    },
+    {
+      "path": "src/validation.ts",
+      "sha256": "ed99830dc25d59f94fe742c963964b563babc25200e83ed6345eccda9014212d"
+    },
+    {
+      "path": "test/contract.test.ts",
+      "sha256": "daaf5f341f756645c20abab68f3dbd9c592276d6512d0d77f5eaa6e9040ba842"
+    },
+    {
+      "path": "test/failure.test.ts",
+      "sha256": "a1605eb80894762c3f4688d00d0fab838da7d44ce662bc2411ec0a55e6cc5050"
+    },
+    {
+      "path": "test/helpers.ts",
+      "sha256": "a77e3c986fb1e2af57913a5321fcf8d54b1b213dcfe2b7a9acaaa9c57c7d4aba"
+    },
+    {
+      "path": "test/security.test.ts",
+      "sha256": "a66907e313f54e247e65f9d40f437a47893d4585deb7797815dd4a44b321321a"
+    },
+    {
+      "path": "test/shared-contract.ts",
+      "sha256": "e184ea0305b3dce4f4a5be79e431e4807cdf302e22f8d1e139f76903c7bd889b"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "b3ba619cf280f6e7090555f3086f6ae1157dae07c6bee1f00a25424ca07c8ed3"
+    }
+  ]
+}

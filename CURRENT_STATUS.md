@@ -6,76 +6,67 @@
 
 ## Phase
 
-P1.1 — 常用模块实施蓝图与项目任务入口
+Storage M1-B — Core/Memory implemented; Local/OSS review blocked
 
 ## Milestone
 
-为新项目提供从能力选择到实现、测试和验收的标准路径；具体业务代码按项目推进，Storage Runtime 参考工作暂缓。
+用户已恢复 Core／Memory／Local／OSS 开发。Core/Memory 已实现和验证，四层尚未全部完成。项目标准采用入口仍可独立使用。
 
 ## Current Task
 
-P1.1 的 9 类蓝图、实施方案、模板接入与校验已完成，PR #2 已按用户要求合并到当前仓库 main；本轮完成合并与交接，P2 实际项目应用尚未开始。
+交付 Core/Memory 可执行代码、测试证据和 [Local/OSS 独立审查包](modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md)。当前执行者为 Codex，未调用 Cursor 或自动启动其他 Agent。
 
 ## Completed
 
-- M0：生命周期、Module Schema/模板、Agent、风险/Gate 和状态标准已完成。
-- M1-A：Storage 规格已合并，保持 TASKS_READY；Runtime 尚未实现。
-- P1：标准采用包已通过 PR #1 合并到 main；历史验证见 [ADOPTION_REVIEW](framework/ADOPTION_REVIEW.md)。
-- P1.1：配置、审计、登录、权限、Storage、OSS、媒体、通知、支付的边界、任务与验收蓝图齐备。
-- 已把蓝图与 MODULE_PLAN 提示词接入新项目复制清单、能力选择表和开工入口。
-- 新项目采用模拟通过：46 个目标文件、9 组检查、8 个拒绝用例；原 Storage 静态回归通过。
-- PR #2 已合并到 main，9 类蓝图及模板入口已进入主分支；合并提交见 Handoff。
+- M0、M1-A、P1 与 P1.1 的标准、Storage 规格和 9 类蓝图已进入 main；历史 PR #1/#2 见下方。
+- ST-001～004：私有 TypeScript strict ESM 包、Core 校验/错误/取消/能力、Memory 原子条件变更/快照/预算、copy/list 和故障验证。
+- 43 项 Runtime 测试通过：contract 14、failure 20、security 9；类型检查、构建和锁文件重装通过。
+- 查阅官方 ali-oss SDK 和 OSS API，明确版本控制、防覆盖、revision、流长度与签名边界。
+- 支持声明仅添加已验证 memory / typescript-node；Local/OSS 代码和真实云测试未伪报完成。
 
 ## In Progress
 
-当前没有进行中的模块实现任务。P1.1 已合并；P2 实际项目尚未开始，9 类蓝图均不构成已实现的 Runtime 或项目 Gate 通过证据。
+Storage 全模块处于 IMPLEMENTING。Core/Memory medium 子范围已完成作者自检；Local/OSS 为 high 增量，具体方案已可供独立审查。
 
 ## Blocked
 
-当前标准整理无用户决策阻塞。实际新项目名称、需求、技术栈和约束在对应项目立项时确认。
+- Local：TASKS ST-005 要求设计/实现作者以外的独立审查者；SECURITY 明确无审查者时 blocked，禁止自动多 Agent。当前无独立审查结论。
+- OSS：条件写 capability 与 provider 版本控制原语存在具体冲突，审查包提出保守 profile；尚未独立批准或实现。
+- 全模块 Security/Acceptance 仍 PENDING。无真实云测试环境输入，云测试 NOT_RUN。
 
 ## Next
 
-1. 以当前仓库 main 为已合并的标准基线，按实际需要继续维护。
-2. 未来有实际新项目时，从 [START_HERE](START_HERE.md) 初始化，在 PROJECT_PLAN 中确认需求及能力选择。
-3. 按[模块实施方案](framework/MODULE_ADOPTION_PLAN.md)完成项目设计与首条业务链；“登录后上传私有文件”仅为可裁剪示例。
-4. 记录实际测试、评审与验收，再根据复用证据决定是否提取公共 Runtime；不默认恢复 Storage M1-B。
+1. 指定独立审查者或允许一个独立审查 Agent，先审查 [Local/OSS 具体方案](modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md)。
+2. 审查 PASS 后实现 Local 并执行共享 suite / TEST-013；解决 OSS 契约后实现官方 SDK Adapter。
+3. 完成独立实施安全复核和全模块验收，再根据用户的 Git 授权推进主线。不得重复覆盖已完成 Core/Memory。
+4. 未来新项目仍从 [START_HERE](START_HERE.md) 采用标准，12 个阶段保持 pending，不继承本仓库的 Runtime 测试或 Gate。
 
 ## Decisions
 
-- 2026-09-08 用户确认 GitHub 项目标准仓库定位；本轮“给个方案实现一下”落为模块实施蓝图和采用流程增量。
-- 新项目复制标准快照并固定来源 commit；不继承 APF 的已完成阶段或预选模块。
-- 蓝图目录与 Runtime 清单分开；不声明虚假包版本、capability 支持或已过的高风险设计审查。
-- 实施顺序可按需求裁剪，认证通知可以提前，身份/配置等输入可以由宿主提供。
-- 原 Module 契约与 Gate 保留；M1-B/C 暂缓，业务测试和云服务测试均 NOT_RUN。
-- 用户明确本轮直接合并到当前仓库 main；本次只完成合并与状态同步，不另行创建试点项目。
+用户本次明确恢复实际 Storage 代码工作，已取代之前 M1-B/C 的“暂缓”调度。保留已批准 API/架构；未修改 AGENTS、通用 Module Schema、Gate 或独立审查要求。登录/其他蓝图模块没有因本增量变成可安装 Runtime。
 
 ## Changed Files
 
-P1.1 新增总实施方案、9 类蓝图及 catalog、MODULE_PLAN 提示词；更新启动/开发入口、新项目选择表、复制清单、契约引用、路线图、标准验证及状态。本轮合并同步 CURRENT_STATUS 和实施方案中的交接记录。
-
-AGENTS、Module Schema、原 Module 模板、Storage 文件与 Runtime Gate 保持原契约。
+`modules/storage/implementations/typescript/` 的私有包、源码与实际测试；模块支持/状态/验收、报告、审查包与按 scope 的验证证据；相关根状态、活动 workflow、参考蓝图说明与真实性检查。
 
 ## Tests
 
-`node validation/validate-standard.cjs`：PASS（9 组、8 个拒绝用例、46 个目标文件内存模拟）。
+Runtime：43/43 PASS；六个必需脚本 PASS；npm ci PASS。命令、逐项 TEST/AC、版本、限制及源码摘要见 [STORAGE_M1_B_IMPLEMENTATION_REPORT](modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
 
-`node modules/storage/validation/validate-spec.cjs`：PASS（10 组、10 个阴性 fixture、14 项 Runtime 测试计划映射）。运行环境、逐项结果和限制见[实施方案的交付记录](framework/MODULE_ADOPTION_PLAN.md)。
-
-Runtime tests = NOT_RUN；没有创建实际业务项目、执行云集成、发送通知或真实交易。
+静态检查结果记录在 [Storage REVIEW](modules/storage/REVIEW.md)。静态校验不会执行 Runtime；Local/OSS tests = NOT_RUN。没有执行实际业务、云权限操作、pack、发布或部署。
 
 ## Risks
 
-蓝图提供实施规范，不能视为已可安装代码。高风险/critical 项目仍需独立审查与真实环境证据；CI、看板、分支保护及部署由各项目按需求配置。
+Memory 是单进程易失参考实现；预算约束其受控缓冲，不是整个进程 RSS。当前证据来自作者自检，不是独立安全审计。Local 隔离、崩溃恢复和 OSS 真实条件/签名未验证，不能声称全模块或生产完成。
 
 ## Open Questions
 
-首个实际项目需求在对应项目中确认；本标准增量不预设所有项目都需要登录、OSS 或支付。
+Local/OSS 独立 reviewer 的安排；OSS 条件/版本语义的最终批准 profile。代码分发前仍需维护者确认项目 License。
 
 ## Handoff
 
-先读 AGENTS、PROJECT_CONTEXT、本文件，再读 MODULE_ADOPTION_PLAN 与采用清单。当前仍沿项目标准主线推进。
+基线 main `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`，交付分支 `feat/storage-runtime-v0.1`，确切新 SHA 与回读由关联 PR 绑定。本地为经 71 项 blob 核对的 GitHub 文件镜像，无本地 Git 工作树；没有覆盖既有 dirty changes。
 
-P1 经 [PR #1](https://github.com/xyq-dev/agent-project-framework/pull/1) 合并，合并提交 `5283bfafd69768009a45598746e71c5d41b8989d`，后续交接基线 main 为 `d31de78217bae3d567a321b98b04a8a7965718a1`。
+先读 AGENTS、PROJECT_CONTEXT、本文件、[模块状态](modules/storage/STATUS.md)与实施报告，再进入待审材料。
 
-P1.1 来源提交 `563b3ae626cc9d05b039411b46da41f39ff02264`，经 [PR #2](https://github.com/xyq-dev/agent-project-framework/pull/2) 合并到 main；合并提交 `0e8563b09b7449576d050ceac4007f75218de543`。合并前 71 个文件与已验证快照一致，合并树也与该快照一致。本次随后同步交接记录；采用标准时记录实际选用的完整 main SHA。
+历史：P1 经 [PR #1](https://github.com/xyq-dev/agent-project-framework/pull/1) 合并，P1.1 经 [PR #2](https://github.com/xyq-dev/agent-project-framework/pull/2) 合并；P1.1 合并提交 `0e8563b09b7449576d050ceac4007f75218de543`，随后交接基线为上述 main。

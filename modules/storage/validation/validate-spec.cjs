@@ -42,6 +42,42 @@ const acceptance = read(path.join(moduleRoot, 'ACCEPTANCE.md'));
 const status = read(path.join(moduleRoot, 'STATUS.md'));
 const cases = loadYaml(path.join(__dirname, 'cases.yaml'));
 
+function runtimeEvidenceChecks(evidence) {
+  assert.equal(evidence.subject, `${manifest.name}@${manifest.version}`);
+  assert.equal(evidence.implementation_root, 'implementations/typescript');
+  assert.deepEqual(manifest.providers.map(p => p.id).sort(), evidence.implemented_scopes.filter(s => s !== 'core').sort());
+  assert(evidence.not_implemented.every(s => !evidence.implemented_scopes.includes(s)));
+  const expected = ['npm run typecheck', 'npm run build', 'npm test', 'npm run test:contract', 'npm run test:failure', 'npm run test:security'];
+  for (const command of expected) {
+    const item = evidence.commands.find(c => c.command === command);
+    assert(item && item.exit_code === 0, `missing successful command: ${command}`);
+    if (command.includes('test')) {
+      assert(item.tests > 0 && item.tests === item.pass);
+      assert.equal(item.fail, 0); assert.equal(item.skipped, 0); assert.equal(item.cancelled, 0);
+    }
+  }
+  const runtimeRoot = path.join(moduleRoot, evidence.implementation_root);
+  const actual = listFiles(runtimeRoot).filter(p => p.endsWith('.ts') || ['package.json','package-lock.json','tsconfig.json'].includes(path.basename(p)));
+  unique(evidence.files.map(f => f.path), 'runtime evidence file');
+  assert.deepEqual(evidence.files.map(f => f.path).sort(), actual.map(p => path.relative(runtimeRoot,p).split(path.sep).join('/')).sort());
+  for (const file of evidence.files) {
+    const target = path.resolve(runtimeRoot, file.path);
+    assert(within(runtimeRoot, target));
+    assert.equal(require('node:crypto').createHash('sha256').update(fs.readFileSync(target)).digest('hex'), file.sha256, `stale runtime evidence: ${file.path}`);
+  }
+}
+function caseResultChecks(c, evidence) {
+  const values = c.scopes.map(scope => c.results[scope]);
+  assert.deepEqual(Object.keys(c.results).sort(), [...c.scopes].sort(), 'scope results must match declared scopes');
+  assert(values.every(s => ['NOT_RUN','PASS','FAIL','BLOCKED'].includes(s)));
+  for (const scope of c.scopes) if (c.results[scope] === 'PASS') {
+    assert(evidence.implemented_scopes.includes(scope), `unimplemented scope passed: ${scope}`);
+  }
+  const aggregate = values.includes('FAIL') ? 'FAIL' : values.every(s => s === 'PASS') ? 'PASS' :
+    values.includes('PASS') ? 'PARTIAL' : values.includes('BLOCKED') ? 'BLOCKED' : 'NOT_RUN';
+  assert.equal(c.status, aggregate, 'aggregate cannot hide an untested scope');
+}
+
 function semanticChecks(m) {
   unique(m.capabilities.map(c => c.id), 'capability ID');
   unique(m.providers.map(p => p.id), 'provider ID');
@@ -107,10 +143,23 @@ check('14 requirements, runtime cases and acceptance criteria', () => {
   assert.equal(cases.cases.length,14); unique(cases.cases.map(c=>c.id),'case IDs');
   assert.equal(cases.subject, `${manifest.name}@${manifest.version}`);
   const coveredReq=new Set(),coveredAc=new Set();
+  assert.equal(cases.evidence_kind, 'scoped-runtime-results');
+  assert.equal(cases.runtime_evidence, 'runtime-results.json');
+  const evidence = JSON.parse(read(path.join(__dirname, cases.runtime_evidence)));
+  runtimeEvidenceChecks(evidence);
+  const falseComplete = structuredClone(cases.cases.find(c => c.scopes.includes('memory')));
+  falseComplete.status = 'PASS';
+  assert.throws(() => caseResultChecks(falseComplete, evidence));
+  const falseLocal = structuredClone(falseComplete);
+  falseLocal.results.local = 'PASS';
+  assert.throws(() => caseResultChecks(falseLocal, evidence));
+  const staleEvidence = structuredClone(evidence);
+  staleEvidence.files[0].sha256 = '0'.repeat(64);
+  assert.throws(() => runtimeEvidenceChecks(staleEvidence), /stale runtime evidence/);
   for (const c of cases.cases) {
     assert(testIds.includes(c.id)); assert(c.scopes.length);
     assert(c.scopes.every(s=>['memory','local'].includes(s)));
-    assert(['NOT_RUN','PASS','FAIL','BLOCKED'].includes(c.status));
+    caseResultChecks(c, evidence);
     for(const r of c.requirements) { assert(reqs.includes(r)); coveredReq.add(r); }
     for(const a of c.acceptance) { assert(acs.includes(a)); coveredAc.add(a); }
   }
@@ -140,7 +189,7 @@ check('linked documents and non-empty artifacts', () => {
     }
   }
 });
-check('spec-only honesty and Cursor scope', () => {
+check('runtime evidence honesty and historical Cursor scope', () => {
   if(!fs.existsSync(path.join(moduleRoot,'implementations'))) {
     assert.equal(manifest.providers.length,0);
     assert.equal(manifest.compatibility.runtimes.length,0);
@@ -151,6 +200,6 @@ check('spec-only honesty and Cursor scope', () => {
   assert(prompt.startsWith('【执行工具：Cursor｜模型：Grok 4.6 High Fast】'));
   assert(prompt.includes('Push：NO')); assert(prompt.includes('ST-001～ST-004'));
 });
-console.log(`STATIC_CHECKS=${checks}; NEGATIVE_FIXTURES=10; PLANNED_RUNTIME_CASES=${cases.cases.length}`);
+console.log(`STATIC_CHECKS=${checks}; NEGATIVE_FIXTURES=13; MAPPED_RUNTIME_CASES=${cases.cases.length}`);
 console.log(`AJV=${require('ajv/package.json').version}; JS_YAML=${require('js-yaml/package.json').version}`);
-console.log('STATIC_VALIDATION=PASS; RUNTIME_TESTS=NOT_RUN');
+console.log('STATIC_VALIDATION=PASS; RUNTIME_TESTS=NOT_EXECUTED_BY_THIS_CHECK');

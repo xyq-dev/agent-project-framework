@@ -1,6 +1,6 @@
 # 通用存储实施蓝图
 
-通用设计输入，Runtime tests=NOT_RUN。对象契约基础风险 medium；本地文件系统、真实云权限/签名增量按 high 处理。见 [实施方案](../../framework/MODULE_ADOPTION_PLAN.md)。
+通用设计输入，采用项目的 Runtime/Gate 仍需自行验证。对象契约基础风险 medium；本地文件系统、真实云权限/签名增量按 high 处理。见 [实施方案](../../framework/MODULE_ADOPTION_PLAN.md)。
 
 ## 采用前确认
 
@@ -15,7 +15,7 @@
 - signed URL、copy、range、multipart 等按项目需要和适配器实际证据选择；不支持时明确拒绝。
 - 存储模块不拥有媒体业务记录、用户资料、业务 ACL 或 Bucket/IAM 管理。
 
-可参考 [APF Storage 规格快照](https://github.com/xyq-dev/agent-project-framework/blob/d31de78217bae3d567a321b98b04a8a7965718a1/modules/storage/SPEC.md)。该快照只有规格；Memory/Local 参考实现仍未开发。
+可参考 [APF Storage 规格快照](https://github.com/xyq-dev/agent-project-framework/blob/d31de78217bae3d567a321b98b04a8a7965718a1/modules/storage/SPEC.md)。该历史快照只有规格。APF 后续新增了 [Core/Memory 私有参考实现及测试报告](https://github.com/xyq-dev/agent-project-framework/blob/feat/storage-runtime-v0.1/modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)，Local/OSS 尚未实现。采用模板不会复制 Runtime 或继承该报告的项目 Gate；选择代码时应固定实际使用的 commit。
 
 ## 实施任务
 

@@ -4,9 +4,9 @@ version: 0.1.0-dev
 category: infrastructure
 description: Provider-neutral object storage contracts for byte content, metadata, bounded listing and explicitly negotiated extensions.
 risk: medium
-status: TASKS_READY
+status: IMPLEMENTING
 
-# These are experimental CONTRACT capabilities, not implemented/runtime support.
+# Contract catalog; only provider capabilities below have runtime evidence.
 capabilities:
   - id: put
     description: Write a complete object with explicit overwrite intent and bounded input.
@@ -64,11 +64,17 @@ capabilities:
 # Future config/audit integrations are proposals in ARCHITECTURE.md, not graph edges.
 dependencies: []
 optional_dependencies: []
-providers: []
+providers:
+  - id: memory
+    kind: adapter
+    capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read, conditional-write, conditional-delete]
+    compatibility: "Node 24.x; single-process volatile; verified on Linux x64 Node 24.19.0"
 
 compatibility:
   framework: ">=0.1.0-dev <0.2.0"
-  runtimes: []
+  runtimes:
+    - profile: typescript-node
+      version: ">=24.0.0 <25.0.0"
   modules: []
 
 gates:

@@ -1,4 +1,27 @@
-# M1-A Review and Evidence
+# Storage Review and Evidence
+
+## M1-B 当前实施记录（2026-09-08 验证，2026-09-09 交付）
+
+Core/Memory 已实现；当前 Codex 完成测试与作者复核，未调用 Cursor、未启动独立审查 Agent。完整命令和 TEST/AC 结果见 [STORAGE_M1_B_IMPLEMENTATION_REPORT](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
+
+| 验证 | 当前结果 | 范围 |
+| --- | --- | --- |
+| npm ci / typecheck / build | PASS | Node 24.19.0、TypeScript 5.9.3，私有 strict ESM 包 |
+| npm test | PASS：43/43，0 fail/skip | contract 14、failure 20、security 9；分组脚本分别通过 |
+| Storage static validation | PASS：10 组，13 个拒绝 fixture，14 个 scope 映射 | 包含源码摘要一致性、禁止冒称 Local PASS、禁止隐藏未测试 scope |
+| Standard validation | PASS：9 组，9 个拒绝 fixture，46 个模板目标文件 | 新项目仍 12 阶段 pending、selected_modules 为空、未安装 Runtime |
+| Local / OSS Runtime | NOT_RUN | 无实现，等待独立设计审查；不能用 Memory 代替 |
+| 独立 Security / 全模块 Acceptance | PENDING | 作者测试不构成独立审核 |
+
+复核确认：条件检查和发布原子；失败/取消保留旧对象；已打开快照仍计入内存预算；迟到 get 句柄和未消费流可关闭；变更不会自动重试；对外错误、对象信息和观察事件不泄露 Provider 字段。测试中发现的类型声明与路径问题已修正，无未解决的 Core/Memory 测试失败。
+
+标准采用回归发现实施方案中的相对 Runtime 报告链接不会被复制到新项目，已改为明确的 APF GitHub 参考链接；没有把 Runtime 加入复制清单。再次检查通过。静态脚本校验记录与文件摘要，不重新执行 Runtime，也不替代独立审查。
+
+当前 Gate：Core/Memory 子范围有 Implementation/Test 作者证据；整个 Storage 仍 IMPLEMENTING，Local/OSS 审查、实现与验收未完成。既有 AGENTS / SECURITY / TASKS 审查约束不变；[Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)已可交给独立 reviewer。
+
+以下为 M1-A 历史记录；其中“无 Runtime”“TASKS_READY”只描述当时的规格交付。
+
+## M1-A 历史记录
 
 ## Subject / Scope
 

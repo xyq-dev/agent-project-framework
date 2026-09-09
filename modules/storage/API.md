@@ -5,7 +5,7 @@
 ## Types and Validation
 
 - `Key`：大小写敏感 NFC Unicode 字符串，UTF-8 1..512 bytes；`/` 仅分段。禁止开头/末尾 `/`、空段、`.`/`..` 段、反斜线、`%`、冒号、控制字符（U+0000..001F、007F..009F）、不成对 surrogate。非 NFC 拒绝而非静默规范化。不得 URL-decode 后拼路径。
-- `Prefix`：可为空，否则同 Key 规则但允许一个末尾 `/`；字面 startsWith（`img` 可匹配 `image`，`img/` 才限定该段）。不支持 glob。
+- `Prefix`：可为空，否则同 Key 规则但允许一个末尾 `/`；字面 startsWith（`im` 可匹配 `image`，`img/` 才限定该段）。不支持 glob。
 - `ByteSource`：异步有序 byte chunks，可取消/关闭；长度未知允许，超过限制立即终止，空对象允许。TypeScript Profile 映射 `AsyncIterable<Uint8Array>`，不是字符串内容。
 - `Revision`：非空 opaque token；不同完整写入产生不同 revision，即使 bytes 相同。只在同一 binding/key 内比较，不能当时间、etag、checksum 或授权证明。
 - `UserMetadata`：string→string，key 为 `[a-z][a-z0-9-]{0,62}`，最多 32 项；value 仅 printable ASCII（空串可），总 UTF-8 key+value bytes <= 2048。不接受隐式转换。二进制/Unicode 业务 metadata 在高层编码。

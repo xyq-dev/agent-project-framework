@@ -2,9 +2,9 @@
 
 ## Three Different Evidence Levels
 
-1. **M1-A static validation**：Schema、artifact path、ID/状态/依赖/需求—测试—验收映射；本次可执行。
-2. **M1-B/C runtime tests**：真实 ByteSource、对象、snapshot、并发、filesystem；当前 NOT_RUN。
-3. **Cloud integration**：签名使用、IAM/error 差异、Provider-specific conditional 行为；当前 DEFERRED，不能借 Memory mock 宣称通过。
+1. **Static validation**：Schema、artifact path、ID/状态/依赖/需求—测试—验收与证据映射；不执行 Runtime。
+2. **M1-B/C runtime tests**：Memory 43 项通过（contract 14、failure 20、security 9）；Local 文件系统测试 NOT_RUN。
+3. **Cloud integration**：OSS 本次只有审查材料，代码未实现、云测试 NOT_RUN；不能借 Memory/fake 宣称通过。
 
 机器可读用例在 [validation/cases.yaml](validation/cases.yaml)，与以下 ID 一致；“有用例”不是“已通过”。
 
@@ -66,6 +66,6 @@ npm --prefix modules/storage/implementations/typescript run test:security
 
 ## Results and Gaps
 
-本次静态结果见 [REVIEW.md](REVIEW.md)；所有 Runtime Cases 仍 NOT_RUN，Implementation/Test/Security/Acceptance/Release Gate 不能据静态检查通过。
+当前结果见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md) 和 [REVIEW.md](REVIEW.md)。cases 按 memory/local 分别记录；PARTIAL 表示只有部分适用 scope 通过，不是整组完成。Memory 实测不能使 Local/云 Security、全模块 Acceptance 或 Release Gate 通过。
 
 signed URL 正例（headers/TTL/replay/credential expiry）、guarded move 正例/partial failure、multipart session 尚无 Adapter，未来开启能力前必须增加对应真实 Contract Tests；当前明确不支持且有阴性测试任务，不留下空实现。

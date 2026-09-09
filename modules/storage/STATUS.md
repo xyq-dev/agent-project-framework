@@ -6,94 +6,91 @@
 
 ## Lifecycle State
 
-`TASKS_READY`
+`IMPLEMENTING`
 
 ## Phase
 
-M1-A Specification complete / optional reference work paused
+M1-B Core/Memory complete; Local/OSS awaiting independent design review
 
 ## Milestone
 
-M1 — Storage Reference Module（尚未完成）
+M1 — Storage Reference Module（尚未完成）；本次用户扩展 OSS 开发范围。
 
 ## Current Task
 
-ST-000 规格/设计与任务就绪。2026-09-08 用户将当前主线明确为 GitHub 项目开发标准，M1-B/C 暂缓，Storage 作为可选规格案例保留；不再作为新项目启动的前置任务。
+ST-001～004 已完成并验证。ST-005 与 OSS-001 已有[独立审查包](LOCAL_OSS_REVIEW_PACKAGE.md)，等待 reviewer 的留痕决定。
 
 ## Completed
 
-- 创建完整 Module 文档、实验契约、14 条 REQ/TEST/AC 映射。
-- 确定 TypeScript/Memory→Local 的 Reference 路线及延后能力。
-- config/audit 使用未来注入端口，不伪造已解析模块。
-- Spec、Architecture、Tasks readiness 顺序检查通过；仅批准分步实施计划，不批准 Local/云安全上线。
-- 静态10组检查、10个阴性fixture、14条需求/测试/验收映射验证通过。
+- M1-A 完整规格、API/架构、14 个 REQ/TEST/AC 映射和入场 Gate。
+- Core 与 Memory 源码、类型与接口、43 项实际测试；六个必需脚本和依赖锁文件重装通过。
+- 13 个适用 TEST/AC 组的 Memory 证据；manifest 仅声明已验证 memory / typescript-node。
+- OSS 官方源码和 API 调研，具体差异、候选 profile 与下一步测试已列入审查包。
 
 ## In Progress
 
-None（M1-A 规格已合并到 main；Runtime 尚未开始）。
+全模块 IMPLEMENTING；作者自检完成 Core/Memory，未独立接受 Local/OSS。
 
 ## Blocked
 
-- ST-006 Local：等待 ST-005 的独立安全设计 review 和后续任务授权。
-- 云 signer/move/multipart：不在当前范围，不可自动展开。
+- ST-005：独立 reviewer 缺失；原 SECURITY 禁止自动多 Agent。
+- ST-006：必须 ST-005 PASS 后才允许 Local 实现。
+- ST-007：没有 Local 共享契约、TEST-013 与独立安全证据，不能完成 M1。
+- OSS：候选 profile 与条件写/版本控制冲突待独立审查；实现和真实云测试均未进行。
 
 ## Next
 
-1. 等待用户明确恢复 Storage 实现任务；届时由 Cursor 按 agents/CURSOR_IMPLEMENTATION.md 执行 ST-001..004。
-2. Memory 完成后回传测试与 Git 报告供 Review。
-3. Memory 完成后再进入 Local 独立审查。
+1. 独立审查 [Local/OSS 方案](LOCAL_OSS_REVIEW_PACKAGE.md)，按控制 ID 记录意见。
+2. PASS 后实施 Local/OSS，运行各自支持能力的实际契约/故障测试。
+3. 独立 Security Review 与全模块 Acceptance。当前不 pack、Tag、Release 或部署。
 
 ## Gate Decisions
 
 | Gate / subcheck | Decision | Evidence scope |
 | --- | --- | --- |
-| Spec | PASS | SPEC/API、14 REQ→TEST→AC 映射；当前 Codex analyst 自检，非独立审查 |
-| Architecture | PASS | 当前 Codex architect 自检 ADR-001..006、错误/恢复、Profile 与依赖边界；Local 独立安全审核仍是 ST-005 |
-| Tasks readiness | PASS | ST-001..007 范围/顺序/测试/角色和授权已审查；Local 明确 blocked，不新增第八 Gate |
-| Implementation | PENDING | Runtime 尚无 changes |
-| Test | PENDING | Runtime 所有 cases=NOT_RUN |
-| Security | PENDING | 设计清单不等于运行测试 |
-| Acceptance | PENDING | M1-B/C 未完成 |
-| Release | PENDING | 无发布授权 |
+| Spec | PASS | 历史 M1-A 的 API/14 个映射；OSS profile 另待审 |
+| Architecture | PASS（Core/Memory） | 既有 ADR；Local ST-005 和 OSS 增量不据此通过 |
+| Tasks readiness | PASS（ST-001～004） | 范围、顺序和证据明确 |
+| Implementation | PARTIAL | Core/Memory 实现完成；Local/OSS 未实现 |
+| Test | PARTIAL | Memory 43 个实际测试 PASS，Local/OSS NOT_RUN |
+| Security | PENDING | 作者安全测试不是独立审查 |
+| Acceptance | PENDING | 未满足 Local 与双 Adapter M1 出口 |
+| Release | PENDING | 未发布；无发布授权 |
 
 ## Decisions
 
-见 [ARCHITECTURE.md](ARCHITECTURE.md) ADR-001..006。所有设计审查由当前 Codex 作者自检；不声称独立审计。
-
-调度调整不撤销已有设计证据，不提升 Lifecycle 或 Runtime Gate。项目标准采用可独立推进，无需等待本模块。
+用户恢复 Storage 实际开发取代“暂停”调度；不改变原 API 语义（仅纠正 prefix 示例拼写）。不降低 high 风险独立审查，不自动创建审查 Agent，不伪造 Local/OSS 代码或测试。
 
 ## Transition Evidence
 
-| UTC timestamp | From | To | Decision and evidence |
+| UTC date / timestamp | From | To | Decision and evidence |
 | --- | --- | --- | --- |
-| 2026-09-08T02:59:09Z | DRAFT | SPEC_READY | Spec PASS；REQ/边界/API/验收映射已审查，静态检查10组通过，见 REVIEW |
-| 2026-09-08T02:59:38Z | SPEC_READY | ARCHITECTURE_READY | Architecture PASS；冻结 Memory 路线和 Local 审查前置，不授权 Local/Cloud 实现 |
-| 2026-09-08T03:00:52Z | ARCHITECTURE_READY | TASKS_READY | Tasks readiness PASS；当前 Codex 自检 TASKS/Cursor scope；Runtime gates 均保持 PENDING |
+| 2026-09-08T02:59:09Z | DRAFT | SPEC_READY | 历史 M1-A Spec PASS，见 REVIEW |
+| 2026-09-08T02:59:38Z | SPEC_READY | ARCHITECTURE_READY | 历史 Core/Memory ADR 通过；Local 审查独立 |
+| 2026-09-08T03:00:52Z | ARCHITECTURE_READY | TASKS_READY | 历史任务入场批准 |
+| 2026-09-08 | TASKS_READY | IMPLEMENTING | 用户恢复代码工作；ST-001～004 实施及真实验证，见实施报告 |
 
 ## Changed Files
 
-- `modules/storage/` manifest、九份标准文档、REVIEW、Cursor 任务包、validation cases 与静态验证脚本。
-- 项目 README/CURRENT_STATUS、active lifecycle、Roadmap 的 M1 说明；Kernel 入场/出场语义澄清。
-- 本次用户授权的合并仅另行同步项目与模块 STATUS；Runtime 与 Gate 状态不变。
+私有 TypeScript Runtime、源码/测试/锁文件/README；模块 manifest、任务/测试/验收/状态、报告与审查包、scoped cases 和静态检查；根活动状态与标准引用同步。共享 AGENTS、Schema 与 Gate 未修改。
 
 ## Tests
 
-静态 PASS（Node 24.19.0、Ajv 8.20.0、js-yaml 4.1.1；10组检查、10个阴性fixture、14条映射）；Runtime = NOT_RUN；cloud = DEFERRED。命令和证据见 [REVIEW.md](REVIEW.md)。
+`npm test` 43/43；`test:contract` 14/14；`test:failure` 20/20；`test:security` 9/9；typecheck/build/ci PASS。
+分组是同一批 43 项，不重复计数。按 scope 证据见 [cases.yaml](validation/cases.yaml)，完整记录见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。Local/OSS NOT_RUN。
 
 ## Risk and Compatibility Impact
 
-基础风险 medium；Local/真实签名安全边界增量 high；现有 Framework Schema 未改变。`providers`/`runtimes` 均空是当前支持事实；无 Runtime，故无消费者破坏性变更、DB/Migration 或生产数据影响。
+Core/Memory 基础 medium；Local/OSS high。首个实际支持为 Linux x64 上 Node 24.19.0 验证的 typescript-node / memory。私有未发布；不涉及业务 DB、既有对象、云资源或权限。
 
 ## Risks
 
-- 本规格未有运行时证据，不能用于生产接入。
-- Local TOCTOU、跨平台、断电恢复尚需专门审查，不把可信 root 假设当普遍安全保证。
-- 真实云端 Revision/ETag、条件和签名差异未验证。
+Memory 易失、总预算不等于进程 RSS；不提供签名/move/multipart。Local 隔离、锁与恢复未测试；OSS provider 条件语义与签名未实现。当前只有作者自检，不能冒充独立审核。
 
 ## Open Questions
 
-License 由 `xyq-dev` 在分发前决定；未来 cloud Provider 和实际兼容矩阵待专门任务；M1-A 没有阻碍写规格的产品决策。
+独立 reviewer 的安排；OSS profile 批准；维护者在分发前决定 License。
 
 ## Handoff
 
-M0 历史检查点=`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交 `c969474e4c05f0f50fb2d90646e0864bdbdc9e99` 已合并；项目交接基线为 `main`，调度以根 CURRENT_STATUS 为准。当前暂缓 Runtime；恢复任务时从 ST-001 开始，保留已通过设计，不触碰 Local/云权限。
+基线 main `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`，交付分支 `feat/storage-runtime-v0.1`，关联 PR 提供确切提交与远端回读。开工前 71 个文件与基线一致；本地为 GitHub 文件镜像而非 Git checkout。

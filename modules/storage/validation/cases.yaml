@@ -1,74 +1,89 @@
 version: "0.1"
 subject: storage@0.1.0-dev
-evidence_kind: planned-runtime-tests
+evidence_kind: scoped-runtime-results
+runtime_evidence: runtime-results.json
 cases:
   - id: TEST-001
     requirements: [REQ-001]
     acceptance: [AC-001]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-002
     requirements: [REQ-002]
     acceptance: [AC-002]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-003
     requirements: [REQ-003]
     acceptance: [AC-003]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-004
     requirements: [REQ-004]
     acceptance: [AC-004]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-005
     requirements: [REQ-005]
     acceptance: [AC-005]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-006
     requirements: [REQ-006]
     acceptance: [AC-006]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-007
     requirements: [REQ-007]
     acceptance: [AC-007]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-008
     requirements: [REQ-008]
     acceptance: [AC-008]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-009
     requirements: [REQ-009]
     acceptance: [AC-009]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-010
     requirements: [REQ-010]
     acceptance: [AC-010]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-011
     requirements: [REQ-011]
     acceptance: [AC-011]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-012
     requirements: [REQ-012]
     acceptance: [AC-012]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}
   - id: TEST-013
     requirements: [REQ-013]
     acceptance: [AC-013]
     scopes: [local]
     status: NOT_RUN
+    results: {local: NOT_RUN}
   - id: TEST-014
     requirements: [REQ-014]
     acceptance: [AC-014]
     scopes: [memory, local]
-    status: NOT_RUN
+    status: PARTIAL
+    results: {memory: PASS, local: NOT_RUN}

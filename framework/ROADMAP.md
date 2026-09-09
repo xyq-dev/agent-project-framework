@@ -11,7 +11,7 @@ Roadmap 是方向和里程碑边界，不代表未实现能力已经可用。动
 3. **P2 — 首个实际项目应用**：按项目需求裁剪标准，形成需求到发布的真实记录；根据使用中暴露的问题改进模板。
 4. **P3 — 按需深化**：再决定具体 Module、可复用实现和自动化优先级。
 
-下文 M0～M4 保留为原 Framework/Runtime 演进路线。M0 已完成；Storage M1-A 规格保留，M1-B/C 暂缓。新项目采用标准不以 Runtime 路线完成为前提。
+下文 M0～M4 保留为原 Framework/Runtime 演进路线。M0 已完成；Storage M1-A 规格已完成；用户已恢复 Core/Memory/Local/OSS，当前 Core/Memory 已实测，Local/OSS 待独立审查和实现。新项目采用标准不以 Runtime 路线完成为前提。
 
 ## M0 — Framework Core
 
@@ -89,8 +89,8 @@ Local filesystem、AWS S3、Cloudflare R2、Aliyun OSS、Tencent COS 和 MinIO �
 
 ### M1 increments
 
-- M1-A：Storage 规格、设计与执行任务，见 [Storage SPEC](../modules/storage/SPEC.md)。只到 TASKS_READY，不视为 Runtime 完成。
-- M1-B：Node/TypeScript Core + Memory，当前暂缓；任务再次排期时 Cursor 只执行 ST-001..004。
+- M1-A：Storage 规格、设计与执行任务已完成，见 [Storage SPEC](../modules/storage/SPEC.md)。
+- M1-B：Node/TypeScript Core + Memory 已实现，43 项测试通过，见[实施报告](../modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。Local/OSS 从[独立审查包](../modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md)继续。
 - M1-C：Local 独立安全设计审查 → 实现 → 双 Adapter Contract Tests；全部完成才可验收 M1。
 - 真实 cloud/signing、guarded move 与 multipart session 不由此隐式启用。
 

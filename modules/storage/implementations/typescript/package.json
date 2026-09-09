@@ -1,0 +1,17 @@
+{
+  "name": "@agent-project-framework/storage-reference",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=24 <25"},
+  "exports": {".": {"types": "./dist/src/index.d.ts", "import": "./dist/src/index.js"}},
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "test:contract": "npm run build && node --test dist/test/contract.test.js",
+    "test:failure": "npm run build && node --test dist/test/failure.test.js",
+    "test:security": "npm run build && node --test dist/test/security.test.js"
+  },
+  "devDependencies": {"@types/node": "24.13.3", "typescript": "5.9.3"}
+}

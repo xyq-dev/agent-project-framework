@@ -6,7 +6,7 @@ Agent Project Framework（APF）是放在 GitHub 上的项目开发标准仓库�
 
 标准仓库保存可复用流程；每个业务项目仓库保存所采用的标准快照以及本项目的需求、设计、任务、代码、测试、验收、发布和交接记录。采用标准无需等待登录、OSS 或其它 Runtime 模块完成。
 
-当前优先级为标准采用与全流程使用入口。模块契约和可复用实现属于按需扩展；Storage 保留为规格参考案例，M1-B/C 暂缓，不作为新项目初始化的必经步骤。
+标准采用入口已建立。2026-09-08 用户进一步明确恢复 Storage Core／Memory／Local／OSS：当前提供已测试的 Core/Memory 私有参考实现，Local/OSS 等待独立设计审查后继续。Storage 仍不作为新项目初始化的必经步骤；动态证据见 CURRENT_STATUS。
 
 ## Core Philosophy
 

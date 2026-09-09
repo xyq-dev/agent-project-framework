@@ -48,7 +48,7 @@ APF 是技术栈中立的项目标准仓库。当前优先交付可直接采用�
 
 登录/身份、权限、存储/OSS、配置、审计、媒体、通知、支付等，在立项时决定采用、延后或不适用。选择一种能力后，按[实施蓝图](framework/MODULE_ADOPTION_PLAN.md)定义项目契约、选用已有组件或安排实现，并按风险验证。
 
-**能力清单不代表本仓库已经提供这些功能代码。**目前 [Storage](modules/storage/STATUS.md) 只有规格与测试计划，保留为可选参考案例；M1-B/C 尚未实施，当前主线优先完善项目标准采用流程。
+**能力清单不代表所有模块已经实现。**[Storage Core + Memory](modules/storage/implementations/typescript/README.md) 已提供私有 TypeScript 参考代码，43 项测试通过；Local/OSS 仍待独立审查和实现。登录等其他蓝图没有因此变成可安装代码。详见[实施报告](modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
 
 ## Agent 分工与证据
 

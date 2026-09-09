@@ -6,8 +6,8 @@
 
 M1 分三个可验收增量：
 
-- **M1-A（本次）**：规格、架构、数据/API 契约、测试计划、任务和交接。没有 Runtime、云资源或业务接入。
-- **M1-B**：TypeScript/Node Reference Core + Memory Adapter；仅本地测试，无网络。
+- **M1-A（已完成）**：规格、架构、数据/API 契约、测试计划、任务和交接；该历史增量没有 Runtime。
+- **M1-B（已实现）**：TypeScript/Node Reference Core + Memory Adapter；43 项 Runtime 测试通过，见[实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。测试无网络。
 - **M1-C**：受控目录下的 Local Adapter、跨 Adapter Contract Tests、安全复核；完成这些才可能完成 M1。
 
 签名 URL 的**通用授权契约与不支持行为**在 M1 定义；真正签发/使用 URL 必须在后续云 Adapter 增量验证。multipart 仅保留发现入口，尚无上传会话协议。不得以文档存在替代实现或宣称全云兼容。
@@ -22,7 +22,7 @@ M1 分三个可验收增量：
 
 ## Capability Matrix
 
-下表均为**待实现目标**，不是当前支持列表。当前 `providers: []`、`compatibility.runtimes: []` 是事实。
+下表保留契约目标。Memory 的 required 能力已实现并通过测试，已写入 manifest；Local 列仍为目标。OSS 本次恢复设计工作，审查与契约差异见 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)，尚无 OSS 实现。
 
 | Capability ID | Memory target (M1-B) | Local target (M1-C) | Future cloud adapter |
 | --- | --- | --- | --- |

@@ -2,9 +2,9 @@
 
 ## Execution Boundary
 
-调度状态（2026-09-08）：当前主线优先建立 GitHub 项目开发标准。M1-B/C 暂缓，下列实现工作单保留为可选参考；只有用户明确恢复本模块工作时才执行。
+调度状态（2026-09-08）：用户明确恢复 Core／Memory／Local／OSS。ST-001～004 已由当前 Codex 完成并实测，未调用 Cursor。Local 保留 ST-005 独立审查前置；OSS 具体任务与冲突见 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)。
 
-M1-A = 本次规格任务。ST-001..007 是**后续**实现/验收工作单，未执行。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
+M1-A 为历史规格任务。ST-001..004 已执行；ST-005..007 尚未完成。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
 
 默认只在专题分支工作，保留既有 dirty changes；commit 需任务授权，push/main/Release/Tag/npm 发布/云部署不因本文件而获得授权。
 
@@ -13,10 +13,10 @@ M1-A = 本次规格任务。ST-001..007 是**后续**实现/验收工作单，�
 | ID | Goal | Depends on | Owner role | Risk | Status |
 | --- | --- | --- | --- | --- | --- |
 | ST-000 | M1-A 完整契约和静态验证 | M0 | Codex analyst/architect | medium | complete |
-| ST-001 | 建立隔离 Runtime 测试工作包 | ST-000 design gates | Cursor implementer | medium | pending |
-| ST-002 | 公共类型、校验、错误、capability facade | ST-001 | Cursor implementer | medium | pending |
-| ST-003 | Memory primitive 与条件语义 | ST-002 | Cursor implementer | medium | pending |
-| ST-004 | Copy、分页、故障测试及 Memory review | ST-003 | Cursor implementer; Codex reviewer | medium | pending |
+| ST-001 | 建立隔离 Runtime 测试工作包 | ST-000 design gates | Cursor implementer | medium | complete（见实施报告，作者自检） |
+| ST-002 | 公共类型、校验、错误、capability facade | ST-001 | Cursor implementer | medium | complete（见实施报告，作者自检） |
+| ST-003 | Memory primitive 与条件语义 | ST-002 | Cursor implementer | medium | complete（见实施报告，作者自检） |
+| ST-004 | Copy、分页、故障测试及 Memory review | ST-003 | Cursor implementer; Codex reviewer | medium | complete（见实施报告，作者自检） |
 | ST-005 | Local 路径/锁/恢复设计独立安全审查 | ST-004 | independent security reviewer | high | pending |
 | ST-006 | Local Reference Adapter | ST-005 PASS | Cursor implementer | high | blocked |
 | ST-007 | 双 Adapter 验收、M1 Gate 决策 | ST-006 | tester + independent reviewer/acceptor | high | blocked |
@@ -85,4 +85,4 @@ M1-A = 本次规格任务。ST-001..007 是**后续**实现/验收工作单，�
 
 ## Cursor Start Point
 
-恢复本模块后的第一轮只执行 ST-001..004；完整提示词见 [agents/CURSOR_IMPLEMENTATION.md](agents/CURSOR_IMPLEMENTATION.md)。不要把 ST-005..007 或未来云接入一并展开。
+ST-001..004 已完成，勿重新生成或覆盖现有实现。旧 [Cursor 任务包](agents/CURSOR_IMPLEMENTATION.md)保留为 M1-B 范围参考；当前接手从 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md) 和 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)开始。独立设计审查 PASS 后才进入对应实现，不重做已通过的 Memory 架构。
