@@ -1,6 +1,6 @@
 # TypeScript Storage Reference
 
-私有参考包，Core/Memory/Local/OSS 初始 profile 已实现；104 项本地/离线测试通过。最终独立实施复核与真实 OSS 验证未完成；状态和逐项测试见 [实施报告](../../STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
+私有参考包，Core/Memory/Local/OSS 初始 profile 已实现；112 项本地/离线测试通过。独立实施复核消息已完成；正式 Gate 与真实 OSS 验证未完成；状态和逐项测试见 [实施报告](../../STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
 
 Node 24.x，TypeScript strict ESM；OSS 使用精确锁定的 ali-oss 6.23.0。Core 不导入 Provider SDK，SDK 只在创建 OSS adapter 时加载。
 
@@ -78,6 +78,10 @@ try {
 
 close 超时保留锁且禁止新操作；后台 I/O settle 不自动解锁，宿主可以显式再次 close 等待完成。实例 rename/unlink 不确定失败后需 close 并重开重建索引。发生进程崩溃时，宿主必须先确认所有使用该 root 的进程已退出、备份并核验 root 归属，再人工处理 writer.lock；没有自动 stale-lock stealing/目录修复/扫描删除功能。历史 tmp 不参与 list，不自动清除；应纳入磁盘空间运维。SIGKILL 测试不等于断电耐久性/NFS/恶意同机写入者隔离。
 
+输入源的 `next()` 和协作 `return()` 必须实际结束后才释放 staging/lease。公共调用可以先返回 aborted/timeout；如果宿主输入源永久阻塞，adapter.close 会超时并保留锁，需结束旧进程后按恢复流程处理。Memory 同样保留尚未结束输入占用的缓冲预算。
+
+文件或目录 handle.close 一旦报错，该实例停止接收新操作；不会再次 close 同一 handle，也不通过数字 FD 猜测清理成功。失败发生在解锁前时，重复 adapter.close 仍报错并保留写锁；对应临时文件与预算保持占用。最后解锁已 unlink 后的目录 sync/close 失败会报错，但不能恢复已经移除的锁；此时所有操作资源已先完成关闭，宿主仍应核验磁盘与 root 状态。
+
 ## OSS 使用与受支持能力
 
 宿主提供已有 Versioning=Enabled 的测试/应用 bucket、region（如 oss-cn-hangzhou）、namespace、独立可信 spoolRoot（0700）和异步 credentials provider。adapter 不创建 bucket、不改 ACL/版本状态、不读环境凭据或背景刷新。
@@ -109,10 +113,14 @@ try {
 
 默认 live staging 128MiB、并发16、对象16MiB；完整源验证后才取凭据/PUT，实际网络和文件 I/O 结束后才清理自己文件。SDK 使用官方 V4 signer/XML parser 与专用 HTTPS transport，关闭重试、代理、重定向；所有调用错误和观察事件脱敏。不要在在途操作期间动态开启 ali-oss debug；adapter 在初始化/每次凭据和 dispatch 前拒绝已开启的真实 SDK debug namespace。
 
+OSS staging 也等待输入源 next/return 结束；关闭失败后实例不可复用，临时文件不会被当作已清理。spoolRoot 由宿主独占管理，不允许把尚未关闭实例的目录交给另一个实例。
+
 ## OSS 验证边界
 
-npm test 包含32项 OSS 离线测试，执行官方 SDK + 真实 loopback HTTP socket；不调用阿里云。Work Mode 无接口枚举能力，仅测试首次加载 SDK 未使用 ClusterClient 时 mock 空网络接口并立即 restore，生产 src 不含 shim。
+npm test 包含34项 OSS 离线测试，执行官方 SDK + 真实 loopback HTTP socket；不调用阿里云。Work Mode 无接口枚举能力，仅测试首次加载 SDK 未使用 ClusterClient 时 mock 空网络接口并立即 restore，生产 src 不含 shim。
 
 真实云 smoke 函数位于 [test/oss-cloud-smoke.ts](test/oss-cloud-smoke.ts)，编译后可由宿主专用 runner 显式调用 verifyOssCloud(options, cleanupExactVersions)。它只对随机唯一逻辑 key 做9项实际 smoke 检查，cleanup 回调仅接收本次成功记录的 physicalKey/versionId；宿主必须提供真实测试范围授权与精确版本清理，不能扩大为批量/全桶删除。调用方需处理 unknown PUT 的人工核对；它不覆盖完整 IAM/TLS/delete-marker/故障矩阵。
 
-当前真实 OSS NOT_RUN；最终独立实施安全审查因 reviewer Agent 额度中断仍 PENDING。不能把本参考包当作已经完成生产验收的存储服务。
+verify 或 adapter.close 失败仍会尝试精确版本 cleanup；多个失败以 AggregateError 保留，不能只因 cleanup 成功就报告 smoke PASS。离线验证了该退出控制和 DNS lookup、TLS 握手等待、部分上传的实际 request/socket 取消；握手取消不证明证书校验、真实 OSS 或 IAM 已验收。
+
+当前真实 OSS NOT_RUN；独立代码复核和112项复测已完成，正式报告追加前额度中断；正式 Gate 仍 PENDING。不能把本参考包当作已经完成生产验收的存储服务。

@@ -6,7 +6,7 @@ import {fail, StorageError, publicError} from '../errors.js';
 import type {ErrorCode} from '../errors.js';
 import type {AdapterDescriptor, ByteSource, ObjectInfo, OperationContext, ReadResult, StorageAdapter, ValidatedList, ValidatedPut, ValidatedRead} from '../types.js';
 import {cloneInfo, contentType, DEFAULT_LIMITS, integer, key as validKey, metadata, provided, rangeBounds, record, revision} from '../validation.js';
-import {directory, fsError, Spool, trustedRoot} from './files.js';
+import {CloseGuard, directory, fsError, Spool, trustedRoot} from './files.js';
 import type {Temp} from './files.js';
 import {Lifecycle} from './lifecycle.js';
 import {narrowTransport, Ticket} from './oss-transport.js';
@@ -48,6 +48,7 @@ class OssAdapter implements OssStorageAdapter {
   readonly #root: string;
   readonly #budget: number;
   readonly #life: Lifecycle;
+  readonly #closer = new CloseGuard(() => this.#life.seal());
   #spool!: Spool;
   #invalid = false;
   #SDK!: SdkConstructor;
@@ -69,6 +70,7 @@ class OssAdapter implements OssStorageAdapter {
       supported: Object.freeze(['put', 'get', 'head', 'exists', 'delete', 'list', 'metadata', 'capability-negotiation', 'copy', 'range-read', 'conditional-read'] as const)});
   }
   #guard = (): void => {
+    if (this.#closer.failed) fail('provider-error', 'head');
     if (this.#invalid) fail('integrity-error', 'head');
     if (['ali-oss', 'ali-oss:object', 'ali-oss:sts', 'ali-oss:multipart-copy'].some(ns => this.#debug(ns))) fail('permission-denied', 'head');
   };
@@ -84,7 +86,7 @@ class OssAdapter implements OssStorageAdapter {
       this.#guard();
       this.#SDK = require('ali-oss') as SdkConstructor;
       const identity = await trustedRoot(this.#root);
-      this.#spool = new Spool(this.#root, identity, this.#budget);
+      this.#spool = new Spool(this.#root, identity, this.#budget, this.#closer.close);
       await this.#spool.accountResiduals();
       const {result} = await this.#call(ctx, '', {}, 'GET', 'initialize', (sdk, opts) => sdk.getBucketVersioning(this.#bucket, opts), {versioning: ''});
       if (result.versionStatus !== 'Enabled') fail('unsupported-capability', 'head');
@@ -94,6 +96,7 @@ class OssAdapter implements OssStorageAdapter {
   async close(options: {timeoutMs?: number} = {}): Promise<void> {
     const o = record(options, ['timeoutMs'], 'head');
     await this.#life.drain(integer(provided(o.timeoutMs, 30000), 1, 120000, 'head'));
+    if (this.#closer.failed) fail('provider-error', 'head');
   }
   async #credentials(ctx: OperationContext, purpose: 'initialize' | 'read' | 'write'): Promise<OssCredentials> {
     this.#guard(); ctx.check();

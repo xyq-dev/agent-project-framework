@@ -147,3 +147,8 @@ retryable 只是建议，不是重放授权。自动重试仅 head/exists/list/g
 具体参考工厂为 createMemoryAdapter、异步 createLocalAdapter、异步 createOssAdapter；仅 Local/OSS adapter 暴露显式 async close({timeoutMs?})，不改变公共 Storage facade。内部 OperationContext.cancel() 幂等触发已有 abort 路径，不替代真实 I/O settlement 或 finish。
 
 Memory/Local 保持本 API 的条件能力；OSS conservative profile 不提供 conditional-write/delete，两种签名、move、multipart false。默认 put/copy 必须因其隐含 absence 条件而先返回 unsupported-capability；显式 overwrite:true 才可无条件写入/复制。OSS revision 为开启版本控制的服务端版本 ID；current reads 从不以历史版本匹配条件。工厂参数、恢复与真实验证限制见 [参考包 README](implementations/typescript/README.md)。
+
+
+### Reference adapter shutdown failure handling
+
+Local/OSS close waits for underlying file/socket work and accepted input next/return operations to settle. A public abort or deadline may return first. A non-cooperative producer retains its staging/lease; Local close then times out without releasing the writer lock. A rejected handle close seals the instance, is never retried on the same handle, and prevents a later Local unlock. The final directory sync after lock unlink can still fail and cannot recreate that lock; callers must treat close errors as recovery events. See the TypeScript reference README for the supported host recovery boundary.

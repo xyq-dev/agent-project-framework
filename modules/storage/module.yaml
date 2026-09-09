@@ -73,11 +73,11 @@ providers:
   - id: local
     kind: adapter
     capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read, conditional-write, conditional-delete]
-    compatibility: "Node 24.x/Linux local filesystem; dedicated trusted 0700 root; offline tests pass, final independent implementation review pending"
+    compatibility: "Node 24.x/Linux local filesystem; dedicated trusted 0700 root; offline tests and independent code review confirmed; formal Gate pending"
   - id: oss
     kind: adapter
     capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read]
-    compatibility: "ali-oss 6.23.0/Node 24.x/Linux spool; Versioning Enabled; SDK+loopback tests only; real OSS and final review NOT_RUN/PENDING"
+    compatibility: "ali-oss 6.23.0/Node 24.x/Linux spool; Versioning Enabled; SDK+loopback tests only; independent code review confirmed; real OSS NOT_RUN and formal Gate PENDING"
 
 compatibility:
   framework: ">=0.1.0-dev <0.2.0"

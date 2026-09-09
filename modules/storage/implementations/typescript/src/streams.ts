@@ -7,12 +7,12 @@ export function guardedInput(source: ByteSource, context: OperationContext, maxB
   return {
     async *[Symbol.asyncIterator]() {
       const iterator = source[Symbol.asyncIterator]();
-      let total = 0, ended = false;
+      let total = 0, ended = false, active: Promise<IteratorResult<Uint8Array>> | undefined;
       try {
         while (true) {
           context.check();
           let item: IteratorResult<Uint8Array>;
-          try {item = await context.wait(iterator.next());}
+          try {active = Promise.resolve(iterator.next()); item = await context.wait(active); active = undefined;}
           catch (error) {
             if (error instanceof StorageError) throw error;
             throw new StorageError('invalid-input', context.operation);
@@ -25,7 +25,14 @@ export function guardedInput(source: ByteSource, context: OperationContext, maxB
         }
         if (expected !== undefined && total !== expected) throw new StorageError('invalid-input', context.operation);
         context.check();
-      } finally {if (!ended) closeIterator(iterator);}
+      } finally {
+        if (!ended) {
+          // Request cooperative cancellation before waiting for the raw producer.
+          // Core may already report abort; adapter ownership lasts until both settle.
+          const closing = Promise.resolve().then(() => iterator.return?.());
+          await Promise.allSettled([active, closing]);
+        }
+      }
     },
   };
 }

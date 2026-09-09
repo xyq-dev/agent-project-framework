@@ -64,19 +64,19 @@ project_lifecycle:
     mode: required
     status: complete
     evidence: ["modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md"]
-    reason: "Core/Memory/Local/OSS initial profiles implemented; final independent security review remains pending."
+    reason: "Core/Memory/Local/OSS initial profiles implemented; independent code review confirmed by message; formal security Gate remains pending."
   - id: testing
     name: "Testing"
     mode: required
     status: in-progress
     evidence: ["modules/storage/validation/runtime-results.json","modules/storage/validation/cases.yaml"]
-    reason: "104 tests pass (43 Core/Memory, 29 Local, 32 OSS offline); real OSS NOT_RUN."
+    reason: "112 tests pass (44 Core/Memory, 34 Local, 34 OSS offline); real OSS NOT_RUN."
   - id: security
     name: "Security"
     mode: required
     status: blocked
-    evidence: ["modules/storage/SECURITY.md","modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md"]
-    reason: "User-authorized independent reviewer passed designs and reviewed Local first pass; final implementation review interrupted by agent quota."
+    evidence: ["modules/storage/SECURITY.md","modules/storage/INDEPENDENT_REVIEW_TRANSCRIPT.md"]
+    reason: "Independent reviewer confirmed fixes and 112 tests; quota interrupted formal report append. Message transcript preserved; formal Gate and real OSS evidence pending."
   - id: deployment
     name: "Deployment"
     mode: not-applicable

@@ -24,8 +24,9 @@ export class Lifecycle {
       if (this.#count === 0) for (const resolve of this.#drained) resolve();
     };
   }
+  seal(): void {this.#closed = true;}
   stop(): void {
-    this.#closed = true;
+    this.seal();
     for (const ctx of this.#leases.keys()) ctx.cancel();
   }
   async drain(timeoutMs: number): Promise<void> {

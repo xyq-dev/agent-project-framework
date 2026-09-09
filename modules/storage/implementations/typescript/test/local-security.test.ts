@@ -114,15 +114,29 @@ it('TEST-003/007/013: early return, dormant timeout and close cancel snapshots a
   const expired = await f.storage.get('item', {timeoutMs: 25});
   await new Promise(resolve => setTimeout(resolve, 40)); await assert.rejects(expired.body.next(), errorIs('timeout'));
   const read = await f.storage.get('item');
-  const started = new Promise<void>(resolve => {
-    async function* blocked() {yield Buffer.from('x'); resolve(); await new Promise<void>(() => {});}
-    const put = f.storage.put('other', blocked()); void assert.rejects(put, errorIs('aborted'));
-  });
-  await started; await f.adapter.close({timeoutMs: 1000});
+  let release!: () => void, started!: () => void;
+  const gate = new Promise<void>(resolve => {release = resolve;}), entered = new Promise<void>(resolve => {started = resolve;});
+  async function* blocked() {yield Buffer.from('x'); started(); await gate;}
+  const put = assert.rejects(f.storage.put('other', blocked()), errorIs('aborted'));
+  await entered; await assert.rejects(f.adapter.close({timeoutMs: 10}), errorIs('timeout')); await put;
+  await access(join(f.root, 'writer.lock'));
+  await assert.rejects(createLocalAdapter({root: f.root, namespace: 'local-test'}), errorIs('unavailable'));
+  release(); await f.adapter.close({timeoutMs: 1000});
   await assert.rejects(read.body.next(), errorIs('aborted'));
   const next = await createLocalAdapter({root: f.root, namespace: 'local-test'});
   assert.equal(await content(createStorage({adapter: next, namespace: 'local-test'}), 'item'), 'body'); await next.close();
   assert.deepEqual(await readdir(join(f.root, 'tmp')), []);
+});
+it('TEST-007/013: a permanently blocked producer keeps its root locked until process termination', {timeout: 5000}, async () => {
+  const root = await mkdtemp(join(tmpdir(), 'apf-blocked-producer-'));
+  const child = fork(new URL('./local-crash-worker.js', import.meta.url), [root, 'blocked-close'], {stdio: ['ignore', 'ignore', 'pipe', 'ipc']});
+  const exited = once(child, 'exit');
+  try {
+    const [message] = await once(child, 'message');
+    assert.deepEqual(message, {phase: 'blocked-close', close: 'timeout', operation: 'aborted'});
+    await access(join(root, 'writer.lock')); assert.equal((await readdir(join(root, 'tmp'))).length, 1);
+    await assert.rejects(createLocalAdapter({root, namespace: 'crash-test'}), errorIs('unavailable'));
+  } finally {child.kill('SIGKILL'); await exited; await rm(root, {recursive: true, force: true});}
 });
 it('TEST-013: controlled process SIGKILL at staging/before/racing/after rename exposes only complete records', {timeout: 15000}, async () => {
   for (const phase of ['during-staging', 'before-rename', 'race-rename', 'after-rename']) {

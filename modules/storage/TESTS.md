@@ -3,7 +3,7 @@
 ## Three Different Evidence Levels
 
 1. **Static validation**：Schema、artifact path、ID/状态/依赖/需求—测试—验收与证据映射；不执行 Runtime。
-2. **M1-B/C runtime tests**：Core/Memory 43、Local 29、OSS 离线 32，合计 104 项通过（contract 42、failure 37、security 25）。
+2. **M1-B/C runtime tests**：Core/Memory 44、Local 34、OSS 离线 34，合计 112 项通过（contract 42、failure 43、security 27）。
 3. **Cloud integration**：OSS 初始代码和 pinned SDK + loopback 测试已完成，真实 OSS 云测试 NOT_RUN；离线证据不替代真实服务端/TLS/IAM。
 
 机器可读用例在 [validation/cases.yaml](validation/cases.yaml)，与以下 ID 一致；“有用例”不是“已通过”。
@@ -31,10 +31,10 @@
 
 | Profile / Adapter | State today | Required runs |
 | --- | --- | --- |
-| Node 24.x / Memory | IMPLEMENTED / 43 PASS | ST-004: TEST-001..012/014，包含 failure/security 子集 |
-| Node 24.x / Local Linux | IMPLEMENTED / 29 PASS; final review pending | ST-007: 同上 + TEST-013、进程恢复、独立安全 review |
+| Node 24.x / Memory | IMPLEMENTED / 44 PASS | ST-004: TEST-001..012/014，包含 failure/security 子集 |
+| Node 24.x / Local Linux | IMPLEMENTED / 34 PASS; review confirmed by message; formal Gate pending | ST-007: 同上 + TEST-013、进程恢复、独立安全 review |
 | Fake failure adapter | EXECUTED (test-only) | 仅为错误注入，不作为生产 Provider，不代替真实 Local 行为 |
-| OSS pinned SDK / loopback HTTP | 32 PASS (offline), real cloud NOT_RUN | 支持能力与拒绝能力分别断言；真实云 smoke 入口不由 npm test 调用 |
+| OSS pinned SDK / loopback HTTP | 34 PASS (offline), real cloud NOT_RUN | 支持能力与拒绝能力分别断言；真实云 smoke 入口不由 npm test 调用 |
 | S3 / R2 / COS / MinIO | DEFERRED | 授权测试 namespace，签名/条件语义单独验收 |
 
 N/A：HTTP UI/E2E（无对外服务）、数据库测试/Migration（无数据库）。未适用不等于所有 Runtime 测试均 N/A。
@@ -77,4 +77,4 @@ OSS 的 default put/copy、条件写/删、move、签名和 multipart 均提前 
 
 SDK 首次 import 的 unused ClusterClient 枚举接口在 Work Mode 受限；仅测试加载窗口 mock 空接口并 finally 恢复/断言原函数。生产源码没有 shim。真实云入口为 test/oss-cloud-smoke.ts，需显式 host 测试配置和 exact-version cleanup 回调；未运行。
 
-最终独立实施复核、真实云/TLS/IAM、FD close 异常与更多网络取消阶段矩阵尚未完成；详见实施报告，不能把 104 PASS 改写为这些阶段均 PASS。
+本轮已补 FD close 异常、输入 next/return 实际 settle、永久阻塞子进程、DNS/TLS 握手/部分上传取消和 smoke cleanup 控制。112 PASS 仅对应这些本地/离线用例；真实服务端/TLS 策略/IAM/delete-marker/未知写入恢复仍 NOT_RUN，独立结论见审查记录。

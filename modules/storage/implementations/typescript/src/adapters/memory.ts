@@ -6,6 +6,7 @@ import {cloneInfo, DEFAULT_LIMITS, integer, key as validateKey, provided, rangeB
 
 export interface MemoryOptions {namespace: string; maxObjectBytes?: number; maxTotalBytes?: number; maxObjects?: number}
 interface Stored {info: ObjectInfo; bytes: Uint8Array; capacity: number; references: number}
+const utf8 = new TextDecoder('utf-8', {fatal: true});
 
 export class MemoryAdapter implements StorageAdapter {
   readonly descriptor: Readonly<AdapterDescriptor>;
@@ -133,7 +134,9 @@ export class MemoryAdapter implements StorageAdapter {
         if (!/^[A-Za-z0-9_-]+$/.test(raw) || raw.length > 8192) throw new Error();
         const bytes = Buffer.from(raw, 'base64url');
         if (bytes.toString('base64url') !== raw) throw new Error();
-        const data = record(JSON.parse(bytes.toString('utf8')) as unknown, ['v', 'adapter', 'binding', 'namespace', 'prefix', 'after'], context.operation);
+        const decoded = utf8.decode(bytes);
+        const data = record(JSON.parse(decoded) as unknown, ['v', 'adapter', 'binding', 'namespace', 'prefix', 'after'], context.operation);
+        if (JSON.stringify(data) !== decoded) throw new Error();
         if (data.v !== 1 || data.adapter !== 'memory' || data.binding !== this.#scope || data.namespace !== this.descriptor.namespace || data.prefix !== options.prefix) throw new Error();
         after = validateKey(data.after, context.operation);
         if (!after.startsWith(options.prefix)) throw new Error();

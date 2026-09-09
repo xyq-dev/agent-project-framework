@@ -25,21 +25,25 @@
   "commands": [
     {
       "command": "npm ci --ignore-scripts --no-audit --no-fund --fetch-retries=0 --fetch-timeout=15000",
-      "exit_code": 0
+      "exit_code": 0,
+      "provenance": "Previous implementation run; package-lock unchanged in security follow-up"
     },
     {
       "command": "npm run typecheck",
-      "exit_code": 0
+      "exit_code": 0,
+      "seconds": 6.19
     },
     {
       "command": "npm run build",
-      "exit_code": 0
+      "exit_code": 0,
+      "seconds": 6.56
     },
     {
       "command": "npm test",
       "exit_code": 0,
-      "tests": 104,
-      "pass": 104,
+      "seconds": 12.21,
+      "tests": 112,
+      "pass": 112,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -47,6 +51,7 @@
     {
       "command": "npm run test:contract",
       "exit_code": 0,
+      "seconds": 10.58,
       "tests": 42,
       "pass": 42,
       "fail": 0,
@@ -56,8 +61,9 @@
     {
       "command": "npm run test:failure",
       "exit_code": 0,
-      "tests": 37,
-      "pass": 37,
+      "seconds": 9.04,
+      "tests": 43,
+      "pass": 43,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -65,8 +71,9 @@
     {
       "command": "npm run test:security",
       "exit_code": 0,
-      "tests": 25,
-      "pass": 25,
+      "seconds": 10.92,
+      "tests": 27,
+      "pass": 27,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -83,19 +90,19 @@
     },
     {
       "path": "src/adapters/files.ts",
-      "sha256": "535b96c2becd4d73da4c3679656247eddf145451c3439d6bf43d2bf4c96fe791"
+      "sha256": "c7508eab2ec3f05b2bdf0e2ab3c1339fac280b788b8028bc187c7ed9a097918b"
     },
     {
       "path": "src/adapters/lifecycle.ts",
-      "sha256": "f565a8e22c578e37a8172a1601bfaa6ea738cd1eb3ddd2269eba5f6e5f0d2d12"
+      "sha256": "0fbdd7fd0133afde5d28f9ad874f85964032f2491561b2f48dd0006ed7e851a3"
     },
     {
       "path": "src/adapters/local.ts",
-      "sha256": "b0e0e8112f35440eee3cb259553748cd2b9f0dc82d801c8ab797f572a1136991"
+      "sha256": "81484f1a67e6c879731ecdac46fa2f3cb75e54af6e36b17f57260955297dd7d1"
     },
     {
       "path": "src/adapters/memory.ts",
-      "sha256": "a148ef00eb4f98605ffe85da262c07e56e6d43144ac50a0d07a96429e936d009"
+      "sha256": "424bb8975197d764f2135aa711bd3ea0691e7089405309874e8ee022dc3113a9"
     },
     {
       "path": "src/adapters/oss-transport.ts",
@@ -103,7 +110,7 @@
     },
     {
       "path": "src/adapters/oss.ts",
-      "sha256": "dc36bf06632dd647d09f72f2a9866892ab65f6360b9a976da5fd50abaca581c5"
+      "sha256": "f6297230a5135af1b33247b8b904ac5cb636803a78e27e2f8eb3abec7a3fccf5"
     },
     {
       "path": "src/context.ts",
@@ -123,7 +130,7 @@
     },
     {
       "path": "src/streams.ts",
-      "sha256": "a656fb6325e785d7ecc6588a327ac91128c9e6627507406cd62358bea32ed025"
+      "sha256": "4b7d023deba9557ab93e9e5dd6892bbba25321f733022ff9723a3e97b0233c8f"
     },
     {
       "path": "src/types.ts",
@@ -151,11 +158,11 @@
     },
     {
       "path": "test/local-crash-worker.ts",
-      "sha256": "a629ed276e0c5cac6e58cc0939996e4ad0c467a7eb965e5645a97774dafc0ce3"
+      "sha256": "8f92785102ecc18a862739ed5414282f4b3a264760733715ef6959e84ee3e847"
     },
     {
       "path": "test/local-failure.test.ts",
-      "sha256": "6e293002915324c338538a06ee6ba1f3ef693137fe6f746807b1d21ec524f500"
+      "sha256": "a63721d4e8fc39b2f1b70eec16e852801ed17ba925ea482b5162964c1df2fa87"
     },
     {
       "path": "test/local-fixture.ts",
@@ -163,11 +170,11 @@
     },
     {
       "path": "test/local-security.test.ts",
-      "sha256": "e6da104a991599593916491bfaad1955f98ba12861edc65fd1a8d37ae7746264"
+      "sha256": "78c1884ceb93f343273828e7546a135ce80e17d0a72567a0de35c50b17dce703"
     },
     {
       "path": "test/oss-cloud-smoke.ts",
-      "sha256": "520c005bba8508f9ad509e7f37894443d5236d68ca767042fa877a3d889c0701"
+      "sha256": "022f42044017b5c7595c6588cd9aba92fc66188b7f5987eec743cb5c8e6106ba"
     },
     {
       "path": "test/oss-contract.test.ts",
@@ -175,7 +182,7 @@
     },
     {
       "path": "test/oss-failure.test.ts",
-      "sha256": "ae832d8e798750054ef04ee3d69cb3441da75d8f491b2e6f06e0ebe6728a7d58"
+      "sha256": "8209c668907d8c6906fefef9bccd9463e9cd6c34f3b785bde9f0462a3e2f9fa0"
     },
     {
       "path": "test/oss-fixture.ts",
@@ -187,7 +194,7 @@
     },
     {
       "path": "test/security.test.ts",
-      "sha256": "a66907e313f54e247e65f9d40f437a47893d4585deb7797815dd4a44b321321a"
+      "sha256": "6b36ddbe1eeb9a1204a92036c65ee9c3ea53d2aec1ee98083f77d98928bf0b3a"
     },
     {
       "path": "test/shared-contract.ts",
@@ -200,13 +207,34 @@
   ],
   "independent_review_detail": {
     "design": "PASS: Local ST-005 and OSS-001 conservative profile",
-    "implementation": "PENDING: reviewer quota interruption after Local first-pass feedback",
-    "record": "INDEPENDENT_SECURITY_REVIEW.md"
+    "implementation": "COMPLETED_BY_RECEIVED_MESSAGE: independent static review and 112 tests; all reported fixes confirmed; no unresolved high/critical found within reviewed Local/OSS offline source",
+    "record": "INDEPENDENT_SECURITY_REVIEW.md",
+    "formal_security_gate": "PENDING: report append interrupted by agent quota; real OSS evidence unavailable",
+    "message_record": "INDEPENDENT_REVIEW_TRANSCRIPT.md",
+    "reviewer": "/root/storage_security_review (GPT-5.6 Sol / xhigh)",
+    "independently_executed": [
+      {
+        "command": "npm test",
+        "exit_code": 0,
+        "tests": 112,
+        "pass": 112,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "exit_code": 0
+      }
+    ],
+    "source_manifest_sha256": "030e5c628f0de12c208cc01d71a144f5eac49905822c555a126d28dc0249b350",
+    "test_manifest_sha256": "8b137ef7cffb5f6a10ebbc02900b519ebcb748628d7af0e074cf9a74637731f4",
+    "manifest_verified_against_current_files": true
   },
   "test_profiles": {
-    "core_memory": 43,
-    "local_linux": 29,
-    "oss_offline_sdk_loopback": 32,
+    "core_memory": 44,
+    "local_linux": 34,
+    "oss_offline_sdk_loopback": 34,
     "real_oss": "NOT_RUN"
   },
   "offline_environment_limitations": [
@@ -226,7 +254,8 @@
       "critical": 0,
       "total": 0
     },
-    "sdk": "ali-oss@6.23.0"
+    "sdk": "ali-oss@6.23.0",
+    "provenance": "Previous implementation audit on the unchanged lockfile; not repeated in security follow-up"
   },
   "static_checks": [
     {
@@ -243,5 +272,22 @@
       "negative_fixtures": 9,
       "bootstrap_files": 46
     }
-  ]
+  ],
+  "security_followup": {
+    "baseline_commit": "36677e8cee9025c9f77541876609bd780f23a006",
+    "author_verified_fixes": [
+      "strict Memory cursor decoding",
+      "failed handle close seals adapter and prevents unlock/retry",
+      "raw input next and return settlement retains resource leases",
+      "cloud smoke cleanup runs after failed close",
+      "already-entered concurrent mutations stop at dispatch after close failure"
+    ],
+    "added_tests": 8,
+    "network_cancellation": [
+      "delayed DNS lookup",
+      "pending TLS handshake",
+      "partial upload"
+    ],
+    "log_completeness": "Intermediate snapshot full-run output lacked a summary and was excluded; final snapshot has complete 112/112, contract42/failure43/security27 summaries"
+  }
 }

@@ -11,6 +11,23 @@ import type {ByteSource, Operation, OperationContext} from '../types.js';
 export const READ = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
 export const CREATE = constants.O_RDWR | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW;
 export interface Identity {dev: number; ino: number}
+export type CloseResource = (handle: {close(): Promise<void>}) => Promise<void>;
+const closeResource: CloseResource = handle => handle.close();
+/** A rejected close is never retried: its numeric descriptor may already be reused. */
+export class CloseGuard {
+  #failed = false;
+  readonly #pending = new WeakMap<object, Promise<void>>();
+  constructor(private readonly onFailure: () => void) {}
+  get failed(): boolean {return this.#failed;}
+  readonly close: CloseResource = handle => {
+    let promise = this.#pending.get(handle);
+    if (!promise) {
+      promise = Promise.resolve().then(() => handle.close()).catch(e => {this.#failed = true; this.onFailure(); throw e;});
+      this.#pending.set(handle, promise);
+    }
+    return promise;
+  };
+}
 export const same = (a: Identity, b: Identity): boolean => a.dev === b.dev && a.ino === b.ino;
 export function fsError(error: unknown, op: Operation): never {
   if (error instanceof StorageError) throw error;
@@ -49,9 +66,9 @@ export async function directory(path: string, expected: Identity | undefined, op
   if (expected && !same(s, expected)) fail('integrity-error', op);
   return {dev: s.dev, ino: s.ino};
 }
-export async function secureOpen(path: string, op: Operation): Promise<FileHandle> {
+export async function secureOpen(path: string, op: Operation, close: CloseResource = closeResource): Promise<FileHandle> {
   const fd = await open(path, READ);
-  try {secureStat(await fd.stat(), false, op); return fd;} catch (e) {await fd.close(); throw e;}
+  try {secureStat(await fd.stat(), false, op); return fd;} catch (e) {await close(fd); throw e;}
 }
 export async function writeAll(fd: FileHandle, bytes: Uint8Array, position: number): Promise<void> {
   let offset = 0;
@@ -71,24 +88,27 @@ export async function readAll(fd: FileHandle, length: number, position: number, 
   }
   return result;
 }
-export async function entries(path: string, max: number, op: Operation): Promise<string[]> {
+export async function entries(path: string, max: number, op: Operation, close: CloseResource = closeResource): Promise<string[]> {
   const output: string[] = [];
-  for await (const entry of await opendir(path)) {
-    if (output.length >= max) fail('limit-exceeded', op);
-    output.push(entry.name);
-  }
+  const dir = await opendir(path);
+  try {
+    for (let entry = await dir.read(); entry; entry = await dir.read()) {
+      if (output.length >= max) fail('limit-exceeded', op);
+      output.push(entry.name);
+    }
+  } finally {await close(dir);}
   return output;
 }
-export async function syncDirectory(path: string): Promise<void> {
+export async function syncDirectory(path: string, close: CloseResource = closeResource): Promise<void> {
   const fd = await open(path, READ | constants.O_DIRECTORY);
-  try {await fd.sync();} finally {await fd.close();}
+  try {await fd.sync();} finally {await close(fd);}
 }
 export interface Temp {path: string; fd: FileHandle; identity: Identity; bytes: number; closed: boolean; moved: boolean}
 export class Spool {
   #allocated = 0;
-  constructor(readonly path: string, readonly identity: Identity, private readonly max: number) {}
+  constructor(readonly path: string, readonly identity: Identity, private readonly max: number, private readonly close: CloseResource = closeResource) {}
   async accountResiduals(): Promise<void> {
-    for (const name of await entries(this.path, 20000, 'head')) {
+    for (const name of await entries(this.path, 20000, 'head', this.close)) {
       const s = await lstat(join(this.path, name));
       secureStat(s, false, 'head');
       this.reserve(s.size, 'head');
@@ -103,7 +123,7 @@ export class Spool {
     const path = join(this.path, randomUUID() + '.tmp');
     const fd = await open(path, CREATE, 0o600);
     try {const s = await fd.stat(); secureStat(s, false, op); return {path, fd, identity: {dev: s.dev, ino: s.ino}, bytes: 0, closed: false, moved: false};}
-    catch (e) {await fd.close(); throw e;}
+    catch (e) {await this.close(fd); throw e;}
   }
   async append(temp: Temp, bytes: Uint8Array, op: Operation): Promise<void> {
     this.reserve(bytes.byteLength, op);
@@ -114,23 +134,28 @@ export class Spool {
     const temp = await this.create(ctx.operation);
     try {
       const iterator = source[Symbol.asyncIterator]();
+      let pending: Promise<IteratorResult<Uint8Array>> | undefined, ended = false;
       try {
         while (true) {
-          const next = await ctx.wait(iterator.next());
-          if (next.done) break;
+          pending = Promise.resolve(iterator.next());
+          const next = await ctx.wait(pending); pending = undefined;
+          if (next.done) {ended = true; break;}
           ctx.check();
           if (!(next.value instanceof Uint8Array) || next.value.byteLength > max - temp.bytes) fail('limit-exceeded', ctx.operation);
           await this.append(temp, next.value, ctx.operation);
           ctx.check();
         }
-      } finally {try {void Promise.resolve(iterator.return?.()).catch(() => {});} catch { /* cooperative source */ }}
+      } finally {
+        const closing = ended ? undefined : Promise.resolve().then(() => iterator.return?.());
+        await Promise.allSettled([pending, closing]);
+      }
       if (length !== undefined && temp.bytes !== length) fail('invalid-input', ctx.operation);
       await temp.fd.sync();
       ctx.check();
       return temp;
     } catch (e) {await this.cleanup(temp, ctx.operation); throw e;}
   }
-  async closeFile(temp: Temp): Promise<void> {if (!temp.closed) {await temp.fd.close(); temp.closed = true;}}
+  async closeFile(temp: Temp): Promise<void> {if (!temp.closed) {await this.close(temp.fd); temp.closed = true;}}
   async cleanup(temp: Temp, op: Operation): Promise<void> {
     await this.closeFile(temp);
     if (!temp.moved) {

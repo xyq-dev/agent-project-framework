@@ -5,8 +5,8 @@ import {join} from 'node:path';
 import {fail, StorageError} from '../errors.js';
 import type {AdapterDescriptor, ByteSource, ObjectInfo, Operation, OperationContext, ReadResult, StorageAdapter, ValidatedList, ValidatedPut, ValidatedRead} from '../types.js';
 import {cloneInfo, contentType, DEFAULT_LIMITS, integer, key as validKey, metadata, provided, rangeBounds, record} from '../validation.js';
-import {CREATE, directory, entries, fsError, readAll, same, secureOpen, secureStat, Spool, syncDirectory, trustedRoot, writeAll} from './files.js';
-import type {Identity, Temp} from './files.js';
+import {CloseGuard, CREATE, directory, entries, fsError, readAll, same, secureOpen, secureStat, Spool, syncDirectory, trustedRoot, writeAll} from './files.js';
+import type {CloseResource, Identity, Temp} from './files.js';
 import {Lifecycle, Mutex} from './lifecycle.js';
 
 export interface LocalOptions {namespace: string; root: string; maxObjectBytes?: number; maxStagingBytes?: number; maxObjects?: number; maxInFlight?: number}
@@ -27,8 +27,8 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{1
 const digest = (key: string): string => createHash('sha256').update(key).digest('hex');
 const utf8 = new TextDecoder('utf-8', {fatal: true});
 
-async function jsonFile(path: string, op: Operation): Promise<{value: unknown; identity: Identity}> {
-  const fd = await secureOpen(path, op);
+async function jsonFile(path: string, op: Operation, close: CloseResource): Promise<{value: unknown; identity: Identity}> {
+  const fd = await secureOpen(path, op, close);
   try {
     const s = await fd.stat();
     if (s.size < 2 || s.size > 8192) fail('integrity-error', op);
@@ -36,7 +36,7 @@ async function jsonFile(path: string, op: Operation): Promise<{value: unknown; i
     const value: unknown = JSON.parse(raw);
     if (JSON.stringify(value) !== raw) fail('integrity-error', op);
     return {value, identity: {dev: s.dev, ino: s.ino}};
-  } catch {return fail('integrity-error', op);} finally {await fd.close();}
+  } catch {return fail('integrity-error', op);} finally {await close(fd);}
 }
 async function envelope(fd: FileHandle, fileName: string, max: number, op: Operation): Promise<{info: ObjectInfo; offset: number}> {
   try {
@@ -62,6 +62,7 @@ async function envelope(fd: FileHandle, fileName: string, max: number, op: Opera
 class LocalAdapter implements LocalStorageAdapter {
   readonly descriptor: Readonly<AdapterDescriptor>;
   readonly #life: Lifecycle;
+  readonly #closer = new CloseGuard(() => this.#life.seal());
   readonly #mutex = new Mutex();
   readonly #keys = new Set<string>();
   readonly #scope = randomUUID();
@@ -95,7 +96,7 @@ class LocalAdapter implements LocalStorageAdapter {
     let locked = false;
     try {
       this.#rootId = await trustedRoot(this.#root);
-      const initial = await entries(this.#root, 5, 'head');
+      const initial = await entries(this.#root, 5, 'head', this.#closer.close);
       const fresh = initial.length === 0;
       if (!fresh && (initial.some(n => !['manifest.json', 'objects', 'tmp', 'writer.lock'].includes(n)) || !initial.includes('manifest.json'))) fail('integrity-error', 'head');
       let lock: FileHandle;
@@ -105,19 +106,19 @@ class LocalAdapter implements LocalStorageAdapter {
         const s = await lock.stat(); secureStat(s, false, 'head'); this.#lockId = {dev: s.dev, ino: s.ino};
         await writeAll(lock, Buffer.from(JSON.stringify({token: this.#lockToken, pid: process.pid})), 0);
         await lock.sync(); locked = true;
-      } finally {await lock.close();}
+      } finally {await this.#closer.close(lock);}
       if (fresh) {
-        if ((await entries(this.#root, 2, 'head')).some(n => n !== 'writer.lock')) fail('integrity-error', 'head');
+        if ((await entries(this.#root, 2, 'head', this.#closer.close)).some(n => n !== 'writer.lock')) fail('integrity-error', 'head');
         this.#manifest = {formatVersion: 1, kind: 'apf-local', namespace: this.descriptor.namespace, bindingId: randomUUID()};
         const path = join(this.#root, randomUUID() + '.manifest');
         const file = await open(path, CREATE, 0o600);
-        try {await writeAll(file, Buffer.from(JSON.stringify(this.#manifest)), 0); await file.sync();} finally {await file.close();}
+        try {await writeAll(file, Buffer.from(JSON.stringify(this.#manifest)), 0); await file.sync();} finally {await this.#closer.close(file);}
         await mkdir(join(this.#root, 'objects'), {mode: 0o700});
         await mkdir(join(this.#root, 'tmp'), {mode: 0o700});
         await rename(path, join(this.#root, 'manifest.json'));
-        await syncDirectory(this.#root);
+        await syncDirectory(this.#root, this.#closer.close);
       }
-      const loaded = await jsonFile(join(this.#root, 'manifest.json'), 'head');
+      const loaded = await jsonFile(join(this.#root, 'manifest.json'), 'head', this.#closer.close);
       let m: Record<string, unknown>;
       try {m = record(loaded.value, ['formatVersion', 'kind', 'namespace', 'bindingId'], 'head');} catch {fail('integrity-error', 'head');}
       if (m.formatVersion !== 1 || m.kind !== 'apf-local' || m.namespace !== this.descriptor.namespace || typeof m.bindingId !== 'string' || !uuid.test(m.bindingId)) fail('integrity-error', 'head');
@@ -125,42 +126,44 @@ class LocalAdapter implements LocalStorageAdapter {
       this.#manifestId = loaded.identity;
       this.#objectsId = await directory(join(this.#root, 'objects'), undefined, 'head');
       const tmpId = await directory(join(this.#root, 'tmp'), undefined, 'head');
-      this.#spool = new Spool(join(this.#root, 'tmp'), tmpId, this.#maxStaging);
+      this.#spool = new Spool(join(this.#root, 'tmp'), tmpId, this.#maxStaging, this.#closer.close);
       await this.#spool.accountResiduals();
-      for (const name of await entries(join(this.#root, 'objects'), this.#maxObjects, 'head')) {
+      for (const name of await entries(join(this.#root, 'objects'), this.#maxObjects, 'head', this.#closer.close)) {
         if (!/^[0-9a-f]{64}$/.test(name)) fail('integrity-error', 'head');
-        const fd = await secureOpen(join(this.#root, 'objects', name), 'head');
-        try {this.#keys.add((await envelope(fd, name, this.descriptor.maxObjectBytes, 'head')).info.key);} finally {await fd.close();}
+        const fd = await secureOpen(join(this.#root, 'objects', name), 'head', this.#closer.close);
+        try {this.#keys.add((await envelope(fd, name, this.descriptor.maxObjectBytes, 'head')).info.key);} finally {await this.#closer.close(fd);}
       }
       await this.#guard('head');
       return this;
     } catch (e) {
-      if (locked) {try {await this.#unlock();} catch { /* fail closed: retain an unverifiable lock */ }}
+      if (locked && !this.#closer.failed) {try {await this.#unlock();} catch { /* fail closed: retain an unverifiable lock */ }}
       return fsError(e, 'head');
     }
   }
   async #guard(op: Operation): Promise<void> {
+    if (this.#closer.failed) fail('provider-error', op);
     try {
       if (this.#uncertainMutation) fail('integrity-error', op);
       await directory(this.#root, this.#rootId, op);
       await directory(join(this.#root, 'objects'), this.#objectsId, op);
       await directory(this.#spool.path, this.#spool.identity, op);
-      const m = await jsonFile(join(this.#root, 'manifest.json'), op);
+      const m = await jsonFile(join(this.#root, 'manifest.json'), op, this.#closer.close);
       if (!same(m.identity, this.#manifestId) || JSON.stringify(m.value) !== JSON.stringify(this.#manifest)) fail('integrity-error', op);
       await this.#verifyLock(op);
     } catch {fail('integrity-error', op);}
   }
   async #verifyLock(op: Operation): Promise<void> {
-    const lock = await jsonFile(join(this.#root, 'writer.lock'), op);
+    const lock = await jsonFile(join(this.#root, 'writer.lock'), op, this.#closer.close);
     const value = record(lock.value, ['token', 'pid'], op);
     if (!same(lock.identity, this.#lockId) || value.token !== this.#lockToken || value.pid !== process.pid) fail('integrity-error', op);
   }
   async #unlock(): Promise<void> {
+    if (this.#closer.failed) fail('provider-error', 'head');
     if (this.#unlocked) return;
     await directory(this.#root, this.#rootId, 'head');
     await this.#verifyLock('head');
     await unlink(join(this.#root, 'writer.lock'));
-    await syncDirectory(this.#root);
+    await syncDirectory(this.#root, this.#closer.close);
     this.#unlocked = true;
   }
   async close(options: {timeoutMs?: number} = {}): Promise<void> {
@@ -174,7 +177,7 @@ class LocalAdapter implements LocalStorageAdapter {
   async #opened(key: string, revision: string | undefined, ctx: OperationContext): Promise<Opened> {
     ctx.check();
     let fd: FileHandle;
-    try {fd = await (this.hooks.openObject ?? secureOpen)(join(this.#root, 'objects', digest(key)), ctx.operation);}
+    try {fd = await (this.hooks.openObject ?? secureOpen)(join(this.#root, 'objects', digest(key)), ctx.operation, this.#closer.close);}
     catch (e) {if ((e as {code?: string}).code === 'ENOENT') fail(revision === undefined ? 'not-found' : 'precondition-failed', ctx.operation); throw e;}
     try {
       ctx.check();
@@ -183,11 +186,11 @@ class LocalAdapter implements LocalStorageAdapter {
       if (revision !== undefined && loaded.info.revision !== revision) fail('precondition-failed', ctx.operation);
       ctx.check();
       return {fd, ...loaded};
-    } catch (e) {await fd.close(); throw e;}
+    } catch (e) {await this.#closer.close(fd); throw e;}
   }
   async head(key: string, revision: string | undefined, ctx: OperationContext): Promise<ObjectInfo> {
     const leave = this.#life.enter(ctx);
-    try {await this.#guard(ctx.operation); const opened = await this.#opened(key, revision, ctx); try {return cloneInfo(opened.info);} finally {await opened.fd.close();}}
+    try {await this.#guard(ctx.operation); const opened = await this.#opened(key, revision, ctx); try {return cloneInfo(opened.info);} finally {await this.#closer.close(opened.fd);}}
     catch (e) {return fsError(e, ctx.operation);} finally {leave();}
   }
   async get(key: string, options: ValidatedRead, ctx: OperationContext): Promise<ReadResult> {
@@ -203,7 +206,7 @@ class LocalAdapter implements LocalStorageAdapter {
       let pending: Promise<unknown> = Promise.resolve(), closePromise: Promise<void> | undefined;
       const close = (): Promise<void> => {
         closing = true;
-        if (!closePromise) closePromise = (async () => {try {await pending.catch(() => {}); await snapshot.fd.close();} finally {ctx.signal.removeEventListener('abort', abort); leave();}})();
+        if (!closePromise) closePromise = (async () => {try {await pending.catch(() => {}); await this.#closer.close(snapshot.fd);} finally {ctx.signal.removeEventListener('abort', abort); leave();}})();
         return closePromise;
       };
       const abort = (): void => {void close().catch(() => {});};
@@ -230,7 +233,7 @@ class LocalAdapter implements LocalStorageAdapter {
       ctx.signal.addEventListener('abort', abort, {once: true});
       if (ctx.signal.aborted) {await close(); ctx.check();}
       return {info: cloneInfo(snapshot.info), returnedBytes: end - start, body};
-    } catch (e) {if (opened && !transferred) await opened.fd.close(); return fsError(e, ctx.operation);}
+    } catch (e) {if (opened && !transferred) await this.#closer.close(opened.fd); return fsError(e, ctx.operation);}
     finally {if (!transferred) leave();}
   }
   async put(key: string, body: ByteSource, options: ValidatedPut, ctx: OperationContext): Promise<ObjectInfo> {
@@ -260,18 +263,19 @@ class LocalAdapter implements LocalStorageAdapter {
         try {
           if (options.condition?.kind === 'if-absent' && old || options.condition?.kind === 'if-revision' && (!old || old.info.revision !== options.condition.revision)) fail('precondition-failed', ctx.operation);
           if (!old && this.#keys.size >= this.#maxObjects) fail('limit-exceeded', ctx.operation);
-        } finally {await old?.fd.close();}
+        } finally {if (old) await this.#closer.close(old.fd);}
         await this.hooks.phase?.('before-rename'); ctx.check();
         const tempStat = await lstat(envelopeTemp.path);
         secureStat(tempStat, false, ctx.operation);
         if (!same(tempStat, envelopeTemp.identity)) fail('integrity-error', ctx.operation);
         await this.#guard(ctx.operation); ctx.check();
+        if (this.#closer.failed) fail('provider-error', ctx.operation);
         ctx.markDispatched();
         try {await (this.hooks.rename ?? rename)(envelopeTemp.path, join(this.#root, 'objects', digest(key)));}
         catch (e) {this.#uncertainMutation = true; throw e;}
         envelopeTemp.moved = true; this.#keys.add(key); ctx.markApplied();
         await this.hooks.phase?.('after-rename');
-        await (this.hooks.syncDirectory ?? syncDirectory)(join(this.#root, 'objects'));
+        await (this.hooks.syncDirectory ?? syncDirectory)(join(this.#root, 'objects'), this.#closer.close);
         ctx.check();
       });
       return cloneInfo(info);
@@ -289,11 +293,13 @@ class LocalAdapter implements LocalStorageAdapter {
         let old: Opened | undefined;
         try {old = await this.#opened(key, revision, ctx);} catch (e) {if (!(e instanceof StorageError && e.code === 'not-found' && revision === undefined)) throw e;}
         if (!old) {ctx.markApplied(); return;}
-        await old.fd.close(); ctx.check(); ctx.markDispatched();
+        await this.#closer.close(old.fd); ctx.check();
+        if (this.#closer.failed) fail('provider-error', ctx.operation);
+        ctx.markDispatched();
         try {await (this.hooks.unlink ?? unlink)(join(this.#root, 'objects', digest(key)));}
         catch (e) {this.#uncertainMutation = true; throw e;}
         this.#keys.delete(key); ctx.markApplied();
-        await (this.hooks.syncDirectory ?? syncDirectory)(join(this.#root, 'objects')); ctx.check();
+        await (this.hooks.syncDirectory ?? syncDirectory)(join(this.#root, 'objects'), this.#closer.close); ctx.check();
       });
       return {absent: true};
     } catch (e) {return fsError(e, ctx.operation);} finally {leave();}
@@ -319,7 +325,7 @@ class LocalAdapter implements LocalStorageAdapter {
       for (const key of page) {
         let opened: Opened;
         try {opened = await this.#opened(key, undefined, ctx);} catch (e) {if (e instanceof StorageError && e.code === 'not-found') continue; throw e;}
-        try {items.push(cloneInfo(opened.info));} finally {await opened.fd.close();}
+        try {items.push(cloneInfo(opened.info));} finally {await this.#closer.close(opened.fd);}
       }
       const nextCursor = keys.length > page.length ? Buffer.from(JSON.stringify({v: 1, adapter: 'local', binding: this.#manifest.bindingId, instance: this.#scope,
         namespace: this.descriptor.namespace, prefix: options.prefix, after: page.at(-1)})).toString('base64url') : null;

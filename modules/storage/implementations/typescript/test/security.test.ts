@@ -66,6 +66,17 @@ it('TEST-005: cursor injection and invalid pagination fail closed', async t => {
   for (const pageSize of [0, 1001, 1.5, NaN]) await assert.rejects(s.list({pageSize}), errorIs('invalid-input'));
   await assert.rejects(s.list({prefix: '../'}), errorIs('invalid-input'));
 });
+it('TEST-005: Memory rejects malformed UTF-8, duplicate fields and noncanonical cursor JSON', async t => {
+  const f = fixture(); t.after(() => f.dispose()); const s = f.storage;
+  await s.put('a', source('first')); await s.put('b', source('second'));
+  const page = await s.list({pageSize: 1}); assert(page.nextCursor);
+  const bytes = Buffer.from(page.nextCursor, 'base64url'), raw = bytes.toString('utf8');
+  const invalidUtf8 = Buffer.from(bytes); invalidUtf8[bytes.indexOf('"after":"a"') + 9] = 0xff;
+  for (const malformed of [invalidUtf8, Buffer.from(raw.replace('"after":"a"', '"after":"a","after":"b"')), Buffer.from(' ' + raw)]) {
+    await assert.rejects(s.list({cursor: malformed.toString('base64url')}), errorIs('invalid-cursor'));
+  }
+  assert.deepEqual((await s.list({cursor: page.nextCursor})).items.map(item => item.key), ['b']);
+});
 it('TEST-012: binding and configured limits are validated without environment reads', () => {
   const adapter = createMemoryAdapter({namespace: 'actual', maxObjectBytes: 100});
   assert.throws(() => createStorage({adapter, namespace: 'wrong'}), errorIs('invalid-input'));

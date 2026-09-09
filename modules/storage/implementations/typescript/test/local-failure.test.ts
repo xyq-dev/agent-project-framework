@@ -3,7 +3,8 @@ import {it} from 'node:test';
 import {rename, readdir, access, rm, unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {createLocalAdapter} from '../src/index.js';
-import {secureOpen, readAll, writeAll} from '../src/adapters/files.js';
+import type {ByteSource} from '../src/index.js';
+import {CloseGuard, directory, secureOpen, readAll, Spool, writeAll} from '../src/adapters/files.js';
 import type {FileHandle} from 'node:fs/promises';
 import {localFixture} from './local-fixture.js';
 import {content, errorIs, latch, source, tick} from './helpers.js';
@@ -68,6 +69,90 @@ it('TEST-003/013: a late open is actually closed before the writer lock can be r
   const read = assert.rejects(f.storage.get('x'), errorIs('aborted'));
   await entered.promise; await assert.rejects(f.adapter.close({timeoutMs: 10}), errorIs('timeout'));
   await read; assert(captured && captured.fd >= 0); finish.release(); await f.adapter.close({timeoutMs: 1000}); assert.equal(captured.fd, -1);
+});
+it('TEST-007/013: rejected file close cannot release the writer lock or be silently retried', async () => {
+  for (const operation of ['get', 'head', 'put', 'delete', 'list']) {
+    let inject = false, attempts = 0;
+    const held: {fd: FileHandle; close: () => Promise<void>}[] = [];
+    const f = await localFixture({}, {async openObject(path, op) {
+      const fd = await secureOpen(path, op);
+      if (inject) {
+        held.push({fd, close: fd.close.bind(fd)});
+        fd.close = async () => {attempts++; throw Object.assign(new Error('PRIVATE_CLOSE_FAILURE'), {code: 'EIO'});};
+      }
+      return fd;
+    }});
+    try {
+      await f.storage.put('item', source('original')); inject = true;
+      const action = operation === 'get' ? content(f.storage, 'item') : operation === 'head' ? f.storage.head('item') :
+        operation === 'put' ? f.storage.put('item', source('replacement'), {overwrite: true}) :
+          operation === 'delete' ? f.storage.delete('item') : f.storage.list();
+      await assert.rejects(action, errorIs('provider-error', 'not-applied'));
+      assert.equal(held.length, 1); assert(held[0]!.fd.fd >= 0);
+      await assert.rejects(f.adapter.close({timeoutMs: 1000}), errorIs('provider-error'));
+      await assert.rejects(f.adapter.close({timeoutMs: 1000}), errorIs('provider-error'));
+      await access(join(f.root, 'writer.lock'));
+      await assert.rejects(f.storage.head('item'), errorIs('unavailable'));
+      await assert.rejects(createLocalAdapter({root: f.root, namespace: 'local-test'}), errorIs('unavailable'));
+      assert.equal(attempts, 1);
+    } finally {
+      // Only the fault injector knows these test-owned handles were never closed.
+      for (const entry of held) await entry.close();
+      await rm(f.root, {recursive: true, force: true});
+    }
+  }
+});
+it('TEST-009/013: failed spool close retains bytes and file without retrying a possibly released descriptor', async t => {
+  const f = await localFixture(); t.after(() => f.dispose());
+  const path = join(f.root, 'tmp');
+  for (const released of [false, true]) {
+    let sealed = false, attempts = 0;
+    const closer = new CloseGuard(() => {sealed = true;});
+    const spool = new Spool(path, await directory(path, undefined, 'put'), 16, closer.close);
+    const temp = await spool.create('put'); await spool.append(temp, Buffer.alloc(8), 'put');
+    const original = temp.fd.close.bind(temp.fd);
+    temp.fd.close = async () => {attempts++; if (released) await original(); throw Object.assign(new Error('PRIVATE_CLOSE'), {code: 'EIO'});};
+    try {
+      for (let n = 0; n < 2; n++) await assert.rejects(spool.cleanup(temp, 'put'));
+      assert.equal(attempts, 1); assert(sealed && closer.failed); assert.equal(temp.closed, false);
+      assert.equal(temp.bytes, 8); await access(temp.path);
+      assert.throws(() => spool.reserve(9, 'put'), errorIs('limit-exceeded'));
+      assert.equal(temp.fd.fd === -1, released);
+    } finally {if (!released) await original(); await unlink(temp.path);}
+  }
+});
+it('TEST-007/013: a close failure also prevents publication by an already staged concurrent writer', async t => {
+  const staged = latch(), finish = latch(); let inject = false, originalClose: (() => Promise<void>) | undefined;
+  const f = await localFixture({}, {
+    async phase(phase) {if (inject && phase === 'staged') {staged.release(); await finish.promise;}},
+    async openObject(path, op) {const fd = await secureOpen(path, op); if (inject && op === 'head') {
+      originalClose = fd.close.bind(fd); fd.close = async () => {throw Object.assign(new Error('PRIVATE_CLOSE'), {code: 'EIO'});};
+    } return fd;},
+  });
+  t.after(async () => {await originalClose?.(); await rm(f.root, {recursive: true, force: true});});
+  await f.storage.put('old', source('original')); inject = true;
+  const write = assert.rejects(f.storage.put('new', source('staged')), errorIs('provider-error', 'not-applied'));
+  await staged.promise; await assert.rejects(f.storage.head('old'), errorIs('provider-error'));
+  finish.release(); await write;
+  assert.equal((await readdir(join(f.root, 'objects'))).length, 1);
+  await assert.rejects(f.adapter.close(), errorIs('provider-error')); await access(join(f.root, 'writer.lock'));
+});
+it('TEST-007/013: cancelled input retains its lease through raw next and return settlement', async t => {
+  const entered = latch(), nextDone = latch(), returnCalled = latch(), returnDone = latch(); let calls = 0;
+  const body: ByteSource = {[Symbol.asyncIterator]() {return {
+    async next() {if (calls++ === 0) return {done: false, value: Buffer.from('first')}; entered.release(); await nextDone.promise; return {done: false, value: Buffer.from('late')};},
+    async return() {returnCalled.release(); await returnDone.promise; return {done: true, value: undefined};},
+  };}};
+  const f = await localFixture(); t.after(() => rm(f.root, {recursive: true, force: true}));
+  const put = assert.rejects(f.storage.put('late', body), errorIs('aborted', 'not-applied'));
+  await entered.promise; await assert.rejects(f.adapter.close({timeoutMs: 10}), errorIs('timeout')); await put; await returnCalled.promise;
+  assert.equal((await readdir(join(f.root, 'tmp'))).length, 1); await access(join(f.root, 'writer.lock'));
+  nextDone.release(); await assert.rejects(f.adapter.close({timeoutMs: 10}), errorIs('timeout'));
+  await assert.rejects(createLocalAdapter({root: f.root, namespace: 'local-test'}), errorIs('unavailable'));
+  returnDone.release(); await tick(); await access(join(f.root, 'writer.lock'));
+  await f.adapter.close({timeoutMs: 1000});
+  const next = await localFixture({root: f.root}); assert.equal(await next.storage.exists('late'), false); await next.adapter.close();
+  assert.deepEqual(await readdir(join(f.root, 'tmp')), []);
 });
 it('TEST-013: file loops handle repeated short reads/writes and reject zero progress', async () => {
   const data = Buffer.alloc(9); let written = 0;

@@ -3,6 +3,17 @@ import {randomUUID, createHash} from 'node:crypto';
 import {createOssAdapter, createStorage} from '../src/index.js';
 import type {OssOptions} from '../src/index.js';
 
+/** Local-testable shutdown control; never opens a client or discovers credentials. */
+export async function withCloudCleanup<T>(verify: () => Promise<T>, close: () => Promise<void>, cleanup: () => Promise<void>): Promise<T> {
+  const failures: unknown[] = []; let value!: T;
+  try {value = await verify();} catch (e) {failures.push(e);}
+  try {await close();} catch (e) {failures.push(e);}
+  try {await cleanup();} catch (e) {failures.push(e);}
+  if (failures.length === 1) throw failures[0];
+  if (failures.length > 1) throw new AggregateError(failures, 'Cloud verification or cleanup failed');
+  return value;
+}
+
 /** Explicit host-run entry. Never called by npm test; never loads environment credentials.
  * Host must authorize a versioning-enabled TEST bucket + namespace and implement exact-version
  * cleanup using its own official SDK. No wildcard key, bucket configuration or IAM operation.
@@ -17,7 +28,7 @@ export async function verifyOssCloud(options: OssOptions, cleanupExactVersions: 
   const checks: string[] = [];
   async function* input() {yield Buffer.from('APF cloud verification');}
   const read = async (key: string): Promise<string> => {const result = await storage.get(key), chunks: Uint8Array[] = []; for await (const chunk of result.body) chunks.push(chunk); return Buffer.concat(chunks).toString();};
-  try {
+  return withCloudCleanup(async () => {
     assert.equal(await storage.exists(a), false); checks.push('confirmed-new-key');
     const first = await storage.put(a, input(), {overwrite: true, metadata: {test: 'cloud'}});
     created.push({physicalKey: physical + a, revision: first.revision}); checks.push('put-version-confirmation');
@@ -33,9 +44,6 @@ export async function verifyOssCloud(options: OssOptions, cleanupExactVersions: 
     const range = await storage.get(a, {range: {start: 0, endInclusive: 2}}), parts: Uint8Array[] = [];
     for await (const chunk of range.body) parts.push(chunk);
     assert.equal(Buffer.concat(parts).toString(), 'APF'); checks.push('range');
-  } finally {
-    await adapter.close();
-    await cleanupExactVersions(Object.freeze(created.map(item => Object.freeze({...item}))));
-  }
-  return {kind: 'real-oss-smoke', status: 'PASS', checks, limitations: ['No IAM/TLS-policy negative test', 'No delete-marker or response-loss test', 'Unknown PUT outcome may require host reconciliation']};
+    return {kind: 'real-oss-smoke', status: 'PASS', checks, limitations: ['No IAM/TLS-policy negative test', 'No delete-marker or response-loss test', 'Unknown PUT outcome may require host reconciliation']};
+  }, () => adapter.close(), () => cleanupExactVersions(Object.freeze(created.map(item => Object.freeze({...item})))));
 }

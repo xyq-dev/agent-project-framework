@@ -2,7 +2,7 @@
 
 ## Risk Classification and Gate
 
-M1-A/Memory 基础对象契约为 medium；四层初始 profile 已实现并通过 104 项本地/离线测试（25 项安全专项），见[实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。Local 隔离和 signer 的实现属于安全边界工作，任务升级 high，要求独立安全复核。当前 Security Gate = PENDING，不以设计文字代替实施测试。
+M1-A/Memory 基础对象契约为 medium；四层初始 profile 已实现并通过 112 项本地/离线测试（27 项安全专项），见[实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。Local 隔离和 signer 的实现属于安全边界工作，任务升级 high，要求独立安全复核。当前 Security Gate = PENDING，不以设计文字代替实施测试。
 
 默认仅受信任宿主调用。模块不提供认证/业务 ACL；宿主必须先授权再调用 Storage。binding 必须来自受控配置，不能由外部请求挑 bucket/root/endpoint。
 
@@ -44,13 +44,13 @@ Local 高风险审查需确认：可支持 OS、文件打开/rename 原语、锁
 ## Decision Record
 
 - Design threat inventory: prepared by Codex（单一作者，非独立审计）。
-- Security Gate: PENDING。2026-09-09 用户明确授权一个独立审查 Agent，`storage_security_review` 负责 Local/OSS 设计与后续实现复核；独立设计已 PASS，最终实现复核因 Agent 额度限制中断，仍 PENDING。
+- Security Gate: PENDING。2026-09-09 用户明确授权一个独立审查 Agent，`storage_security_review` 负责 Local/OSS 设计与后续实现复核；独立设计已 PASS；独立最终代码复核和112项复测完成，报告追加前触发 Agent 额度限制，已另存消息原文，正式 Gate 未签发。
 - M1-B：Core/Memory 合同与故障测试 PASS，属于实现者自检，不提升全模块独立 Security Gate。
-- M1-C：ST-005 独立 DESIGN PASS 后实施 Local；首轮反馈已修，最终实施复核待完成，不伪造审核。
+- M1-C：ST-005 独立 DESIGN PASS 后实施 Local；本轮反馈已修，独立复核确认修复；消息记录与正式 Gate 分开，不伪造签发。
 - 用户已恢复 OSS Adapter 开发范围；[审查包](LOCAL_OSS_REVIEW_PACKAGE.md)与独立 DESIGN PASS 已有记录，初始代码和离线测试已完成。实际签名、生产/云权限变更不能从研究资料推断已授权或已验证。
 
 ## Current implementation constraints
 
 O-001～O-009 与 L-001～L-007 见独立记录。OSS 固定官方 HTTPS、Enabled Versioning、无条件显式覆盖、current-response revision 检查、完整 spool 后取凭据、HEAD404 GET 确认、有界 list/transport 与无 mutation retry。SDK 实際 debug predicate 每次取凭据/dispatch 前 fail closed；宿主不得在在途请求中开启 SDK debug，模块不修改全局日志设置。
 
-依赖 audit 当前已知漏洞 0；该数据库结果不是无漏洞证明。最终独立复核和真实云/TLS/IAM 证据仍未完成；包括报告列出的 FD close 异常/网络取消阶段补充验证，不能以作者自检直接通过 Security Gate。
+依赖 audit 当前已知漏洞 0；该数据库结果不是无漏洞证明。本轮 FD close 异常、并发 dispatch、输入源 lifetime、网络取消阶段、smoke cleanup 均已修复/补测并获得独立确认；[消息原文](INDEPENDENT_REVIEW_TRANSCRIPT.md)已保存并绑定源码摘要。真实 OSS/TLS/IAM 仍无证据，正式 Security Gate 不由作者补签。

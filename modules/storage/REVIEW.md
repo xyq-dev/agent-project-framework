@@ -2,18 +2,18 @@
 
 ## 当前实施与审查证据（2026-09-09）
 
-四层初始实现与 104 项测试完成。详细命令、源码摘要、限制和未完成事项见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。作者为当前 Codex，未调用 Cursor；用户明确授权了一个独立安全审查 Agent，结论仅见 [其独立记录](INDEPENDENT_SECURITY_REVIEW.md)。
+四层初始实现与 112 项测试完成。详细命令、源码摘要、限制和未完成事项见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。作者为当前 Codex，未调用 Cursor；用户明确授权了一个独立安全审查 Agent，设计结论见 [其独立记录](INDEPENDENT_SECURITY_REVIEW.md)，本轮最终代码复核见 [原样消息记录](INDEPENDENT_REVIEW_TRANSCRIPT.md)。
 
 | 验证 | 当前结果 |
 | --- | --- |
 | ci / typecheck / build | PASS |
-| npm test | 104/104，0 fail/skip/cancel |
-| 分组测试 | contract42 / failure37 / security25；不重复计数 |
-| Local | 29 PASS（真实临时文件系统、进程 SIGKILL） |
-| OSS | 32 PASS（官方 SDK + loopback），真实云 NOT_RUN |
+| npm test | 112/112，0 fail/skip/cancel |
+| 分组测试 | contract42 / failure43 / security27；不重复计数 |
+| Local | 34 PASS（真实临时文件系统、进程 SIGKILL） |
+| OSS | 34 PASS（官方 SDK + loopback），真实云 NOT_RUN |
 | runtime dependency audit | 已知漏洞0 |
 | 独立设计 | Local ST-005 与 OSS-001 DESIGN PASS |
-| 最终独立实现 Security / Acceptance | PENDING：review Agent 额度中断；Local 首轮反馈已修复 |
+| 最终独立实现 Security / Acceptance | PENDING：独立代码复核/112项复测已确认，正式报告追加前额度中断；结论见消息记录 |
 
 Storage 静态检查 PASS（10 组、13 阴性、14 映射）；标准采用回归 PASS（9 组、9 阴性、46 目标内存模拟）；结果由报告/PR 回读绑定。它们校验状态、哈希和未实现 scope 阴性，不执行 Runtime。新项目仍 12 阶段 pending，不自动安装参考实现或继承 Gate。
 
