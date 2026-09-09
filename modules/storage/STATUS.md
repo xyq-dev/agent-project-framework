@@ -94,3 +94,5 @@ Memory 易失、总预算不等于进程 RSS；不提供签名/move/multipart。
 ## Handoff
 
 基线 main `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`，交付分支 `feat/storage-runtime-v0.1`，关联 PR 提供确切提交与远端回读。开工前 71 个文件与基线一致；本地为 GitHub 文件镜像而非 Git checkout。
+
+2026-09-09 交付：[草稿 PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3)，实现提交 `1b3bf0b7a1f4e09ec70d24a997b6c3baa915617e`。92 个远端文件与已验证快照逐项一致，运行证据正文回读一致。随后状态交接提交不改变实现；PR 当前未合并，Local/OSS 仍待独立审查与实现。

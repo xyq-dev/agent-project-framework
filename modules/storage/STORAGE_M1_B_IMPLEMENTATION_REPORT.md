@@ -86,3 +86,8 @@ Memory 的 PASS 仅覆盖支持的操作和禁用能力的拒绝行为，不代�
 3. OSS 先解决 capability 与 provider 原语差异，再编写官方 SDK Adapter、错误/取消/请求绑定和离线契约测试；真实云通过证据另行记录，不以 mock 代替。
 4. Local/OSS 实现后完成独立安全复核及全模块验收。没有这些证据，不将 M1 或四层标记“全部完成”。
 
+## GitHub 实际交付（2026-09-09）
+
+[草稿 PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 已创建，目标 main，来源 `feat/storage-runtime-v0.1`。实现提交为 `1b3bf0b7a1f4e09ec70d24a997b6c3baa915617e`（tree `9c8a8d42ec6fc69ca18e0067c97b8f187ff64be9`）。初次远端回读：92 个文件的 blob SHA 与验证快照一致，runtime-results.json 正文相同；PR 为 open/draft，未合并。随后交接提交只补充状态与本记录，未改测试或源码。
+
+GitHub commit/ref：YES；本地 git commit/push 命令：NO（API 文件镜像交付）；Local/OSS 实现：NO；云测试/CLI/Release/Tag/Pack：NO。主线合并和全模块完成尚未发生，后续继续本 PR 的独立审查及剩余实现。

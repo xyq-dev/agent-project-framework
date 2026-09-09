@@ -70,3 +70,5 @@ Local/OSS 独立 reviewer 的安排；OSS 条件/版本语义的最终批准 pro
 先读 AGENTS、PROJECT_CONTEXT、本文件、[模块状态](modules/storage/STATUS.md)与实施报告，再进入待审材料。
 
 历史：P1 经 [PR #1](https://github.com/xyq-dev/agent-project-framework/pull/1) 合并，P1.1 经 [PR #2](https://github.com/xyq-dev/agent-project-framework/pull/2) 合并；P1.1 合并提交 `0e8563b09b7449576d050ceac4007f75218de543`，随后交接基线为上述 main。
+
+2026-09-09 交付：[草稿 PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3)，实现提交 `1b3bf0b7a1f4e09ec70d24a997b6c3baa915617e`。92 个远端文件与已验证快照逐项一致，运行证据正文回读一致。随后状态交接提交不改变实现；PR 当前未合并，Local/OSS 仍待独立审查与实现。
