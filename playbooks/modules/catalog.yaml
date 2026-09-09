@@ -46,8 +46,8 @@ items:
     guide: storage.md
     runtime_status: partial
     reference_implementation:
-      scopes: [core, memory]
-      not_implemented: [local, oss]
+      scopes: [core, memory, local, oss]
+      not_implemented: []
       evidence_url: https://github.com/xyq-dev/agent-project-framework/blob/feat/storage-runtime-v0.1/modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md
       installed_by_bootstrap: false
     prerequisite_capabilities: [validated-binding, selected-adapter-contract]
@@ -57,7 +57,12 @@ items:
     kind: adapter-guide
     risk: high
     guide: oss.md
-    runtime_status: not-implemented
+    runtime_status: partial
+    reference_implementation:
+      scopes: [oss]
+      not_implemented: []
+      evidence_url: https://github.com/xyq-dev/agent-project-framework/blob/feat/storage-runtime-v0.1/modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md
+      installed_by_bootstrap: false
     prerequisite_capabilities: [storage-contract, server-authorization, scoped-credential-source]
     related_guides: [storage, authorization, config, audit]
   - id: media

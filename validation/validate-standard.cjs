@@ -117,11 +117,11 @@ function blueprints(map) {
     assert(typeof item.name === 'string' && item.name.length > 0);
     assert(['module-guide', 'adapter-guide'].includes(item.kind));
     assert(['medium', 'high', 'critical'].includes(item.risk));
-    if (item.id === 'storage') {
+    if (['storage', 'oss'].includes(item.id)) {
       assert.equal(item.runtime_status, 'partial', 'false full storage runtime claim');
       const reference = item.reference_implementation;
-      assert.deepEqual(reference.scopes, ['core', 'memory']);
-      assert.deepEqual(reference.not_implemented, ['local', 'oss']);
+      assert.deepEqual(reference.scopes, item.id === 'storage' ? ['core', 'memory', 'local', 'oss'] : ['oss']);
+      assert.deepEqual(reference.not_implemented, []);
       assert.equal(reference.installed_by_bootstrap, false);
       assert(/^https:\/\/github\.com\/xyq-dev\/agent-project-framework\/blob\/[^ ]+\/modules\/storage\/STORAGE_M1_B_IMPLEMENTATION_REPORT\.md$/.test(reference.evidence_url));
     } else {

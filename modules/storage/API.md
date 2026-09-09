@@ -141,3 +141,9 @@ retryable 只是建议，不是重放授权。自动重试仅 head/exists/list/g
 ## Compatibility
 
 新增厂商选项只进独立 Adapter 配置，不改变消费者接口。降级须显式错误或另一次由调用者选择的操作，不静默换安全语义。ETag 条件并非天然满足 APF 不复用 Revision 约束；云 Adapter 必须证明或关闭条件能力。[AWS conditional requests](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-requests.html)
+
+## TypeScript reference adapter lifecycle/profile（2026-09-09）
+
+具体参考工厂为 createMemoryAdapter、异步 createLocalAdapter、异步 createOssAdapter；仅 Local/OSS adapter 暴露显式 async close({timeoutMs?})，不改变公共 Storage facade。内部 OperationContext.cancel() 幂等触发已有 abort 路径，不替代真实 I/O settlement 或 finish。
+
+Memory/Local 保持本 API 的条件能力；OSS conservative profile 不提供 conditional-write/delete，两种签名、move、multipart false。默认 put/copy 必须因其隐含 absence 条件而先返回 unsupported-capability；显式 overwrite:true 才可无条件写入/复制。OSS revision 为开启版本控制的服务端版本 ID；current reads 从不以历史版本匹配条件。工厂参数、恢复与真实验证限制见 [参考包 README](implementations/typescript/README.md)。

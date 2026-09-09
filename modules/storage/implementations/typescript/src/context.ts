@@ -38,6 +38,7 @@ export class Context implements OperationContext {
   }
   get signal(): AbortSignal {return this.#controller.signal;}
   get outcome(): Outcome {return this.#outcome;}
+  cancel(): void {this.#abort('aborted');}
   #abort(code: 'aborted' | 'timeout'): void {
     if (this.#abortError || this.#ended) return;
     this.#abortError = new StorageError(code, this.operation, this.#outcome === 'not-applied' ? 'not-applied' : 'unknown');

@@ -2,9 +2,9 @@
 
 ## Execution Boundary
 
-调度状态（2026-09-08）：用户明确恢复 Core／Memory／Local／OSS。ST-001～004 已由当前 Codex 完成并实测，未调用 Cursor。Local 保留 ST-005 独立审查前置；OSS 具体任务与冲突见 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)。
+调度状态（2026-09-09）：用户明确恢复 Core／Memory／Local／OSS。ST-001～004 已由当前 Codex 完成并实测，未调用 Cursor。ST-005 与 OSS-001 独立设计已 PASS；Local/OSS 初始 profile 实现及 104 项测试已完成，最终实施安全复核待完成。详细范围见 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)。
 
-M1-A 为历史规格任务。ST-001..004 已执行；ST-005..007 尚未完成。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
+M1-A 为历史规格任务。ST-001..004 已执行；ST-005 设计通过、ST-006 实现/本地测试完成，ST-007 仍 blocked（最终独立复核额度中断）。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
 
 默认只在专题分支工作，保留既有 dirty changes；commit 需任务授权，push/main/Release/Tag/npm 发布/云部署不因本文件而获得授权。
 
@@ -17,8 +17,8 @@ M1-A 为历史规格任务。ST-001..004 已执行；ST-005..007 尚未完成。
 | ST-002 | 公共类型、校验、错误、capability facade | ST-001 | Cursor implementer | medium | complete（见实施报告，作者自检） |
 | ST-003 | Memory primitive 与条件语义 | ST-002 | Cursor implementer | medium | complete（见实施报告，作者自检） |
 | ST-004 | Copy、分页、故障测试及 Memory review | ST-003 | Cursor implementer; Codex reviewer | medium | complete（见实施报告，作者自检） |
-| ST-005 | Local 路径/锁/恢复设计独立安全审查 | ST-004 | independent security reviewer | high | pending |
-| ST-006 | Local Reference Adapter | ST-005 PASS | Cursor implementer | high | blocked |
+| ST-005 | Local 路径/锁/恢复设计独立安全审查 | ST-004 | independent security reviewer | high | complete — DESIGN PASS |
+| ST-006 | Local Reference Adapter | ST-005 PASS | implementer（本次 Codex） | high | complete — code/tests; final review pending |
 | ST-007 | 双 Adapter 验收、M1 Gate 决策 | ST-006 | tester + independent reviewer/acceptor | high | blocked |
 
 无循环依赖。config/audit 不作为虚假 prerequisite；它们不在当前 module dependency graph 内。
@@ -54,10 +54,10 @@ M1-A 为历史规格任务。ST-001..004 已执行；ST-005..007 尚未完成。
 - 实现有界 list 与 cursor 作用域校验、同 binding copy；移动/签名/multipart 始终 false。
 - Fault adapter 为测试注入 permissions/timeout/commit-then-response-loss；证明 exists 和 error/outcome 不失真。
 - 同一 shared factory 预留 Local 的调用入口，但不得先创建空 Local 代码或伪造通过。
-- Commands：ST-001 的全部 scripts；TEST-001..012/014（CASE scope=memory），Local TEST-013 明确 NOT_RUN。
+- Commands：ST-001 的全部 scripts；TEST-001..012/014（CASE scope=memory），该历史 ST-004 子范围不运行 Local TEST-013；当前 Local 实测见 ST-006。
 - AC：AC-001..012/014，缺一项即 ST-004 未完成；契约检查不等于这些行为测试。
 - 产出：Memory review evidence、命令结果、执行环境、失败列表；更新 Module/项目 STATUS，未来把已验证 `memory` 与 `typescript-node` 支持写入 manifest。
-- 不得把整个 M1 标为 ACCEPTED/RELEASED；Local 仍未实现，Security/Acceptance 全模块 Gate 仍待定。
+- 不得把整个 M1 标为 ACCEPTED/RELEASED；ST-004 单独不完成 Local；Security/Acceptance 全模块 Gate 仍待定。
 
 ## ST-005 — Independent Local design review
 
@@ -69,7 +69,7 @@ M1-A 为历史规格任务。ST-001..004 已执行；ST-005..007 尚未完成。
 
 ## ST-006 — Local implementation
 
-- 前置：ST-005 PASS + 用户对该增量的授权；执行路径限定 reference `src/adapters/local/` 及对应测试。
+- 前置：ST-005 PASS + 用户对该增量的授权；实现路径为 reference `src/adapters/local.ts`、共享 `files.ts`/`lifecycle.ts` 及对应测试；该文件组织调整不改变已审 Local 边界。
 - 按已审 Local profile 实现单 envelope、专属 root、独占 writer lock、锁内条件变更、snapshot read、校验与 staging 清理。
 - Tests：全部 shared cases + TEST-013（进程 crash/restart、symlink、临时残留、损坏、锁竞争），实测环境 Linux/Node 24；其它 OS 不得据此宣称已支持。
 - 不自动修改 root 权限、清理 stale lock、扫描删除用户文件，无法证明归属即停止。
@@ -86,3 +86,7 @@ M1-A 为历史规格任务。ST-001..004 已执行；ST-005..007 尚未完成。
 ## Cursor Start Point
 
 ST-001..004 已完成，勿重新生成或覆盖现有实现。旧 [Cursor 任务包](agents/CURSOR_IMPLEMENTATION.md)保留为 M1-B 范围参考；当前接手从 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md) 和 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)开始。独立设计审查 PASS 后才进入对应实现，不重做已通过的 Memory 架构。
+
+## OSS initial profile execution
+
+OSS-001 DESIGN PASS；OSS-002/003 初始代码与离线测试完成；OSS-004 signing 按已批准 conservative profile 明确延后，两个签名 capability 均 false；OSS-005 离线 32 项 PASS，真实云 NOT_RUN。最终独立审查因 Agent quota 中断而 PENDING，实施报告列出剩余矩阵。不能据此 auto merge main 或发布。

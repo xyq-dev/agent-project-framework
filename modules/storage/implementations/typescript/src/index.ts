@@ -10,3 +10,7 @@ export type {
   SignedDownloadOptions, SignedGrant, SignedUploadOptions, Storage, StorageAdapter,
   StorageLimits, UserMetadata, ValidatedList, ValidatedPut, ValidatedRead, WriteCondition,
 } from './types.js';
+export {createLocalAdapter} from './adapters/local.js';
+export type {LocalOptions, LocalStorageAdapter} from './adapters/local.js';
+export {createOssAdapter} from './adapters/oss.js';
+export type {OssOptions, OssCredentials, OssCredentialProvider, OssStorageAdapter} from './adapters/oss.js';

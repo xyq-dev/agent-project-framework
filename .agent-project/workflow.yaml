@@ -44,9 +44,9 @@ project_lifecycle:
   - id: architecture
     name: "Architecture"
     mode: required
-    status: in-progress
-    evidence: ["modules/storage/ARCHITECTURE.md","modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md"]
-    reason: "Core/Memory approved design implemented; Local/OSS independent design review remains pending."
+    status: complete
+    evidence: ["modules/storage/ARCHITECTURE.md","modules/storage/INDEPENDENT_SECURITY_REVIEW.md"]
+    reason: "Local ST-005 and OSS-001 conservative profile have independent DESIGN PASS."
   - id: database
     name: "Database"
     mode: not-applicable
@@ -56,27 +56,27 @@ project_lifecycle:
   - id: api
     name: "API"
     mode: required
-    status: in-progress
+    status: complete
     evidence: ["modules/storage/API.md","modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md"]
-    reason: "Core/Memory conforms to the existing API; OSS profile differences await review."
+    reason: "Existing Core API retained; conservative OSS capabilities explicitly reject unsupported conditions."
   - id: implementation
     name: "Implementation"
     mode: required
-    status: in-progress
+    status: complete
     evidence: ["modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md"]
-    reason: "Core/Memory implemented; Local/OSS not implemented."
+    reason: "Core/Memory/Local/OSS initial profiles implemented; final independent security review remains pending."
   - id: testing
     name: "Testing"
     mode: required
     status: in-progress
     evidence: ["modules/storage/validation/runtime-results.json","modules/storage/validation/cases.yaml"]
-    reason: "43 Core/Memory tests pass; Local/OSS tests not run."
+    reason: "104 tests pass (43 Core/Memory, 29 Local, 32 OSS offline); real OSS NOT_RUN."
   - id: security
     name: "Security"
     mode: required
     status: blocked
     evidence: ["modules/storage/SECURITY.md","modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md"]
-    reason: "Independent Local/OSS reviewer not assigned; implementation author cannot self-accept high-risk boundaries or automatically spawn reviewers."
+    reason: "User-authorized independent reviewer passed designs and reviewed Local first pass; final implementation review interrupted by agent quota."
   - id: deployment
     name: "Deployment"
     mode: not-applicable

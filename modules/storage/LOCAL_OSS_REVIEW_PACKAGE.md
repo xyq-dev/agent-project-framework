@@ -73,5 +73,31 @@ SDK list 返回值若缺完整 metadata/revision，需有界补充 head（并发
 
 审查人/Agent 身份、审查日期、输入 commit、控制 ID、发现级别、修改意见、可定位证据、各 profile 的 PASS/BLOCKED 决定。未接受 high/critical 发现必须阻止对应实现/验收。没有 reviewer 身份和证据不能填 PASS。
 
-当前待决：Local ST-005 和 OSS-001 的独立 reviewer。仓库明确禁止自动多 Agent，本次没有自行启动；需要用户指定独立审查者或允许一个独立审查 Agent。其他代码和测试已经形成可审交付，不要求用户重新批准 Core/Memory 工作。
+2026-09-09：用户明确授权一个独立安全审查 Agent，已由 `storage_security_review` 承担 Local ST-005 与 OSS-001；以下补充响应首轮审查，最终决定由 [独立审查记录](INDEPENDENT_SECURITY_REVIEW.md) 给出。仍不自动增加其他 Agent，不重新批准或覆盖 Core/Memory。
 
+## 2026-09-09 Local 审查补充（实现必须遵守）
+
+1. root 初次使用必须为空；独占 writer lock 后原子发布持久 `manifest.json`，严格记录 `{formatVersion: 1, kind: 'apf-local', namespace, bindingId}`。重开时验证精确 namespace 和稳定 bindingId；存在任何旧 objects/tmp/lock 布局但没有有效 manifest 一律拒绝，不猜测归属、不自动修复。cursor 同时绑定此持久标识和初始化实例标识。
+2. root 和子目录归当前有效用户，禁止组/其他用户访问；新文件 0600、子目录 0700。已存在目录权限不符合则拒绝，不自动 chmod。
+3. `close()` 必须先原子进入 closing，拒绝新操作，通知本实例在途操作取消并关闭已返回 snapshot；等待所有实际异步 I/O 和文件句柄结束后，检查 lock inode 与随机 token，才可 unlink 自己的锁。关闭超时必须保留锁并失败；不得在旧写入仍可能发布时允许新实例。
+4. 不可取消的 rename/unlink 发起前 `markDispatched()`；成功确认后才 `markApplied()`。调用方超时并不表示 I/O 已结束，在 I/O settle 前仍保留同 key mutex、staging 预算及 writer lock。迟到的 open 必须关闭返回 FD；迟到的 rename 只能报告 unknown，不能补偿删除可能已发布的新对象。
+5. 文件系统 primitive 需处理短读/短写；普通对象文件首次打开时拒绝 symlink、特殊文件和多硬链接。记录 header/key/revision/metadata/实际文件长度一致后才暴露内容。已打开 snapshot 可在 unlink 后继续读旧 FD。
+6. 对象数和 staging 总字节/并发必须有界；失败清理仅操作本实例本次拥有的路径。正常 close 不删除 root、manifest、objects 或历史 tmp；崩溃遗留锁由宿主人工确认，不提供自动解锁入口。
+
+## 2026-09-09 OSS 审查落实（首版固定 profile）
+
+独立记录已给出 OSS-001 DESIGN PASS；以下落实 O-001～O-009，替代上文候选及“均未执行”表中的设计待定描述，实际实现/测试状态另记报告。
+
+- 支持基础八项、copy、range-read、conditional-read；conditional-write/delete、move、两种 signing、multipart 均 false。默认 put/copy 在源、凭据、网络前拒绝；显式 overwrite 才可无条件写。OSS-004 签名下载为明确后续增量，本轮不开放。
+- 初始化只验证固定 bucket 的 Versioning=Enabled；当前 GET/HEAD/PUT 必须返回非空非 null versionId。PUT 成功后只用其 versionId 做确认 HEAD；确认失败 unknown 不重试；无效版本令实例失效。公开条件读只读取当前对象并比较同一响应。
+- 固定官方 HTTPS origin/region/bucket/namespace；物理前缀 apf-storage/v1/SHA256(namespace)/objects/（按 reviewer 补充固定长度，独立 namespace marker 保留精确绑定），格式/绑定/key digest 标记与用户 metadata 分离。用户 metadata 用独立有界 base64url JSON 字段编码。
+- 专属 0700 spool 与 0600 排他文件；源完整暂存并测量长度后才取凭据和 PUT；容量/并发有界，真实 I/O 结束后才释放预算及清理自己文件。
+- 固定 ali-oss 6.23.0 官方 V4 signer/XML parser，retryMax=0；注入严格 Node HTTPS transport，逐请求精确校验 method/origin/path/query，禁止 redirect/proxy，正常 TLS；实际销毁请求/响应/socket 并等待 close。非流成功响应上限 4 MiB，错误 64 KiB。
+- 每次取凭据与签名/请求前检查 SDK 实际 debug namespace 是否启用；启用则拒绝，绝不修改宿主 DEBUG 或全局日志开关。
+- HEAD404 必须以一次当前 GET 确认，仅显式 NoSuchKey 为不存在；GET 成功解析同一响应后立即关闭；bucket/auth/permission 错误继续失败。
+- listV2 条目以最多 4 个并发当前 HEAD 补全，共享期限，保持顺序和 provider 续页；确认删除可跳过但保留非空 cursor，严格校验前缀/marker。
+- 拒绝 symlink/gzip/异常编码；Range 必须 206 且 Content-Range/Length 与范围一致；实际字节计数，短流/超流失败，早退/取消关闭同一响应。
+
+设计 PASS 仅允许实现。实际云验证缺少明确授权测试环境，保持 NOT_RUN；不改变 bucket 配置、角色或已有数据。
+
+2026-09-09 实施：批准的初始 profiles 代码和 104 项测试已完成；OSS-004 signing 按最终设计延后。最终实施审查因 Agent 额度中断而 PENDING，真实云 NOT_RUN，当前细节以实施报告/STATUS 为准。

@@ -15,7 +15,7 @@
 - signed URL、copy、range、multipart 等按项目需要和适配器实际证据选择；不支持时明确拒绝。
 - 存储模块不拥有媒体业务记录、用户资料、业务 ACL 或 Bucket/IAM 管理。
 
-可参考 [APF Storage 规格快照](https://github.com/xyq-dev/agent-project-framework/blob/d31de78217bae3d567a321b98b04a8a7965718a1/modules/storage/SPEC.md)。该历史快照只有规格。APF 后续新增了 [Core/Memory 私有参考实现及测试报告](https://github.com/xyq-dev/agent-project-framework/blob/feat/storage-runtime-v0.1/modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)，Local/OSS 尚未实现。采用模板不会复制 Runtime 或继承该报告的项目 Gate；选择代码时应固定实际使用的 commit。
+可参考 [APF Storage 规格快照](https://github.com/xyq-dev/agent-project-framework/blob/d31de78217bae3d567a321b98b04a8a7965718a1/modules/storage/SPEC.md)。该历史快照只有规格。APF 后续新增了 [Storage 私有参考实现及测试报告](https://github.com/xyq-dev/agent-project-framework/blob/feat/storage-runtime-v0.1/modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)，Local 与 OSS 初始 profile 也已有代码和本地测试；真实 OSS 与最终安全审查仍待完成。采用模板不会复制 Runtime 或继承该报告的项目 Gate；选择代码时应固定实际使用的 commit。
 
 ## 实施任务
 

@@ -149,10 +149,12 @@ check('14 requirements, runtime cases and acceptance criteria', () => {
   runtimeEvidenceChecks(evidence);
   const falseComplete = structuredClone(cases.cases.find(c => c.scopes.includes('memory')));
   falseComplete.status = 'PASS';
+  falseComplete.results.local = 'NOT_RUN';
   assert.throws(() => caseResultChecks(falseComplete, evidence));
   const falseLocal = structuredClone(falseComplete);
   falseLocal.results.local = 'PASS';
-  assert.throws(() => caseResultChecks(falseLocal, evidence));
+  const unimplementedLocal = {...evidence, implemented_scopes: evidence.implemented_scopes.filter(s => s !== 'local')};
+  assert.throws(() => caseResultChecks(falseLocal, unimplementedLocal));
   const staleEvidence = structuredClone(evidence);
   staleEvidence.files[0].sha256 = '0'.repeat(64);
   assert.throws(() => runtimeEvidenceChecks(staleEvidence), /stale runtime evidence/);

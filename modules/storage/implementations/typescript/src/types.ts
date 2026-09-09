@@ -38,6 +38,8 @@ export type Observer = (event: Readonly<Observation>) => void | Promise<void>;
 export interface OperationContext {
   readonly operation: Operation; readonly signal: AbortSignal; readonly outcome: Outcome;
   check(): void;
+  /** Adapter lifecycle cancellation; underlying I/O still owns its lease until settled. */
+  cancel(): void;
   wait<T>(promise: PromiseLike<T>, disposeLate?: (value: T) => void): Promise<T>;
   markDispatched(): void;
   markApplied(): void;

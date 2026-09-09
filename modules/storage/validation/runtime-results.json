@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "subject": "storage@0.1.0-dev",
-  "date_utc": "2026-09-08",
+  "date_utc": "2026-09-09",
   "base_commit": "a6556a41ee7bd35007cc9226b40c9679c8bdf3bc",
   "branch": "feat/storage-runtime-v0.1",
   "environment": {
@@ -16,12 +16,11 @@
   "implementation_root": "implementations/typescript",
   "implemented_scopes": [
     "core",
-    "memory"
-  ],
-  "not_implemented": [
+    "memory",
     "local",
     "oss"
   ],
+  "not_implemented": [],
   "independent_security_review": "PENDING",
   "commands": [
     {
@@ -39,8 +38,8 @@
     {
       "command": "npm test",
       "exit_code": 0,
-      "tests": 43,
-      "pass": 43,
+      "tests": 104,
+      "pass": 104,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -48,8 +47,8 @@
     {
       "command": "npm run test:contract",
       "exit_code": 0,
-      "tests": 14,
-      "pass": 14,
+      "tests": 42,
+      "pass": 42,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -57,8 +56,8 @@
     {
       "command": "npm run test:failure",
       "exit_code": 0,
-      "tests": 20,
-      "pass": 20,
+      "tests": 37,
+      "pass": 37,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -66,8 +65,8 @@
     {
       "command": "npm run test:security",
       "exit_code": 0,
-      "tests": 9,
-      "pass": 9,
+      "tests": 25,
+      "pass": 25,
       "fail": 0,
       "skipped": 0,
       "cancelled": 0
@@ -76,19 +75,39 @@
   "files": [
     {
       "path": "package-lock.json",
-      "sha256": "6a67a50c15765fc79a455e7d0951334bb61e8e97666e2e124d2d08d8bc038237"
+      "sha256": "b2010afd8bf40de1f5d6c0687d8462663e161dead34e43a0060cab2901c64087"
     },
     {
       "path": "package.json",
-      "sha256": "e00c2ca7e00d1404982db2c01692fdd85d2cc02760373f966decb2c6ad447909"
+      "sha256": "c78cabab09b9c3d004642cc52bcc1830c941c593d8c942b20f2e5709a90da9d5"
+    },
+    {
+      "path": "src/adapters/files.ts",
+      "sha256": "535b96c2becd4d73da4c3679656247eddf145451c3439d6bf43d2bf4c96fe791"
+    },
+    {
+      "path": "src/adapters/lifecycle.ts",
+      "sha256": "f565a8e22c578e37a8172a1601bfaa6ea738cd1eb3ddd2269eba5f6e5f0d2d12"
+    },
+    {
+      "path": "src/adapters/local.ts",
+      "sha256": "b0e0e8112f35440eee3cb259553748cd2b9f0dc82d801c8ab797f572a1136991"
     },
     {
       "path": "src/adapters/memory.ts",
       "sha256": "a148ef00eb4f98605ffe85da262c07e56e6d43144ac50a0d07a96429e936d009"
     },
     {
+      "path": "src/adapters/oss-transport.ts",
+      "sha256": "ea86206759b1fc188bf0e54573640337de36f45cebb6969ad2e1b234290b27ef"
+    },
+    {
+      "path": "src/adapters/oss.ts",
+      "sha256": "dc36bf06632dd647d09f72f2a9866892ab65f6360b9a976da5fd50abaca581c5"
+    },
+    {
       "path": "src/context.ts",
-      "sha256": "b4611cb19b273e9d213de9a3233151e24b045cf3e2dc7ddab45020dc876b7eb1"
+      "sha256": "ddd9df666425aa0c7d93f2f649f3bc9ca8f1a7c096ee8e4039cd64a3a7ec147d"
     },
     {
       "path": "src/core.ts",
@@ -100,7 +119,7 @@
     },
     {
       "path": "src/index.ts",
-      "sha256": "fa9f497ffb3630c1a4aa02d682cd7d0b53192db4eb049ca110194219436f66b1"
+      "sha256": "0b63e136a260e9f8433d6a192aa9dca9fc8c98938e5124a2338640ce2ebe76aa"
     },
     {
       "path": "src/streams.ts",
@@ -108,7 +127,7 @@
     },
     {
       "path": "src/types.ts",
-      "sha256": "d1a92af79891aefd26cef5007702d260f64435765137d341a92768c63b10bf52"
+      "sha256": "51b56660a62d3b4a164e6d8d471b4457dd570e8ab318245e88dd9c721b7b62a3"
     },
     {
       "path": "src/validation.ts",
@@ -120,11 +139,51 @@
     },
     {
       "path": "test/failure.test.ts",
-      "sha256": "a1605eb80894762c3f4688d00d0fab838da7d44ce662bc2411ec0a55e6cc5050"
+      "sha256": "5d495064e020d36965cd6309af0e88905196cd542981f46e498d2c2c831e1ddf"
     },
     {
       "path": "test/helpers.ts",
       "sha256": "a77e3c986fb1e2af57913a5321fcf8d54b1b213dcfe2b7a9acaaa9c57c7d4aba"
+    },
+    {
+      "path": "test/local-contract.test.ts",
+      "sha256": "3925c7f5c03bbe0786405994ebaf48e81bf5fa5bc31e1f14a9812dfb3dabebc7"
+    },
+    {
+      "path": "test/local-crash-worker.ts",
+      "sha256": "a629ed276e0c5cac6e58cc0939996e4ad0c467a7eb965e5645a97774dafc0ce3"
+    },
+    {
+      "path": "test/local-failure.test.ts",
+      "sha256": "6e293002915324c338538a06ee6ba1f3ef693137fe6f746807b1d21ec524f500"
+    },
+    {
+      "path": "test/local-fixture.ts",
+      "sha256": "aeaf8d9cad81a54719f6573e6b49b38f14ca89f980620822abb3474e7c1c3c30"
+    },
+    {
+      "path": "test/local-security.test.ts",
+      "sha256": "e6da104a991599593916491bfaad1955f98ba12861edc65fd1a8d37ae7746264"
+    },
+    {
+      "path": "test/oss-cloud-smoke.ts",
+      "sha256": "520c005bba8508f9ad509e7f37894443d5236d68ca767042fa877a3d889c0701"
+    },
+    {
+      "path": "test/oss-contract.test.ts",
+      "sha256": "df86b447d57a33f578b51626d0047f266b02d5770b7e5d72236e245ff6fe016f"
+    },
+    {
+      "path": "test/oss-failure.test.ts",
+      "sha256": "ae832d8e798750054ef04ee3d69cb3441da75d8f491b2e6f06e0ebe6728a7d58"
+    },
+    {
+      "path": "test/oss-fixture.ts",
+      "sha256": "cc5e586a14d72ef023db0350e1c63372029f311d01931db9292fb71003ba8145"
+    },
+    {
+      "path": "test/oss-security.test.ts",
+      "sha256": "26c6a1ea7a3ffc884532e0e732d9b36b03dd4b623bcdf9fdfc8a66c87e04b66b"
     },
     {
       "path": "test/security.test.ts",
@@ -132,11 +191,57 @@
     },
     {
       "path": "test/shared-contract.ts",
-      "sha256": "e184ea0305b3dce4f4a5be79e431e4807cdf302e22f8d1e139f76903c7bd889b"
+      "sha256": "598979f1bee8dd9ca68cbd4e20ea6c020741a238b88c751008863745b18dadd6"
     },
     {
       "path": "tsconfig.json",
       "sha256": "b3ba619cf280f6e7090555f3086f6ae1157dae07c6bee1f00a25424ca07c8ed3"
+    }
+  ],
+  "independent_review_detail": {
+    "design": "PASS: Local ST-005 and OSS-001 conservative profile",
+    "implementation": "PENDING: reviewer quota interruption after Local first-pass feedback",
+    "record": "INDEPENDENT_SECURITY_REVIEW.md"
+  },
+  "test_profiles": {
+    "core_memory": 43,
+    "local_linux": 29,
+    "oss_offline_sdk_loopback": 32,
+    "real_oss": "NOT_RUN"
+  },
+  "offline_environment_limitations": [
+    "ali-oss unused ClusterClient import calls blocked os.networkInterfaces; test-only synchronous empty-interface stub restored immediately",
+    "Loopback HTTP validates protocol/socket ownership, not production TLS, OSS service or IAM",
+    "SIGKILL tests validate process crash, not power loss or hostile co-writer protection"
+  ],
+  "cloud_smoke_entry": "implementations/typescript/test/oss-cloud-smoke.ts",
+  "dependency_audit": {
+    "command": "npm audit --omit=dev --json",
+    "exit_code": 0,
+    "known_vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "sdk": "ali-oss@6.23.0"
+  },
+  "static_checks": [
+    {
+      "command": "node modules/storage/validation/validate-spec.cjs",
+      "exit_code": 0,
+      "checks": 10,
+      "negative_fixtures": 13,
+      "mapped_cases": 14
+    },
+    {
+      "command": "node validation/validate-standard.cjs",
+      "exit_code": 0,
+      "checks": 9,
+      "negative_fixtures": 9,
+      "bootstrap_files": 46
     }
   ]
 }

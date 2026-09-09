@@ -1,25 +1,23 @@
 # Storage Review and Evidence
 
-## M1-B 当前实施记录（2026-09-08 验证，2026-09-09 交付）
+## 当前实施与审查证据（2026-09-09）
 
-Core/Memory 已实现；当前 Codex 完成测试与作者复核，未调用 Cursor、未启动独立审查 Agent。完整命令和 TEST/AC 结果见 [STORAGE_M1_B_IMPLEMENTATION_REPORT](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
+四层初始实现与 104 项测试完成。详细命令、源码摘要、限制和未完成事项见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。作者为当前 Codex，未调用 Cursor；用户明确授权了一个独立安全审查 Agent，结论仅见 [其独立记录](INDEPENDENT_SECURITY_REVIEW.md)。
 
-| 验证 | 当前结果 | 范围 |
-| --- | --- | --- |
-| npm ci / typecheck / build | PASS | Node 24.19.0、TypeScript 5.9.3，私有 strict ESM 包 |
-| npm test | PASS：43/43，0 fail/skip | contract 14、failure 20、security 9；分组脚本分别通过 |
-| Storage static validation | PASS：10 组，13 个拒绝 fixture，14 个 scope 映射 | 包含源码摘要一致性、禁止冒称 Local PASS、禁止隐藏未测试 scope |
-| Standard validation | PASS：9 组，9 个拒绝 fixture，46 个模板目标文件 | 新项目仍 12 阶段 pending、selected_modules 为空、未安装 Runtime |
-| Local / OSS Runtime | NOT_RUN | 无实现，等待独立设计审查；不能用 Memory 代替 |
-| 独立 Security / 全模块 Acceptance | PENDING | 作者测试不构成独立审核 |
+| 验证 | 当前结果 |
+| --- | --- |
+| ci / typecheck / build | PASS |
+| npm test | 104/104，0 fail/skip/cancel |
+| 分组测试 | contract42 / failure37 / security25；不重复计数 |
+| Local | 29 PASS（真实临时文件系统、进程 SIGKILL） |
+| OSS | 32 PASS（官方 SDK + loopback），真实云 NOT_RUN |
+| runtime dependency audit | 已知漏洞0 |
+| 独立设计 | Local ST-005 与 OSS-001 DESIGN PASS |
+| 最终独立实现 Security / Acceptance | PENDING：review Agent 额度中断；Local 首轮反馈已修复 |
 
-复核确认：条件检查和发布原子；失败/取消保留旧对象；已打开快照仍计入内存预算；迟到 get 句柄和未消费流可关闭；变更不会自动重试；对外错误、对象信息和观察事件不泄露 Provider 字段。测试中发现的类型声明与路径问题已修正，无未解决的 Core/Memory 测试失败。
+Storage 静态检查 PASS（10 组、13 阴性、14 映射）；标准采用回归 PASS（9 组、9 阴性、46 目标内存模拟）；结果由报告/PR 回读绑定。它们校验状态、哈希和未实现 scope 阴性，不执行 Runtime。新项目仍 12 阶段 pending，不自动安装参考实现或继承 Gate。
 
-标准采用回归发现实施方案中的相对 Runtime 报告链接不会被复制到新项目，已改为明确的 APF GitHub 参考链接；没有把 Runtime 加入复制清单。再次检查通过。静态脚本校验记录与文件摘要，不重新执行 Runtime，也不替代独立审查。
-
-当前 Gate：Core/Memory 子范围有 Implementation/Test 作者证据；整个 Storage 仍 IMPLEMENTING，Local/OSS 审查、实现与验收未完成。既有 AGENTS / SECURITY / TASKS 审查约束不变；[Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)已可交给独立 reviewer。
-
-以下为 M1-A 历史记录；其中“无 Runtime”“TASKS_READY”只描述当时的规格交付。
+以下 M1-A 为历史规格记录，其中“无 Runtime/TASKS_READY”只描述当时交付。
 
 ## M1-A 历史记录
 

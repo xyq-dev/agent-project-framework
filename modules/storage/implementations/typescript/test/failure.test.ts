@@ -163,10 +163,11 @@ it('TEST-011: at most 16 unsettled observer calls exist; slots free only after s
 it('TEST-014: private isolated package has exact locked dependencies and provider-free Core', async () => {
   const root = new URL('../', import.meta.url);
   // Tests run from dist/test; package files sit one level above dist.
-  const pkg = JSON.parse(await readFile(new URL('../package.json', root), 'utf8')) as {private: boolean; devDependencies: Record<string, string>};
+  const pkg = JSON.parse(await readFile(new URL('../package.json', root), 'utf8')) as {private: boolean; devDependencies: Record<string, string>; dependencies: Record<string, string>};
   const lock = JSON.parse(await readFile(new URL('../package-lock.json', root), 'utf8')) as {packages: Record<string, {version?: string; integrity?: string}>};
   assert.equal(pkg.private, true);
-  for (const [name, version] of Object.entries(pkg.devDependencies)) {
+  assert.deepEqual(pkg.dependencies, {'ali-oss': '6.23.0'});
+  for (const [name, version] of Object.entries({...pkg.devDependencies, ...pkg.dependencies})) {
     assert.match(version, /^\d+\.\d+\.\d+$/); assert.equal(lock.packages[`node_modules/${name}`]?.version, version);
     assert(lock.packages[`node_modules/${name}`]?.integrity);
   }

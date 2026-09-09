@@ -3,8 +3,8 @@
 ## Three Different Evidence Levels
 
 1. **Static validation**：Schema、artifact path、ID/状态/依赖/需求—测试—验收与证据映射；不执行 Runtime。
-2. **M1-B/C runtime tests**：Memory 43 项通过（contract 14、failure 20、security 9）；Local 文件系统测试 NOT_RUN。
-3. **Cloud integration**：OSS 本次只有审查材料，代码未实现、云测试 NOT_RUN；不能借 Memory/fake 宣称通过。
+2. **M1-B/C runtime tests**：Core/Memory 43、Local 29、OSS 离线 32，合计 104 项通过（contract 42、failure 37、security 25）。
+3. **Cloud integration**：OSS 初始代码和 pinned SDK + loopback 测试已完成，真实 OSS 云测试 NOT_RUN；离线证据不替代真实服务端/TLS/IAM。
 
 机器可读用例在 [validation/cases.yaml](validation/cases.yaml)，与以下 ID 一致；“有用例”不是“已通过”。
 
@@ -31,10 +31,11 @@
 
 | Profile / Adapter | State today | Required runs |
 | --- | --- | --- |
-| Node 24.x / Memory | NOT_IMPLEMENTED | ST-004: TEST-001..012/014，包含 failure/security 子集 |
-| Node 24.x / Local Linux | NOT_IMPLEMENTED | ST-007: 同上 + TEST-013、进程恢复、独立安全 review |
-| Fake failure adapter | PLANNED | 仅为错误注入，不作为生产 Provider，不代替真实 Local 行为 |
-| S3 / R2 / OSS / COS / MinIO | DEFERRED | 授权测试 namespace，签名/条件语义单独验收 |
+| Node 24.x / Memory | IMPLEMENTED / 43 PASS | ST-004: TEST-001..012/014，包含 failure/security 子集 |
+| Node 24.x / Local Linux | IMPLEMENTED / 29 PASS; final review pending | ST-007: 同上 + TEST-013、进程恢复、独立安全 review |
+| Fake failure adapter | EXECUTED (test-only) | 仅为错误注入，不作为生产 Provider，不代替真实 Local 行为 |
+| OSS pinned SDK / loopback HTTP | 32 PASS (offline), real cloud NOT_RUN | 支持能力与拒绝能力分别断言；真实云 smoke 入口不由 npm test 调用 |
+| S3 / R2 / COS / MinIO | DEFERRED | 授权测试 namespace，签名/条件语义单独验收 |
 
 N/A：HTTP UI/E2E（无对外服务）、数据库测试/Migration（无数据库）。未适用不等于所有 Runtime 测试均 N/A。
 
@@ -48,9 +49,9 @@ node modules/storage/validation/validate-spec.cjs
 
 依赖为 `ajv` 8（2020-12）与 `js-yaml` 4。使用环境已有包；干净环境可在临时目录安装并把该目录的 `node_modules` 加入 NODE_PATH，勿往仓库根添加 package。精确执行版本记录在 REVIEW 中。脚本只检查静态文档/Schema/fixture，不尝试网络或实际对象存储。
 
-## Future Runtime Commands
+## Runtime Commands
 
-ST-001 必须建立下列 package scripts；**现在不要运行或把不存在的脚本记为 PASS**。
+下列脚本已存在并真实运行；结果和源码摘要绑定在 runtime-results.json。
 
 ```sh
 npm --prefix modules/storage/implementations/typescript ci
@@ -69,3 +70,11 @@ npm --prefix modules/storage/implementations/typescript run test:security
 当前结果见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md) 和 [REVIEW.md](REVIEW.md)。cases 按 memory/local 分别记录；PARTIAL 表示只有部分适用 scope 通过，不是整组完成。Memory 实测不能使 Local/云 Security、全模块 Acceptance 或 Release Gate 通过。
 
 signed URL 正例（headers/TTL/replay/credential expiry）、guarded move 正例/partial failure、multipart session 尚无 Adapter，未来开启能力前必须增加对应真实 Contract Tests；当前明确不支持且有阴性测试任务，不留下空实现。
+
+## OSS-specific evidence and remaining verification
+
+OSS 的 default put/copy、条件写/删、move、签名和 multipart 均提前 unsupported，测试不能自动把无条件覆盖当作 create/CAS。共享 suite 只在普通操作 setup 显式选择该 profile 的 overwrite，其条件专项运行真正的拒绝断言。当前使用官方 SDK signer/XML parser 与真实 loopback socket。
+
+SDK 首次 import 的 unused ClusterClient 枚举接口在 Work Mode 受限；仅测试加载窗口 mock 空接口并 finally 恢复/断言原函数。生产源码没有 shim。真实云入口为 test/oss-cloud-smoke.ts，需显式 host 测试配置和 exact-version cleanup 回调；未运行。
+
+最终独立实施复核、真实云/TLS/IAM、FD close 异常与更多网络取消阶段矩阵尚未完成；详见实施报告，不能把 104 PASS 改写为这些阶段均 PASS。
