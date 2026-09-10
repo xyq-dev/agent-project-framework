@@ -68,16 +68,16 @@ providers:
   - id: memory
     kind: adapter
     capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read, conditional-write, conditional-delete]
-    compatibility: "Node 24.x; single-process volatile; verified on Linux x64 Node 24.19.0"
+    compatibility: "Node 24.x; single-process volatile; verified on Linux x64 Node 24.19.0; ST-007 scoped acceptance PASS"
 
   - id: local
     kind: adapter
     capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read, conditional-write, conditional-delete]
-    compatibility: "Node 24.x/Linux local filesystem; dedicated trusted 0700 root; offline tests and independent code review confirmed; formal Gate pending"
+    compatibility: "Node 24.x/Linux local filesystem; dedicated trusted 0700 root; 34 local tests; ST-007 scoped Test/Security/Acceptance PASS"
   - id: oss
     kind: adapter
     capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read]
-    compatibility: "ali-oss 6.23.0/Node 24.x/Linux spool; Versioning Enabled; SDK+loopback tests only; independent code review confirmed; real OSS NOT_RUN and formal Gate PENDING"
+    compatibility: "ali-oss 6.23.0/Node 24.x/Linux spool; Versioning Enabled; SDK+loopback tests and scoped offline review PASS; real OSS NOT_RUN; cloud and whole-module Gates PENDING"
 
 compatibility:
   framework: ">=0.1.0-dev <0.2.0"

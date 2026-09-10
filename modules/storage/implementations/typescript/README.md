@@ -1,6 +1,6 @@
 # TypeScript Storage Reference
 
-私有参考包，Core/Memory/Local/OSS 初始 profile 已实现；112 项本地/离线测试通过。独立实施复核消息已完成；正式 Gate 与真实 OSS 验证未完成；状态和逐项测试见 [实施报告](../../STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
+私有参考包，Core/Memory/Local/OSS 初始 profile 已实现；112 项本地/离线测试通过。原始 ST-007 Memory/Local 范围已获独立正式验收；OSS 离线范围审查通过，真实 OSS 与全模块验收未完成；状态和逐项测试见 [实施报告](../../STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。
 
 Node 24.x，TypeScript strict ESM；OSS 使用精确锁定的 ali-oss 6.23.0。Core 不导入 Provider SDK，SDK 只在创建 OSS adapter 时加载。
 
@@ -123,4 +123,4 @@ npm test 包含34项 OSS 离线测试，执行官方 SDK + 真实 loopback HTTP 
 
 verify 或 adapter.close 失败仍会尝试精确版本 cleanup；多个失败以 AggregateError 保留，不能只因 cleanup 成功就报告 smoke PASS。离线验证了该退出控制和 DNS lookup、TLS 握手等待、部分上传的实际 request/socket 取消；握手取消不证明证书校验、真实 OSS 或 IAM 已验收。
 
-当前真实 OSS NOT_RUN；独立代码复核和112项复测已完成，正式报告追加前额度中断；正式 Gate 仍 PENDING。不能把本参考包当作已经完成生产验收的存储服务。
+当前真实 OSS NOT_RUN；2026-09-10 [正式分范围决定](../../STORAGE_M1_ACCEPTANCE_REVIEW.md) 已完成：Memory/Local 的 ST-007 验收通过，OSS 离线范围通过，真实云和全模块 Gate 仍 PENDING。后续输入、运行方法、8 组真实云矩阵与清理限制见 [OSS_CLOUD_VALIDATION.md](../../OSS_CLOUD_VALIDATION.md)。不能把本参考包当作已经完成生产验收的存储服务。

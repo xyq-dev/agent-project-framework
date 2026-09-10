@@ -32,7 +32,7 @@
 | Profile / Adapter | State today | Required runs |
 | --- | --- | --- |
 | Node 24.x / Memory | IMPLEMENTED / 44 PASS | ST-004: TEST-001..012/014，包含 failure/security 子集 |
-| Node 24.x / Local Linux | IMPLEMENTED / 34 PASS; review confirmed by message; formal Gate pending | ST-007: 同上 + TEST-013、进程恢复、独立安全 review |
+| Node 24.x / Local Linux | IMPLEMENTED / 34 PASS; ST-007 scoped Test/Security/Acceptance PASS | ST-007: 同上 + TEST-013、进程恢复、独立安全 review |
 | Fake failure adapter | EXECUTED (test-only) | 仅为错误注入，不作为生产 Provider，不代替真实 Local 行为 |
 | OSS pinned SDK / loopback HTTP | 34 PASS (offline), real cloud NOT_RUN | 支持能力与拒绝能力分别断言；真实云 smoke 入口不由 npm test 调用 |
 | S3 / R2 / COS / MinIO | DEFERRED | 授权测试 namespace，签名/条件语义单独验收 |
@@ -67,7 +67,7 @@ npm --prefix modules/storage/implementations/typescript run test:security
 
 ## Results and Gaps
 
-当前结果见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md) 和 [REVIEW.md](REVIEW.md)。cases 按 memory/local 分别记录；PARTIAL 表示只有部分适用 scope 通过，不是整组完成。Memory 实测不能使 Local/云 Security、全模块 Acceptance 或 Release Gate 通过。
+2026-09-09 执行结果见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md) 和 [REVIEW.md](REVIEW.md)；2026-09-10 正式分范围决定见 [STORAGE_M1_ACCEPTANCE_REVIEW.md](STORAGE_M1_ACCEPTANCE_REVIEW.md)。本日未重跑 Node 测试。cases 按 memory/local 分别记录；PARTIAL 表示只有部分适用 scope 通过，不是整组完成。Memory 实测不能使 Local/云 Security、全模块 Acceptance 或 Release Gate 通过。
 
 signed URL 正例（headers/TTL/replay/credential expiry）、guarded move 正例/partial failure、multipart session 尚无 Adapter，未来开启能力前必须增加对应真实 Contract Tests；当前明确不支持且有阴性测试任务，不留下空实现。
 
@@ -77,4 +77,4 @@ OSS 的 default put/copy、条件写/删、move、签名和 multipart 均提前 
 
 SDK 首次 import 的 unused ClusterClient 枚举接口在 Work Mode 受限；仅测试加载窗口 mock 空接口并 finally 恢复/断言原函数。生产源码没有 shim。真实云入口为 test/oss-cloud-smoke.ts，需显式 host 测试配置和 exact-version cleanup 回调；未运行。
 
-本轮已补 FD close 异常、输入 next/return 实际 settle、永久阻塞子进程、DNS/TLS 握手/部分上传取消和 smoke cleanup 控制。112 PASS 仅对应这些本地/离线用例；真实服务端/TLS 策略/IAM/delete-marker/未知写入恢复仍 NOT_RUN，独立结论见审查记录。
+本轮已补 FD close 异常、输入 next/return 实际 settle、永久阻塞子进程、DNS/TLS 握手/部分上传取消和 smoke cleanup 控制。112 PASS 仅对应这些本地/离线用例；真实服务端/TLS 策略/IAM/delete-marker/未知写入恢复仍 NOT_RUN，独立结论见正式验收记录，后续按 [真实云验收清单](OSS_CLOUD_VALIDATION.md) 执行。

@@ -8,7 +8,7 @@ M1 分三个可验收增量：
 
 - **M1-A（已完成）**：规格、架构、数据/API 契约、测试计划、任务和交接；该历史增量没有 Runtime。
 - **M1-B（已实现）**：TypeScript/Node Reference Core + Memory Adapter；Core/Memory 44 项 Runtime 测试通过，见[实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。测试无网络。
-- **M1-C（代码与测试已完成并独立复核，待验收）**：Local 34 项；OSS 保守 profile 34 项离线测试；合计 112 项。独立设计已通过，最终 Security/Acceptance 仍待完成。
+- **M1-C（Memory/Local 原始范围已验收；云扩展待验收）**：Local 34 项；OSS 保守 profile 34 项离线测试；合计 112 项。原始 ST-007 已获独立正式 Test/Security/Acceptance PASS；OSS 离线范围审查通过，真实云及全模块 Gate 仍待完成，见[正式验收记录](STORAGE_M1_ACCEPTANCE_REVIEW.md)。
 
 签名 URL 的**通用授权契约与不支持行为**在 M1 定义；真正签发/使用 URL 必须在后续云 Adapter 增量验证。multipart 仅保留发现入口，尚无上传会话协议。不得以文档存在替代实现或宣称全云兼容。
 
@@ -70,7 +70,7 @@ M1 分三个可验收增量：
 - 可靠性：Reference Adapter 单对象操作线性化；多操作及 list 不构成事务。Memory 不持久，Local 仅承诺经测试的进程崩溃行为，不承诺断电持久性。
 - 内存/流：Core/Local 顺序消费 ByteSource，应用层缓存不随对象总大小增长；Memory 测试 Adapter 可缓存对象但受总预算约束。
 - 限制：默认对象 16 MiB，metadata 2 KiB，list 页 100/最大 1000；均是本模块的参考策略，不是云厂商上限。
-- 安全：Local/OSS 按 `high` 路由，设计已独立通过，独立实施复核已完成，正式 Gate 仍 PENDING；未来云 signer 或真实凭据工作仍按 `high` 路由，不沿用 medium 作为发布豁免。
+- 安全：Local/OSS 按 `high` 路由，设计已独立通过；Memory/Local 的 ST-007 正式 Gate 已通过，OSS 仅离线范围通过审查，真实云及全模块 Gate 仍 PENDING；未来云 signer 或真实凭据工作仍按 `high` 路由，不沿用 medium 作为发布豁免。
 - 可移植性：核心契约无语言绑定；第一实现 Profile 为 Node 24.x + TypeScript strict，不强制其它项目采用此栈。
 - 性能：M1 不设未经测量的吞吐/延迟承诺；验收要求取消、大小与超时测试可重复。
 

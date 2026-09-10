@@ -2,9 +2,9 @@
 
 ## Execution Boundary
 
-调度状态（2026-09-09）：用户明确恢复 Core／Memory／Local／OSS。ST-001～004 已由当前 Codex 完成并实测，未调用 Cursor。ST-005 与 OSS-001 独立设计已 PASS；Local/OSS 初始 profile 实现及 112 项测试已完成，独立实施复核消息已完成；正式 Gate 待补。详细范围见 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)。
+调度状态（2026-09-10）：用户明确恢复 Core／Memory／Local／OSS。ST-001～004 已由当前 Codex 完成并实测，未调用 Cursor。ST-005 与 OSS-001 独立设计已 PASS；Local/OSS 初始 profile 实现及 112 项测试已完成；原始 ST-007 Memory/Local 范围已获独立正式验收，OSS 离线范围审查通过，真实云及全模块 Gate 待完成。详细范围见 [Local/OSS 审查包](LOCAL_OSS_REVIEW_PACKAGE.md)。
 
-M1-A 为历史规格任务。ST-001..004 已执行；ST-005 设计通过、ST-006 实现/本地测试完成，ST-007 仍 blocked（已收独立复核结论，正式 Gate 尚未签发）。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
+M1-A 为历史规格任务。ST-001..004 已执行；ST-005 设计通过、ST-006 实现/本地测试完成，ST-007 原始 Memory/Local 范围 complete（正式决定见 [STORAGE_M1_ACCEPTANCE_REVIEW.md](STORAGE_M1_ACCEPTANCE_REVIEW.md)）；含 OSS 的全模块仍 TESTING。执行者开工前需读取 AGENTS、项目与模块 STATUS，不要再次重做已通过的架构分析；发现契约不可实现则停下并报告具体矛盾。
 
 默认只在专题分支工作，保留既有 dirty changes；commit 需任务授权，push/main/Release/Tag/npm 发布/云部署不因本文件而获得授权。
 
@@ -18,8 +18,8 @@ M1-A 为历史规格任务。ST-001..004 已执行；ST-005 设计通过、ST-00
 | ST-003 | Memory primitive 与条件语义 | ST-002 | Cursor implementer | medium | complete（见实施报告，作者自检） |
 | ST-004 | Copy、分页、故障测试及 Memory review | ST-003 | Cursor implementer; Codex reviewer | medium | complete（见实施报告，作者自检） |
 | ST-005 | Local 路径/锁/恢复设计独立安全审查 | ST-004 | independent security reviewer | high | complete — DESIGN PASS |
-| ST-006 | Local Reference Adapter | ST-005 PASS | implementer（本次 Codex） | high | complete — code/tests; independent review confirmed by message |
-| ST-007 | 双 Adapter 验收、M1 Gate 决策 | ST-006 | tester + independent reviewer/acceptor | high | blocked |
+| ST-006 | Local Reference Adapter | ST-005 PASS | implementer（本次 Codex） | high | complete — code/tests; independent scoped Gates PASS |
+| ST-007 | 双 Adapter 验收、M1 Gate 决策 | ST-006 | tester + independent reviewer/acceptor | high | complete — original Memory/Local scope accepted; no Release |
 
 无循环依赖。config/audit 不作为虚假 prerequisite；它们不在当前 module dependency graph 内。
 
@@ -89,4 +89,4 @@ ST-001..004 已完成，勿重新生成或覆盖现有实现。旧 [Cursor 任�
 
 ## OSS initial profile execution
 
-OSS-001 DESIGN PASS；OSS-002/003 初始代码与离线测试完成；OSS-004 signing 按已批准 conservative profile 明确延后，两个签名 capability 均 false；OSS-005 离线 34 项 PASS，真实云 NOT_RUN。独立实现审查已完成并送达结论，正式报告追加前 Agent quota 中断；原文另存 INDEPENDENT_REVIEW_TRANSCRIPT.md，正式 Gate 保持 PENDING，实施报告列出剩余矩阵。不能据此 auto merge main 或发布。
+OSS-001 DESIGN PASS；OSS-002/003 初始代码与离线测试完成；OSS-004 signing 按已批准 conservative profile 明确延后，两个签名 capability 均 false；OSS-005 离线 34 项 PASS，真实云 NOT_RUN。2026-09-10 独立正式决定：OSS 初始 profile Implementation、离线 Test 与离线源码/安全审查 PASS；真实云 Test/Security/Acceptance 和含 OSS 的全模块 Gate 仍 PENDING。此前消息原文保留 INDEPENDENT_REVIEW_TRANSCRIPT.md，当前决定见 STORAGE_M1_ACCEPTANCE_REVIEW.md；下一任务按 [OSS_CLOUD_VALIDATION.md](OSS_CLOUD_VALIDATION.md) 的输入、矩阵与精确清理边界执行。不能据此 auto merge main 或发布。

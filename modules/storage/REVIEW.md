@@ -1,8 +1,8 @@
 # Storage Review and Evidence
 
-## 当前实施与审查证据（2026-09-09）
+## 当前实施与审查证据（2026-09-10）
 
-四层初始实现与 112 项测试完成。详细命令、源码摘要、限制和未完成事项见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。作者为当前 Codex，未调用 Cursor；用户明确授权了一个独立安全审查 Agent，设计结论见 [其独立记录](INDEPENDENT_SECURITY_REVIEW.md)，本轮最终代码复核见 [原样消息记录](INDEPENDENT_REVIEW_TRANSCRIPT.md)。
+四层初始实现与 112 项测试完成。详细命令、源码摘要、限制和未完成事项见 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。作者为当前 Codex，未调用 Cursor；用户明确授权了一个独立安全审查 Agent，设计结论见 [其独立记录](INDEPENDENT_SECURITY_REVIEW.md)，2026-09-09最终代码复核见 [原样消息记录](INDEPENDENT_REVIEW_TRANSCRIPT.md)。2026-09-10独立正式分范围决定见 [STORAGE_M1_ACCEPTANCE_REVIEW.md](STORAGE_M1_ACCEPTANCE_REVIEW.md)；本日未重跑Node测试。
 
 | 验证 | 当前结果 |
 | --- | --- |
@@ -13,9 +13,11 @@
 | OSS | 34 PASS（官方 SDK + loopback），真实云 NOT_RUN |
 | runtime dependency audit | 已知漏洞0 |
 | 独立设计 | Local ST-005 与 OSS-001 DESIGN PASS |
-| 最终独立实现 Security / Acceptance | PENDING：独立代码复核/112项复测已确认，正式报告追加前额度中断；结论见消息记录 |
+| ST-007 Memory/Local | 独立正式Implementation/Test/Security/Acceptance PASS |
+| OSS离线范围 | Implementation、离线Test与离线源码/安全审查PASS |
+| 真实OSS / 含OSS全模块 | Test/Security/Acceptance PENDING；Release未授权 |
 
-Storage 静态检查 PASS（10 组、13 阴性、14 映射）；标准采用回归 PASS（9 组、9 阴性、46 目标内存模拟）；结果由报告/PR 回读绑定。它们校验状态、哈希和未实现 scope 阴性，不执行 Runtime。新项目仍 12 阶段 pending，不自动安装参考实现或继承 Gate。
+上表测试及audit、以下静态检查均为已保存的2026-09-09或所注明前次执行证据，本日只复核源码绑定、文档与范围。Storage静态检查PASS（10组、13阴性、14映射）；标准采用回归PASS（9组、9阴性、46目标内存模拟）；结果由报告/PR 回读绑定。它们校验状态、哈希和未实现 scope 阴性，不执行 Runtime。新项目仍 12 阶段 pending，不自动安装参考实现或继承 Gate。
 
 以下 M1-A 为历史规格记录，其中“无 Runtime/TASKS_READY”只描述当时交付。
 

@@ -1,6 +1,8 @@
 # STORAGE_M1_B_IMPLEMENTATION_REPORT
 
-更新：2026-09-09 UTC。当前增量包含 M1-C Local 和用户授权的 OSS 首版。**四层初始 profile 代码已实现；112 项测试通过。独立实现复核与112项复测已完成，消息证据已保存；正式 Gate、真实 OSS 验证与整体验收未完成。**
+更新：2026-09-10 UTC。当前增量包含 M1-C Local 和用户授权的 OSS 首版。**四层初始 profile 代码已实现；112 项测试通过。原始 ST-007 Memory/Local 范围已获独立正式验收；OSS 离线范围审查通过，真实 OSS 验证与全模块验收未完成。**
+
+本日只补正式决定与交接文档；下列运行、测试、依赖及静态 Node 校验均为2026-09-09或其注明的前次记录，未改动源码/测试/锁文件，未在本日重跑。正式决定见 [STORAGE_M1_ACCEPTANCE_REVIEW.md](STORAGE_M1_ACCEPTANCE_REVIEW.md)。
 
 ## 执行与基线
 
@@ -8,7 +10,7 @@
 - 交付分支：`feat/storage-runtime-v0.1`；[草稿 PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3)。安全复核增量父提交 `36677e8cee9025c9f77541876609bd780f23a006`；前序 Core/Memory 提交 `1b3bf0b7a1f4e09ec70d24a997b6c3baa915617e`。
 - 工作区是 GitHub API 文件镜像，无本地 `.git`。本次开工前核验全部 108 个远端文件与本地 blob 一致，无未同步改动。实际新提交和回读见 PR 与 STATUS，不声称执行 git checkout。
 - 实现与作者自检：当前 Codex；未调用 Cursor。用户明确授权一个独立安全审查 Agent，使用 `storage_security_review` / GPT-5.6 Sol 极高路线；没有自行扩大 Agent 数量。
-- 初始 Local/OSS 设计 PASS 由独立 reviewer 留痕后才开始代码。上轮因 Agent 额度中断的最终复核已恢复；本轮独立发现与最终复核已送达消息；正式报告追加前再次额度中断。作者将消息原样存为独立转录文件，不改原审查文件或补写 Gate PASS。
+- 初始 Local/OSS 设计 PASS 由独立 reviewer 留痕后才开始代码。2026-09-09独立发现与最终复核已送达，正式报告追加前额度中断，作者将消息原样存为独立转录文件；2026-09-10独立Agent完成正式分范围决定，原设计和消息记录继续保持原文。
 
 ## 任务结果
 
@@ -16,8 +18,8 @@
 | --- | --- | --- |
 | ST-001～004 | COMPLETE | Core/Memory 44 项通过（原 43 项加严格 cursor 回归）；新增内部 Context.cancel 支持 adapter 生命周期，公共 Storage 消费 API 不变 |
 | ST-005 | DESIGN PASS | [独立记录](INDEPENDENT_SECURITY_REVIEW.md) L-001～L-007；namespace manifest、锁生命周期、FD snapshot、原子 envelope、清理与恢复 |
-| ST-006 | IMPLEMENTED / TESTED | Local 34 项；global publication mutex 比同 key 锁更严格地串行化写入/删除；独立实施复核消息已确认；正式 Gate 待补 |
-| ST-007 | BLOCKED | 正式 Security Gate 与 acceptor 决策未完成（已取得独立源码/测试复核消息）；不把作者测试视为验收 |
+| ST-006 | COMPLETE | Local34项；global publication mutex严格串行化发布；独立实施/安全Gate已正式通过原始ST-007范围 |
+| ST-007 | COMPLETE / scoped acceptance PASS | 独立reviewer/security-reviewer/acceptor已正式接受原始Memory/Local范围，含OSS全模块与Release不由此通过 |
 | OSS-001 | DESIGN PASS | O-001～O-009 保守能力 profile |
 | OSS-002/003 | IMPLEMENTED / OFFLINE TESTED | 官方 ali-oss 6.23.0、V4 signer/XML parser、窄 HTTPS transport、完整磁盘 staging、版本确认、GET/HEAD/delete/list/copy |
 | OSS-004 | DEFERRED BY APPROVED PROFILE | 签名下载端口后续单独审查；两种 signing、move、multipart 均明确 false，无假成功实现 |
@@ -79,10 +81,10 @@ SDK 和 transport 均不重试 mutation；Core 只对可重试读取最多 2 次
 
 ## 独立复核与剩余事项
 
-- 独立 reviewer 已确认全部修复并自行通过112项测试/typecheck；正式文件追加前额度中断，作者原样保存已送达消息并核对源摘要。正式 Gate 不由作者代签。
+- 2026-09-09独立reviewer确认修复并复测112项/typecheck；消息原文与源码摘要保留。2026-09-10续接的独立reviewer基于该证据与定向源码复核，正式签发原始ST-007 Memory/Local的Test/Security/Acceptance，以及OSS离线范围的Test/源码安全决定；协调者只原样入库，不自签high验收。
 - **真实 OSS：NOT_RUN**。没有授权测试 bucket/namespace/凭据；未读取其他项目 Secrets 或云资源。
 - smoke 需显式测试 OssOptions 与精确版本清理回调；只有本次成功记录的 physicalKey/revision 会交给回调，关闭失败也尝试清理。未知 PUT 可能产生未记录版本，宿主仍须在本次唯一逻辑 key 内核对，不扩大为全桶扫描。
-- 仍需真实服务端/TLS/IAM 拒绝、OSS delete marker/历史版本清理、响应丢失与服务端错误差异验证。9 项 smoke 即使未来通过，也不代替完整云验收。
+- 仍需真实服务端/TLS/IAM拒绝、OSS delete marker/历史版本清理、响应丢失与服务端错误差异验证。9项smoke即使通过，也不代替完整云验收。输入、8组矩阵、unknown/精确清理限制与owner见 [OSS_CLOUD_VALIDATION.md](OSS_CLOUD_VALIDATION.md)。
 - 签名上传/下载、move、multipart 未开放；登录、配置、审计、业务权限、媒体、通知、支付等蓝图不属于本次 Runtime 交付。
 
 ## 兼容性与测试限制
@@ -97,6 +99,14 @@ Work Mode 沙箱阻止 os.networkInterfaces 枚举；官方 SDK 的未使用 Clu
 
 ## Gate 与交付
 
-Implementation 出口：PASS（批准初始 profile 的代码/作者测试/追踪齐备），状态进入 TESTING。Test：本地与离线证据 PASS，扩展云范围 PARTIAL；Security/Acceptance/Release：PENDING；独立代码复核完成的消息不是正式全模块 Gate 签发。无 Gate override。
+Implementation 出口：PASS。2026-09-10独立正式决定：原始ST-007 Memory/Local的Implementation/Test/Security/Acceptance PASS；OSS初始profile Implementation、离线Test与离线源码/安全审查PASS。真实OSS和含OSS全模块Test/Security/Acceptance仍PENDING，Release未授权；模块保持TESTING。无Gate override，未用离线证据豁免云验证。
 
 工作仅交付专题分支和草稿 PR；不合并 main，不 pack/npm publish/Tag/Release/部署。采用标准模板不复制此 Runtime，不继承任何测试/Gate。回滚为使用此前已知参考提交；Local 不自动迁移/修复/清空 root，崩溃锁必须由宿主确认旧进程已停止后人工处理。
+
+## 2026-09-10 正式验收与文档核验
+
+独立角色 `/root/storage_gate_review` 交付正式分范围决定，协调者原样保存为 STORAGE_M1_ACCEPTANCE_REVIEW.md（只补文件末尾换行）。其列出的6个证据Git blob SHA均与所审提交609b327匹配；新决定不改写旧消息、原测试日期或112项结果。
+
+本轮为文档/状态变更：18个既有文件更新、2个新文件；没有改src/test/package/lock/tsconfig、Gate规则或新项目默认状态。会话内JavaScript核验通过：110个相对引用存在；7处YAML变更仅为可解析的字符串/字符串数组且结构不变；14个AC与原TEST映射一致；31个运行时证据文件清单与112项历史汇总保持完整；正式独立文本与收到的决定一致。
+
+本日 `npm test`、typecheck/build、分组测试和两个Node静态校验器均NOT_RUN，原因是当前无Node/Linux执行环境。上述文档核验是本日实际替代证据，不能宣称重跑了运行时。提交后以GitHub tree比较确认运行时和历史证据未变，再回读新报告与状态；实际交付SHA/结果记录到PR正文。

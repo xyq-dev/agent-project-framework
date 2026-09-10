@@ -63,8 +63,8 @@ project_lifecycle:
     name: "Implementation"
     mode: required
     status: complete
-    evidence: ["modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md"]
-    reason: "Core/Memory/Local/OSS initial profiles implemented; independent code review confirmed by message; formal security Gate remains pending."
+    evidence: ["modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md","modules/storage/STORAGE_M1_ACCEPTANCE_REVIEW.md"]
+    reason: "Initial profiles implemented; original ST-007 Memory/Local scoped acceptance PASS; OSS cloud acceptance remains pending."
   - id: testing
     name: "Testing"
     mode: required
@@ -75,8 +75,8 @@ project_lifecycle:
     name: "Security"
     mode: required
     status: blocked
-    evidence: ["modules/storage/SECURITY.md","modules/storage/INDEPENDENT_REVIEW_TRANSCRIPT.md"]
-    reason: "Independent reviewer confirmed fixes and 112 tests; quota interrupted formal report append. Message transcript preserved; formal Gate and real OSS evidence pending."
+    evidence: ["modules/storage/SECURITY.md","modules/storage/STORAGE_M1_ACCEPTANCE_REVIEW.md","modules/storage/OSS_CLOUD_VALIDATION.md"]
+    reason: "ST-007 Memory/Local Security PASS; OSS offline source/security review PASS. Real OSS least-privilege, TLS and recovery evidence remain NOT_RUN; whole-module Security pending."
   - id: deployment
     name: "Deployment"
     mode: not-applicable

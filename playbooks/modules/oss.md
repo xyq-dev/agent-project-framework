@@ -1,6 +1,6 @@
 # OSS 适配器实施蓝图
 
-本页是项目设计输入。建议风险：high；项目独立审查尚未执行；Runtime tests = NOT_RUN。先读[总实施方案](../../framework/MODULE_ADOPTION_PLAN.md)。本蓝图的 OSS 指阿里云 OSS，是 Storage 的服务商适配器；本目录是指南；可选参考代码已位于 APF Storage TypeScript 包（ali-oss 6.23.0），仅通过离线 SDK/loopback 测试，独立实现复核已完成并保存消息，正式 Gate 与真实云待完成。其他服务商另行选择适配器。
+本页是项目设计输入。建议风险：high；项目独立审查尚未执行；Runtime tests = NOT_RUN。先读[总实施方案](../../framework/MODULE_ADOPTION_PLAN.md)。本蓝图的 OSS 指阿里云 OSS，是 Storage 的服务商适配器；本目录是指南；可选参考代码已位于 APF Storage TypeScript 包（ali-oss 6.23.0），仅通过离线 SDK/loopback 测试，独立离线源码/安全审查已正式通过，真实云及全模块 Test/Security/Acceptance 待完成。其他服务商另行选择适配器。
 
 ## 采用前确认
 

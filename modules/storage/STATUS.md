@@ -10,62 +10,66 @@
 
 ## Phase
 
-Independent implementation review completed by message; formal Gates and real OSS verification pending
+Original ST-007 Memory/Local acceptance complete; real OSS verification pending
 
 ## Milestone
 
-M1-B Core/Memory、M1-C Local 与 OSS 保守初始 profile 已实现；本次安全整改和独立源码复核完成，M1 整体验收未完成。
+M1-B Core/Memory、M1-C Local 与 OSS 保守初始 profile 已实现。2026-09-10 原始 ST-007 双 Adapter 范围独立正式验收 PASS；含 OSS 的全模块验收尚未完成。
 
 ## Current Task
 
-交付 [实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)、112 项测试和 [独立审查消息原文](INDEPENDENT_REVIEW_TRANSCRIPT.md)，等待正式 Gate/真实云证据。
+独立分范围决定已记录于 [STORAGE_M1_ACCEPTANCE_REVIEW.md](STORAGE_M1_ACCEPTANCE_REVIEW.md)。继续 OSS-005，按 [OSS_CLOUD_VALIDATION.md](OSS_CLOUD_VALIDATION.md) 准备授权测试宿主并执行真实服务端矩阵。
 
 ## Completed
 
-- Core/Memory 44、Local 34、OSS 离线 34；共112，0 fail/skip/cancel。
-- M-001 cursor、L-008 输入 lifetime、FD close/并发发布、O-010 smoke cleanup 修复；8 项新增回归。
-- typecheck/build、contract42/failure43/security27 全通过。锁文件未变化，沿用此前 ci/audit 证据。
-- 独立 Sol/xhigh reviewer 复核最终源码并自行执行 npm test 112/112 和 typecheck，确认修复，未报告范围内未解决 high/critical。
-- reviewer 消息中的源码/测试清单 SHA256 已由作者重算匹配；原独立设计文件未改，最终消息另存转录文件，保留来源差异。
+- 2026-09-09 Core/Memory44、Local34、OSS离线34，共112项通过，0 fail/skip/cancel；typecheck/build及contract42/failure43/security27通过。
+- M-001、L-008、FD close/并发晚到发布、O-010已整改；源/测试清单和上一独立112项复测保存在原始证据。
+- 原始 ST-007 Memory/Local：Implementation/Test/Security/Acceptance 正式 PASS；全部适用 AC 通过，Memory 对 AC-013 不适用。
+- OSS 初始 profile：Implementation PASS、离线 Test PASS、离线源码/安全审查 PASS。
+- 云端执行入口、输入与清理边界、8组剩余矩阵已汇总成可交接清单，未冒充已执行结果。
 
 ## In Progress / Blocked
 
-独立 Agent 在正式报告落盘前触发额度限制；不代签正式 Security Gate。真实 OSS 无授权测试 bucket/namespace/凭据，NOT_RUN。ST-007、全模块 Security/Acceptance/Release 仍 PENDING。
+正式审查记录缺口已解决。真实 OSS 仍 NOT_RUN：缺少授权测试资源、宿主、凭据注入与精确版本清理输入；当前会话无 Node/Linux 执行环境。维护者 `xyq-dev` 指定输入与宿主执行者后解除执行阻塞，独立 reviewer/security-reviewer/acceptor依据真实证据解除 Gate 阻塞。全模块仍 TESTING，不继承子范围 PASS。
 
 ## Next
 
-1. 基于最终提交、独立消息摘要及现有证据形成正式 Gate 决策，不重复架构分析。
-2. 宿主提供授权测试配置/凭据注入后验证真实 OSS，包括 smoke 之外的 TLS/IAM、delete-marker、版本清理与未知写入恢复。
-3. 满足 Gate 后按用户授权推进 main；目前保持 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 草稿。
+1. 指定专用测试 bucket/region/本次 namespace、Linux宿主、凭据注入和精确版本清理负责人，不提交密钥。
+2. 执行 OSS_CLOUD_VALIDATION 的9项 smoke及8组矩阵，持久化脱敏实际结果和失败/清理记录。
+3. 独立审查真实云 Test/Security/Acceptance；满足后按用户授权推进 main。当前 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 保持草稿。
 
 ## Gate Decisions
 
-| Gate | Decision | Evidence |
-| --- | --- | --- |
-| Spec / Architecture | PASS（批准初始 profile） | 独立 L/O 设计控制记录 |
-| Implementation | PASS（代码与整改） | 四层代码、可兑现 capabilities、112 项测试 |
-| Test | PARTIAL（本地/离线 PASS） | 作者与独立复测；真实 OSS NOT_RUN |
-| Security | PENDING（独立实现复核消息已完成） | 原文/源码摘要已保存；正式 Gate 和真实云证据待补 |
-| Acceptance / Release | PENDING | 不由实现者自接受 high 增量 |
+正式决定人：`/root/storage_gate_review`，GPT-5.6 Sol / xhigh，2026-09-10；源码提交 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`。精确范围、证据与残余风险以其 [原文](STORAGE_M1_ACCEPTANCE_REVIEW.md) 为准。
+
+| Scope | Implementation | Test | Security | Acceptance | Release |
+| --- | --- | --- | --- | --- | --- |
+| 原始 ST-007 Core/Memory + Local | PASS | PASS | PASS | PASS | 未授权 |
+| OSS 保守初始 profile 离线范围 | PASS | PASS（仅离线） | PASS（仅离线源码/控制） | 不签发真实云验收 | 未授权 |
+| 真实 OSS / 当前含 OSS 全模块 | 初始代码已完成 | PENDING | PENDING | PENDING | PENDING / 未授权 |
+
+Spec/Architecture 已按 Local ST-005、OSS-001设计范围 PASS。全模块 Test 仍只有部分证据满足，未执行的真实云测试不能由本地结果替代。
 
 ## Decisions
 
-无 Gate override；公共 Storage 契约不变。CloseGuard 拒绝后封闭实例，阻止未 dispatch 的并发变更；输入 raw next/return settle 前保留 lease/staging；未知资源状态不自动解锁/清理。OSS 条件写/删、签名、move、multipart 不开放。
+无 Gate override，公共契约及 capabilities 不变；ST-007 原始任务明确排除云 Provider、签名与 multipart，本轮按该既定范围验收，不删减 OSS 扩展任务。高风险验收由未参与实现的独立 Agent 决定，协调者原样入库。新项目/其他蓝图不继承这些 Gate。
 
 ## Transition Evidence
 
-- M1-A 历史规格转移与2026-09-08 TASKS_READY→IMPLEMENTING 见既有记录。
-- 2026-09-09 IMPLEMENTING→TESTING：当时104项实现测试通过。
-- 本轮完成8项新增回归、112项全套及独立复测；云/正式Gate缺失，保持TESTING。
+- M1-A 历史规格与2026-09-08 TASKS_READY→IMPLEMENTING见既有记录。
+- 2026-09-09 IMPLEMENTING→TESTING：初始104项通过，安全整改后112项及独立复测通过。
+- 2026-09-10 原始 ST-007范围验收完成；含 OSS 的全模块真实测试未完成，生命周期保持 TESTING，没有整体跳到 ACCEPTED。
 
 ## Changed Files / Tests
 
-Memory、输入流、Local/OSS 关闭控制、测试与文档/状态/摘要。精确命令及31个源码/测试/包文件 SHA256 见 [runtime-results.json](validation/runtime-results.json)。静态检查10组/13阴性/14映射；标准采用9组/9阴性/46目标。AGENTS、Schema、Gate规则和新项目模板不变。
+本轮只改正式决定、ACCEPTANCE/TASKS/STATUS、OSS云端清单及相关指引；运行时代码、测试、package/lock/tsconfig、cases与runtime-results原样保留。原始31个文件SHA256及命令见 [runtime-results.json](validation/runtime-results.json)，其PENDING描述为2026-09-09历史状态，正式当前决定以本日独立记录为准。
+
+本轮使用GitHub tree和文档内容核验改动范围、相对链接及验收映射。没有当前执行环境，未重跑typecheck/build/npm tests或两个Node静态校验器；此前112项及静态10组/13阴性/14映射、标准9组/9阴性/46目标是历史执行证据，不改写日期。
 
 ## Risks / Open Questions
 
-真实OSS/TLS/IAM未验证；仅Linux/Node24可信本地root，无断电/共享盘承诺；不合作的永久输入源需宿主终止旧进程；锁已unlink后的最终目录sync失败只能报告不能复原锁。运行期不得动态开启SDK debug。License由维护者决定；登录等其他Runtime未开发。
+残余风险owner与条件见正式验收记录。Local限Linux/Node24可信root，无断电/共享盘承诺；永久不合作输入需要宿主终止旧进程；close错误保持封闭，锁已unlink后的最终目录sync错误不能恢复锁。OSS运行期不得动态开启SDK debug；真实权限/TLS/版本和unknown恢复待测。License由维护者决定；登录等其他Runtime未开发。
 
 ## Handoff
 
-GitHub API文件镜像；main基线 `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`，分支 `feat/storage-runtime-v0.1`，本轮父提交 `36677e8cee9025c9f77541876609bd780f23a006`。交付SHA与正文回读绑定PR；不修改main、不发布。独立消息已保存，即使Agent会话不可恢复也无需丢失已完成复核。
+main基线 `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`；专题分支 `feat/storage-runtime-v0.1`。本次文档父提交/已审源码 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`；交付SHA和回读绑定PR，无本地checkout。正式报告由独立审查者回复，协调者原样持久化；旧设计及消息记录保留来源，不改写为本日复跑。
