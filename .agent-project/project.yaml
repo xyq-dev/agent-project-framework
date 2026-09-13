@@ -5,7 +5,7 @@ project:
   id: agent-project-framework
   name: Agent Project Framework
   kind: framework
-  lifecycle_profile: standards-adoption
+  lifecycle_profile: storage-reference-runtime
   risk_baseline: medium
   technology_neutral: true
 

@@ -6,94 +6,70 @@
 
 ## Lifecycle State
 
-`TASKS_READY`
+`TESTING`
 
 ## Phase
 
-M1-A Specification complete / optional reference work paused
+Original ST-007 Memory/Local acceptance complete; real OSS verification pending
 
 ## Milestone
 
-M1 — Storage Reference Module（尚未完成）
+M1-B Core/Memory、M1-C Local 与 OSS 保守初始 profile 已实现。2026-09-10 原始 ST-007 双 Adapter 范围独立正式验收 PASS；含 OSS 的全模块验收尚未完成。
 
 ## Current Task
 
-ST-000 规格/设计与任务就绪。2026-09-08 用户将当前主线明确为 GitHub 项目开发标准，M1-B/C 暂缓，Storage 作为可选规格案例保留；不再作为新项目启动的前置任务。
+独立分范围决定已记录于 [STORAGE_M1_ACCEPTANCE_REVIEW.md](STORAGE_M1_ACCEPTANCE_REVIEW.md)。继续 OSS-005，按 [OSS_CLOUD_VALIDATION.md](OSS_CLOUD_VALIDATION.md) 准备授权测试宿主并执行真实服务端矩阵。
 
 ## Completed
 
-- 创建完整 Module 文档、实验契约、14 条 REQ/TEST/AC 映射。
-- 确定 TypeScript/Memory→Local 的 Reference 路线及延后能力。
-- config/audit 使用未来注入端口，不伪造已解析模块。
-- Spec、Architecture、Tasks readiness 顺序检查通过；仅批准分步实施计划，不批准 Local/云安全上线。
-- 静态10组检查、10个阴性fixture、14条需求/测试/验收映射验证通过。
+- 2026-09-09 Core/Memory44、Local34、OSS离线34，共112项通过，0 fail/skip/cancel；typecheck/build及contract42/failure43/security27通过。
+- M-001、L-008、FD close/并发晚到发布、O-010已整改；源/测试清单和上一独立112项复测保存在原始证据。
+- 原始 ST-007 Memory/Local：Implementation/Test/Security/Acceptance 正式 PASS；全部适用 AC 通过，Memory 对 AC-013 不适用。
+- OSS 初始 profile：Implementation PASS、离线 Test PASS、离线源码/安全审查 PASS。
+- 云端执行入口、输入与清理边界、8组剩余矩阵已汇总成可交接清单，未冒充已执行结果。
 
-## In Progress
+## In Progress / Blocked
 
-None（M1-A 规格已合并到 main；Runtime 尚未开始）。
-
-## Blocked
-
-- ST-006 Local：等待 ST-005 的独立安全设计 review 和后续任务授权。
-- 云 signer/move/multipart：不在当前范围，不可自动展开。
+正式审查记录缺口已解决。真实 OSS 仍 NOT_RUN：缺少授权测试资源、宿主、凭据注入与精确版本清理输入；当前会话无 Node/Linux 执行环境。维护者 `xyq-dev` 指定输入与宿主执行者后解除执行阻塞，独立 reviewer/security-reviewer/acceptor依据真实证据解除 Gate 阻塞。全模块仍 TESTING，不继承子范围 PASS。
 
 ## Next
 
-1. 等待用户明确恢复 Storage 实现任务；届时由 Cursor 按 agents/CURSOR_IMPLEMENTATION.md 执行 ST-001..004。
-2. Memory 完成后回传测试与 Git 报告供 Review。
-3. Memory 完成后再进入 Local 独立审查。
+1. 指定专用测试 bucket/region/本次 namespace、Linux宿主、凭据注入和精确版本清理负责人，不提交密钥。
+2. 执行 OSS_CLOUD_VALIDATION 的9项 smoke及8组矩阵，持久化脱敏实际结果和失败/清理记录。
+3. 独立审查真实云 Test/Security/Acceptance；满足后按用户授权推进 main。当前 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 保持草稿。
 
 ## Gate Decisions
 
-| Gate / subcheck | Decision | Evidence scope |
-| --- | --- | --- |
-| Spec | PASS | SPEC/API、14 REQ→TEST→AC 映射；当前 Codex analyst 自检，非独立审查 |
-| Architecture | PASS | 当前 Codex architect 自检 ADR-001..006、错误/恢复、Profile 与依赖边界；Local 独立安全审核仍是 ST-005 |
-| Tasks readiness | PASS | ST-001..007 范围/顺序/测试/角色和授权已审查；Local 明确 blocked，不新增第八 Gate |
-| Implementation | PENDING | Runtime 尚无 changes |
-| Test | PENDING | Runtime 所有 cases=NOT_RUN |
-| Security | PENDING | 设计清单不等于运行测试 |
-| Acceptance | PENDING | M1-B/C 未完成 |
-| Release | PENDING | 无发布授权 |
+正式决定人：`/root/storage_gate_review`，GPT-5.6 Sol / xhigh，2026-09-10；源码提交 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`。精确范围、证据与残余风险以其 [原文](STORAGE_M1_ACCEPTANCE_REVIEW.md) 为准。
+
+| Scope | Implementation | Test | Security | Acceptance | Release |
+| --- | --- | --- | --- | --- | --- |
+| 原始 ST-007 Core/Memory + Local | PASS | PASS | PASS | PASS | 未授权 |
+| OSS 保守初始 profile 离线范围 | PASS | PASS（仅离线） | PASS（仅离线源码/控制） | 不签发真实云验收 | 未授权 |
+| 真实 OSS / 当前含 OSS 全模块 | 初始代码已完成 | PENDING | PENDING | PENDING | PENDING / 未授权 |
+
+Spec/Architecture 已按 Local ST-005、OSS-001设计范围 PASS。全模块 Test 仍只有部分证据满足，未执行的真实云测试不能由本地结果替代。
 
 ## Decisions
 
-见 [ARCHITECTURE.md](ARCHITECTURE.md) ADR-001..006。所有设计审查由当前 Codex 作者自检；不声称独立审计。
-
-调度调整不撤销已有设计证据，不提升 Lifecycle 或 Runtime Gate。项目标准采用可独立推进，无需等待本模块。
+无 Gate override，公共契约及 capabilities 不变；ST-007 原始任务明确排除云 Provider、签名与 multipart，本轮按该既定范围验收，不删减 OSS 扩展任务。高风险验收由未参与实现的独立 Agent 决定，协调者原样入库。新项目/其他蓝图不继承这些 Gate。
 
 ## Transition Evidence
 
-| UTC timestamp | From | To | Decision and evidence |
-| --- | --- | --- | --- |
-| 2026-09-08T02:59:09Z | DRAFT | SPEC_READY | Spec PASS；REQ/边界/API/验收映射已审查，静态检查10组通过，见 REVIEW |
-| 2026-09-08T02:59:38Z | SPEC_READY | ARCHITECTURE_READY | Architecture PASS；冻结 Memory 路线和 Local 审查前置，不授权 Local/Cloud 实现 |
-| 2026-09-08T03:00:52Z | ARCHITECTURE_READY | TASKS_READY | Tasks readiness PASS；当前 Codex 自检 TASKS/Cursor scope；Runtime gates 均保持 PENDING |
+- M1-A 历史规格与2026-09-08 TASKS_READY→IMPLEMENTING见既有记录。
+- 2026-09-09 IMPLEMENTING→TESTING：初始104项通过，安全整改后112项及独立复测通过。
+- 2026-09-10 原始 ST-007范围验收完成；含 OSS 的全模块真实测试未完成，生命周期保持 TESTING，没有整体跳到 ACCEPTED。
 
-## Changed Files
+## Changed Files / Tests
 
-- `modules/storage/` manifest、九份标准文档、REVIEW、Cursor 任务包、validation cases 与静态验证脚本。
-- 项目 README/CURRENT_STATUS、active lifecycle、Roadmap 的 M1 说明；Kernel 入场/出场语义澄清。
-- 本次用户授权的合并仅另行同步项目与模块 STATUS；Runtime 与 Gate 状态不变。
+本轮只改正式决定、ACCEPTANCE/TASKS/STATUS、OSS云端清单及相关指引；运行时代码、测试、package/lock/tsconfig、cases与runtime-results原样保留。原始31个文件SHA256及命令见 [runtime-results.json](validation/runtime-results.json)，其PENDING描述为2026-09-09历史状态，正式当前决定以本日独立记录为准。
 
-## Tests
+本轮使用GitHub tree和文档内容核验改动范围、相对链接及验收映射。没有当前执行环境，未重跑typecheck/build/npm tests或两个Node静态校验器；此前112项及静态10组/13阴性/14映射、标准9组/9阴性/46目标是历史执行证据，不改写日期。
 
-静态 PASS（Node 24.19.0、Ajv 8.20.0、js-yaml 4.1.1；10组检查、10个阴性fixture、14条映射）；Runtime = NOT_RUN；cloud = DEFERRED。命令和证据见 [REVIEW.md](REVIEW.md)。
+## Risks / Open Questions
 
-## Risk and Compatibility Impact
-
-基础风险 medium；Local/真实签名安全边界增量 high；现有 Framework Schema 未改变。`providers`/`runtimes` 均空是当前支持事实；无 Runtime，故无消费者破坏性变更、DB/Migration 或生产数据影响。
-
-## Risks
-
-- 本规格未有运行时证据，不能用于生产接入。
-- Local TOCTOU、跨平台、断电恢复尚需专门审查，不把可信 root 假设当普遍安全保证。
-- 真实云端 Revision/ETag、条件和签名差异未验证。
-
-## Open Questions
-
-License 由 `xyq-dev` 在分发前决定；未来 cloud Provider 和实际兼容矩阵待专门任务；M1-A 没有阻碍写规格的产品决策。
+残余风险owner与条件见正式验收记录。Local限Linux/Node24可信root，无断电/共享盘承诺；永久不合作输入需要宿主终止旧进程；close错误保持封闭，锁已unlink后的最终目录sync错误不能恢复锁。OSS运行期不得动态开启SDK debug；真实权限/TLS/版本和unknown恢复待测。License由维护者决定；登录等其他Runtime未开发。
 
 ## Handoff
 
-M0 历史检查点=`32f0072e386a6d0763e0a40b2584a159f3957be9`。M1-A 规格提交 `c969474e4c05f0f50fb2d90646e0864bdbdc9e99` 已合并；项目交接基线为 `main`，调度以根 CURRENT_STATUS 为准。当前暂缓 Runtime；恢复任务时从 ST-001 开始，保留已通过设计，不触碰 Local/云权限。
+main基线 `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`；专题分支 `feat/storage-runtime-v0.1`。本次文档父提交/已审源码 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`；交付SHA和回读绑定PR，无本地checkout。正式报告由独立审查者回复，协调者原样持久化；旧设计及消息记录保留来源，不改写为本日复跑。

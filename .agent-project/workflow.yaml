@@ -1,5 +1,5 @@
 schema_version: "0.1"
-profile: standards-adoption
+profile: storage-reference-runtime
 
 semantics:
   allowed_modes:
@@ -21,74 +21,74 @@ project_lifecycle:
     name: "Requirements"
     mode: required
     status: complete
-    evidence: ["START_HERE.md", "framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "Extend project standards with selectable module implementation blueprints."
+    evidence: ["modules/storage/SPEC.md","modules/storage/TASKS.md"]
+    reason: "User resumed Core/Memory/Local/OSS reference development."
   - id: product
     name: "Product"
     mode: required
     status: complete
-    evidence: ["framework/ROADMAP.md", "framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "Deliver P1.1 blueprints while actual project work and runtimes remain separate."
+    evidence: ["modules/storage/SPEC.md","modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md"]
+    reason: "Deliver optional reference runtime without changing new-project adoption defaults."
   - id: ux-user-flows
     name: "UX / User Flows"
-    mode: required
+    mode: not-applicable
     status: complete
-    evidence: ["START_HERE.md"]
-    reason: "Document empty-directory and existing-project adoption journeys."
+    evidence: ["modules/storage/API.md"]
+    reason: "Library API only; no application user flow is changed."
   - id: design
     name: "Design"
     mode: not-applicable
     status: complete
-    evidence: ["framework/PROJECT_PLAYBOOK.md"]
-    reason: "This increment delivers text standards without a visual interface."
+    evidence: ["modules/storage/SPEC.md"]
+    reason: "No visual interface."
   - id: architecture
     name: "Architecture"
     mode: required
     status: complete
-    evidence: ["templates/project/BOOTSTRAP_MANIFEST.yaml", "framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "Adopt design guides and task inputs without copying runtime claims or project gate approvals."
+    evidence: ["modules/storage/ARCHITECTURE.md","modules/storage/INDEPENDENT_SECURITY_REVIEW.md"]
+    reason: "Local ST-005 and OSS-001 conservative profile have independent DESIGN PASS."
   - id: database
     name: "Database"
     mode: not-applicable
     status: complete
-    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "No database or migration is changed."
+    evidence: ["modules/storage/SPEC.md"]
+    reason: "No database or migration."
   - id: api
     name: "API"
-    mode: not-applicable
+    mode: required
     status: complete
-    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "No runtime API is implemented or changed."
+    evidence: ["modules/storage/API.md","modules/storage/LOCAL_OSS_REVIEW_PACKAGE.md"]
+    reason: "Existing Core API retained; conservative OSS capabilities explicitly reject unsupported conditions."
   - id: implementation
     name: "Implementation"
     mode: required
     status: complete
-    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "This increment adds nine blueprints, project task prompts, template wiring and read-only validation."
+    evidence: ["modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md","modules/storage/STORAGE_M1_ACCEPTANCE_REVIEW.md"]
+    reason: "Initial profiles implemented; original ST-007 Memory/Local scoped acceptance PASS; OSS cloud acceptance remains pending."
   - id: testing
     name: "Testing"
     mode: required
-    status: complete
-    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "Nine standard checks and eight negative fixtures pass with 46 adopted files; Storage static regression passes."
+    status: in-progress
+    evidence: ["modules/storage/validation/runtime-results.json","modules/storage/validation/cases.yaml"]
+    reason: "112 tests pass (44 Core/Memory, 34 Local, 34 OSS offline); real OSS NOT_RUN."
   - id: security
     name: "Security"
-    mode: not-applicable
-    status: complete
-    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "Generic security design inputs only; no runtime controls or access configuration change, and project security gates remain unassessed."
+    mode: required
+    status: blocked
+    evidence: ["modules/storage/SECURITY.md","modules/storage/STORAGE_M1_ACCEPTANCE_REVIEW.md","modules/storage/OSS_CLOUD_VALIDATION.md"]
+    reason: "ST-007 Memory/Local Security PASS; OSS offline source/security review PASS. Real OSS least-privilege, TLS and recovery evidence remain NOT_RUN; whole-module Security pending."
   - id: deployment
     name: "Deployment"
     mode: not-applicable
     status: complete
-    evidence: ["framework/GITHUB_WORKFLOW.md"]
-    reason: "Repository documentation delivery has no service deployment."
+    evidence: ["modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md"]
+    reason: "Private source delivery only; no service deployment or package publication."
   - id: production-gate
     name: "Production Gate"
     mode: not-applicable
     status: complete
-    evidence: ["framework/MODULE_ADOPTION_PLAN.md"]
-    reason: "No production system or runtime release is in scope."
+    evidence: ["modules/storage/ACCEPTANCE.md"]
+    reason: "Production release is outside this reference implementation increment; no runtime release approval."
 
 module_lifecycle:
   states:

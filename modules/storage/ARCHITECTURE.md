@@ -2,7 +2,7 @@
 
 ## Scope
 
-实现目标为 [SPEC.md](SPEC.md) 的 M1-B/M1-C；本次仅设计。第一 Runtime Profile 选择 `typescript-node`，Node 24.x、TypeScript strict、ESM、Node 内置测试 runner，编译后执行测试。具体 TypeScript patch 在 ST-001 锁定并记录，不假称已经安装。
+实现目标为 [SPEC.md](SPEC.md) 的 M1-B/M1-C。M1-B 已按本文实现 `typescript-node`、Node 24.x、TypeScript 5.9.3 strict ESM、Node 内置测试 runner；见[实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。Local 仍需 ST-005 独立审查；本次新增 OSS 候选 profile 见[审查包](LOCAL_OSS_REVIEW_PACKAGE.md)，未视作 ADR 已批准。
 
 选择依据：标准 ByteSource 易映射到 AsyncIterable，Memory/Local 共用 Contract Tests；云 SDK 不进 Core。其它语言以后实现同一 Contract 即可。[Node release schedule](https://nodejs.org/en/about/previous-releases)
 

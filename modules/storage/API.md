@@ -5,7 +5,7 @@
 ## Types and Validation
 
 - `Key`：大小写敏感 NFC Unicode 字符串，UTF-8 1..512 bytes；`/` 仅分段。禁止开头/末尾 `/`、空段、`.`/`..` 段、反斜线、`%`、冒号、控制字符（U+0000..001F、007F..009F）、不成对 surrogate。非 NFC 拒绝而非静默规范化。不得 URL-decode 后拼路径。
-- `Prefix`：可为空，否则同 Key 规则但允许一个末尾 `/`；字面 startsWith（`img` 可匹配 `image`，`img/` 才限定该段）。不支持 glob。
+- `Prefix`：可为空，否则同 Key 规则但允许一个末尾 `/`；字面 startsWith（`im` 可匹配 `image`，`img/` 才限定该段）。不支持 glob。
 - `ByteSource`：异步有序 byte chunks，可取消/关闭；长度未知允许，超过限制立即终止，空对象允许。TypeScript Profile 映射 `AsyncIterable<Uint8Array>`，不是字符串内容。
 - `Revision`：非空 opaque token；不同完整写入产生不同 revision，即使 bytes 相同。只在同一 binding/key 内比较，不能当时间、etag、checksum 或授权证明。
 - `UserMetadata`：string→string，key 为 `[a-z][a-z0-9-]{0,62}`，最多 32 项；value 仅 printable ASCII（空串可），总 UTF-8 key+value bytes <= 2048。不接受隐式转换。二进制/Unicode 业务 metadata 在高层编码。
@@ -141,3 +141,14 @@ retryable 只是建议，不是重放授权。自动重试仅 head/exists/list/g
 ## Compatibility
 
 新增厂商选项只进独立 Adapter 配置，不改变消费者接口。降级须显式错误或另一次由调用者选择的操作，不静默换安全语义。ETag 条件并非天然满足 APF 不复用 Revision 约束；云 Adapter 必须证明或关闭条件能力。[AWS conditional requests](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-requests.html)
+
+## TypeScript reference adapter lifecycle/profile（2026-09-09）
+
+具体参考工厂为 createMemoryAdapter、异步 createLocalAdapter、异步 createOssAdapter；仅 Local/OSS adapter 暴露显式 async close({timeoutMs?})，不改变公共 Storage facade。内部 OperationContext.cancel() 幂等触发已有 abort 路径，不替代真实 I/O settlement 或 finish。
+
+Memory/Local 保持本 API 的条件能力；OSS conservative profile 不提供 conditional-write/delete，两种签名、move、multipart false。默认 put/copy 必须因其隐含 absence 条件而先返回 unsupported-capability；显式 overwrite:true 才可无条件写入/复制。OSS revision 为开启版本控制的服务端版本 ID；current reads 从不以历史版本匹配条件。工厂参数、恢复与真实验证限制见 [参考包 README](implementations/typescript/README.md)。
+
+
+### Reference adapter shutdown failure handling
+
+Local/OSS close waits for underlying file/socket work and accepted input next/return operations to settle. A public abort or deadline may return first. A non-cooperative producer retains its staging/lease; Local close then times out without releasing the writer lock. A rejected handle close seals the instance, is never retried on the same handle, and prevents a later Local unlock. The final directory sync after lock unlink can still fail and cannot recreate that lock; callers must treat close errors as recovery events. See the TypeScript reference README for the supported host recovery boundary.

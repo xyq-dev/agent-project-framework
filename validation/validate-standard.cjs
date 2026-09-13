@@ -117,7 +117,17 @@ function blueprints(map) {
     assert(typeof item.name === 'string' && item.name.length > 0);
     assert(['module-guide', 'adapter-guide'].includes(item.kind));
     assert(['medium', 'high', 'critical'].includes(item.risk));
-    assert.equal(item.runtime_status, 'not-implemented', `runtime claim in blueprint: ${item.id}`);
+    if (['storage', 'oss'].includes(item.id)) {
+      assert.equal(item.runtime_status, 'partial', 'false full storage runtime claim');
+      const reference = item.reference_implementation;
+      assert.deepEqual(reference.scopes, item.id === 'storage' ? ['core', 'memory', 'local', 'oss'] : ['oss']);
+      assert.deepEqual(reference.not_implemented, []);
+      assert.equal(reference.installed_by_bootstrap, false);
+      assert(/^https:\/\/github\.com\/xyq-dev\/agent-project-framework\/blob\/[^ ]+\/modules\/storage\/STORAGE_M1_B_IMPLEMENTATION_REPORT\.md$/.test(reference.evidence_url));
+    } else {
+      assert.equal(item.runtime_status, 'not-implemented', `runtime claim in blueprint: ${item.id}`);
+      assert.equal(item.reference_implementation, undefined, 'unverified reference claim');
+    }
     safe(item.guide);
     assert(item.guide.endsWith('.md'));
     const guide = map.get(`${base}/${item.guide}`);
@@ -177,6 +187,11 @@ check('blueprints reject missing guides and false runtime completion', () => {
   catalog.items.find(item => item.id === 'identity').runtime_status = 'implemented';
   completed.set('playbooks/modules/catalog.yaml', yaml.dump(catalog));
   assert.throws(() => blueprints(completed), /runtime claim/);
+  const inherited = new Map(target);
+  const storageCatalog = load(inherited.get('playbooks/modules/catalog.yaml'));
+  storageCatalog.items.find(item => item.id === 'storage').reference_implementation.installed_by_bootstrap = true;
+  inherited.set('playbooks/modules/catalog.yaml', yaml.dump(storageCatalog));
+  assert.throws(() => blueprints(inherited), 'must reject implied runtime installation');
 });
 check('bootstrap rejects missing, duplicate, escaping and Git metadata paths', () => {
   const changes = [
@@ -203,5 +218,5 @@ check('prompt execution labels', () => {
     if (text.startsWith('【执行工具：Codex')) assert(text.split('\n')[0].includes('推理等级：'));
   }
 });
-console.log(`STANDARD_CHECKS=${checks}; NEGATIVE_FIXTURES=8; BOOTSTRAP_FILES=${target.size}`);
+console.log(`STANDARD_CHECKS=${checks}; NEGATIVE_FIXTURES=9; BOOTSTRAP_FILES=${target.size}`);
 console.log('STANDARD_VALIDATION=PASS; BOOTSTRAP=IN_MEMORY_ONLY; BUSINESS_TESTS=NOT_RUN');

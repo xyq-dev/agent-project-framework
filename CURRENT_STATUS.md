@@ -6,76 +6,42 @@
 
 ## Phase
 
-P1.1 — 常用模块实施蓝图与项目任务入口
+Storage TESTING; original ST-007 Memory/Local accepted; real OSS verification pending
 
-## Milestone
+## Milestone / Current Task
 
-为新项目提供从能力选择到实现、测试和验收的标准路径；具体业务代码按项目推进，Storage Runtime 参考工作暂缓。
-
-## Current Task
-
-P1.1 的 9 类蓝图、实施方案、模板接入与校验已完成，PR #2 已按用户要求合并到当前仓库 main；本轮完成合并与交接，P2 实际项目应用尚未开始。
+2026-09-10 完成原始 ST-007 Memory/Local 范围的正式验收。独立 reviewer / security-reviewer / acceptor 对固定源码 `609b32724d70f3e1ce5225a2cb415b0e7918edd4` 签发分范围决定，见 [正式记录](modules/storage/STORAGE_M1_ACCEPTANCE_REVIEW.md)。下一任务为 OSS-005 真实环境验证，执行清单已写入仓库。
 
 ## Completed
 
-- M0：生命周期、Module Schema/模板、Agent、风险/Gate 和状态标准已完成。
-- M1-A：Storage 规格已合并，保持 TASKS_READY；Runtime 尚未实现。
-- P1：标准采用包已通过 PR #1 合并到 main；历史验证见 [ADOPTION_REVIEW](framework/ADOPTION_REVIEW.md)。
-- P1.1：配置、审计、登录、权限、Storage、OSS、媒体、通知、支付的边界、任务与验收蓝图齐备。
-- 已把蓝图与 MODULE_PLAN 提示词接入新项目复制清单、能力选择表和开工入口。
-- 新项目采用模拟通过：46 个目标文件、9 组检查、8 个拒绝用例；原 Storage 静态回归通过。
-- PR #2 已合并到 main，9 类蓝图及模板入口已进入主分支；合并提交见 Handoff。
+- M0/M1-A/P1/P1.1 标准采用入口、规格、9 类蓝图已在既有 main。
+- Core/Memory/Local/OSS 保守初始 profile 代码与安全整改完成；2026-09-09 共112项测试通过：Core/Memory44、Local34、OSS离线34，0 fail/skip/cancel。
+- ST-007 原始 Memory/Local 范围：Implementation/Test/Security/Acceptance 正式 PASS；AC-001..012/014 两者 PASS，AC-013 Local PASS、Memory 不适用。
+- OSS 初始 profile Implementation、离线 Test 与离线源码/安全审查 PASS；这些决定不包含真实云环境。
+- 已补齐 [真实 OSS 验收清单](modules/storage/OSS_CLOUD_VALIDATION.md)：宿主输入、9项既有 smoke、8组剩余云端矩阵、精确版本清理与 unknown 恢复要求。
 
-## In Progress
+## In Progress / Blocked
 
-当前没有进行中的模块实现任务。P1.1 已合并；P2 实际项目尚未开始，9 类蓝图均不构成已实现的 Runtime 或项目 Gate 通过证据。
-
-## Blocked
-
-当前标准整理无用户决策阻塞。实际新项目名称、需求、技术栈和约束在对应项目立项时确认。
+含 OSS 的 Storage 全模块仍 TESTING；Test/Security/Acceptance 尚未全部通过，Release 未获授权。正式分范围审查记录的缺口已解决。真实 OSS 没有获准的测试 bucket/region/namespace、执行宿主、凭据注入与精确版本清理输入，仍 NOT_RUN；本会话也没有 Node/Linux 运行环境。责任人：维护者 `xyq-dev` 指定资源及宿主执行者，独立审查者依据真实结果决定剩余 Gate。
 
 ## Next
 
-1. 以当前仓库 main 为已合并的标准基线，按实际需要继续维护。
-2. 未来有实际新项目时，从 [START_HERE](START_HERE.md) 初始化，在 PROJECT_PLAN 中确认需求及能力选择。
-3. 按[模块实施方案](framework/MODULE_ADOPTION_PLAN.md)完成项目设计与首条业务链；“登录后上传私有文件”仅为可裁剪示例。
-4. 记录实际测试、评审与验收，再根据复用证据决定是否提取公共 Runtime；不默认恢复 Storage M1-B。
+1. 维护者提供非秘密测试配置、执行宿主与凭据注入方式，按 OSS_CLOUD_VALIDATION 的边界完成运行准备；密钥不进入聊天或 Git。
+2. 宿主执行真实 smoke 与 TLS/IAM、版本/delete-marker、响应丢失及恢复矩阵，记录逐项结果和清理证据。
+3. 独立审查剩余云 Gate；满足后按用户授权推进 main。新项目可从 START_HERE 采用标准，12阶段仍 pending，不继承本仓库的测试或 Gate。
 
-## Decisions
+## Decisions / Changed Files
 
-- 2026-09-08 用户确认 GitHub 项目标准仓库定位；本轮“给个方案实现一下”落为模块实施蓝图和采用流程增量。
-- 新项目复制标准快照并固定来源 commit；不继承 APF 的已完成阶段或预选模块。
-- 蓝图目录与 Runtime 清单分开；不声明虚假包版本、capability 支持或已过的高风险设计审查。
-- 实施顺序可按需求裁剪，认证通知可以提前，身份/配置等输入可以由宿主提供。
-- 原 Module 契约与 Gate 保留；M1-B/C 暂缓，业务测试和云服务测试均 NOT_RUN。
-- 用户明确本轮直接合并到当前仓库 main；本次只完成合并与状态同步，不另行创建试点项目。
+本轮只更新正式审查、验收清单、状态与指引；src/test/锁文件及2026-09-09原始测试记录保持原样。用户授权的独立安全审查续接由 `/root/storage_gate_review`（GPT-5.6 Sol / xhigh）承担，协调者仅持久化其原文，没有代替实现者自签 high 验收。无 Gate override；没有改动 AGENTS、Schema、Gate 规则或新项目默认状态。未调用 Cursor。
 
-## Changed Files
+## Tests / Risks
 
-P1.1 新增总实施方案、9 类蓝图及 catalog、MODULE_PLAN 提示词；更新启动/开发入口、新项目选择表、复制清单、契约引用、路线图、标准验证及状态。本轮合并同步 CURRENT_STATUS 和实施方案中的交接记录。
+沿用固定源码的112项完整测试及上一独立 Agent 的112/112/typecheck复测；contract42/failure43/security27为同一批分组，不重复计数。原始 ci/audit/静态 Node 校验证据均有日期，不作为本日执行。本轮验证文档相对引用、验收映射、受限 YAML 文本变更与远端 tree/内容一致性；当前 Node 测试及两个 Node 静态校验器未重跑，原因是无执行环境。
 
-AGENTS、Module Schema、原 Module 模板、Storage 文件与 Runtime Gate 保持原契约。
+Local 仅 Node24/Linux 可信专属本地 root；OSS 真实 TLS/IAM/服务端和恢复尚未验证，条件写/删、签名、move、multipart false。登录、配置、审计等仍为蓝图，不是已完成 Runtime。未 pack、发布、部署或操作真实云。
 
-## Tests
+## Open Questions / Handoff
 
-`node validation/validate-standard.cjs`：PASS（9 组、8 个拒绝用例、46 个目标文件内存模拟）。
+GitHub API 管理专题分支，无本地 checkout 可供核验或更改；main 基线 `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`，分支 `feat/storage-runtime-v0.1`。本轮文档提交父节点暨已审源码为 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`；文档提交 SHA 与回读结果绑定 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3)。不猜测包含本文件的提交 SHA。
 
-`node modules/storage/validation/validate-spec.cjs`：PASS（10 组、10 个阴性 fixture、14 项 Runtime 测试计划映射）。运行环境、逐项结果和限制见[实施方案的交付记录](framework/MODULE_ADOPTION_PLAN.md)。
-
-Runtime tests = NOT_RUN；没有创建实际业务项目、执行云集成、发送通知或真实交易。
-
-## Risks
-
-蓝图提供实施规范，不能视为已可安装代码。高风险/critical 项目仍需独立审查与真实环境证据；CI、看板、分支保护及部署由各项目按需求配置。
-
-## Open Questions
-
-首个实际项目需求在对应项目中确认；本标准增量不预设所有项目都需要登录、OSS 或支付。
-
-## Handoff
-
-先读 AGENTS、PROJECT_CONTEXT、本文件，再读 MODULE_ADOPTION_PLAN 与采用清单。当前仍沿项目标准主线推进。
-
-P1 经 [PR #1](https://github.com/xyq-dev/agent-project-framework/pull/1) 合并，合并提交 `5283bfafd69768009a45598746e71c5d41b8989d`，后续交接基线 main 为 `d31de78217bae3d567a321b98b04a8a7965718a1`。
-
-P1.1 来源提交 `563b3ae626cc9d05b039411b46da41f39ff02264`，经 [PR #2](https://github.com/xyq-dev/agent-project-framework/pull/2) 合并到 main；合并提交 `0e8563b09b7449576d050ceac4007f75218de543`。合并前 71 个文件与已验证快照一致，合并树也与该快照一致。本次随后同步交接记录；采用标准时记录实际选用的完整 main SHA。
+PR #1/#2 已合并；#3 保持草稿，当前未合并 main。尚需真实云验证与维护者的 License 决定。继续先读 AGENTS、PROJECT_CONTEXT、本文件、模块 STATUS、正式验收记录与 OSS_CLOUD_VALIDATION，不重做已通过的架构或已绑定证据的源码整改。

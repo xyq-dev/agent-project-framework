@@ -4,9 +4,9 @@ version: 0.1.0-dev
 category: infrastructure
 description: Provider-neutral object storage contracts for byte content, metadata, bounded listing and explicitly negotiated extensions.
 risk: medium
-status: TASKS_READY
+status: TESTING
 
-# These are experimental CONTRACT capabilities, not implemented/runtime support.
+# Contract catalog; only provider capabilities below have runtime evidence.
 capabilities:
   - id: put
     description: Write a complete object with explicit overwrite intent and bounded input.
@@ -64,11 +64,26 @@ capabilities:
 # Future config/audit integrations are proposals in ARCHITECTURE.md, not graph edges.
 dependencies: []
 optional_dependencies: []
-providers: []
+providers:
+  - id: memory
+    kind: adapter
+    capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read, conditional-write, conditional-delete]
+    compatibility: "Node 24.x; single-process volatile; verified on Linux x64 Node 24.19.0; ST-007 scoped acceptance PASS"
+
+  - id: local
+    kind: adapter
+    capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read, conditional-write, conditional-delete]
+    compatibility: "Node 24.x/Linux local filesystem; dedicated trusted 0700 root; 34 local tests; ST-007 scoped Test/Security/Acceptance PASS"
+  - id: oss
+    kind: adapter
+    capabilities: [put, get, head, exists, delete, list, metadata, capability-negotiation, copy, range-read, conditional-read]
+    compatibility: "ali-oss 6.23.0/Node 24.x/Linux spool; Versioning Enabled; SDK+loopback tests and scoped offline review PASS; real OSS NOT_RUN; cloud and whole-module Gates PENDING"
 
 compatibility:
   framework: ">=0.1.0-dev <0.2.0"
-  runtimes: []
+  runtimes:
+    - profile: typescript-node
+      version: ">=24.0.0 <25.0.0"
   modules: []
 
 gates:

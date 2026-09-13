@@ -11,7 +11,7 @@
 | 新项目的功能代码 | 实际适配器、业务集成和测试 | 通过本项目验收；不能仅凭蓝图标记完成 |
 | 可复用 Runtime | 经不同项目验证的实现与版本 | 有证据后再回收到标准仓库，单独发布 |
 
-蓝图放在 `playbooks/modules/`，不伪造 `modules/<name>/module.yaml`、可安装包或依赖版本。蓝图目录不是 Runtime 清单；现有 Storage 规格保留，M1-B/C 调度仍暂停。
+蓝图放在 `playbooks/modules/`，不伪造 `modules/<name>/module.yaml`、可安装包或依赖版本。蓝图目录不是已安装 Runtime 清单。用户随后恢复 Storage 实现；Core/Memory/Local/OSS 初始 profiles 已有代码和112项本地/离线测试，原始 ST-007 Memory/Local 范围已获独立正式验收，OSS 离线范围审查通过，真实 OSS 与全模块验收待完成，见[实施报告](https://github.com/xyq-dev/agent-project-framework/blob/feat/storage-runtime-v0.1/modules/storage/STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。下文 P1.1 交付验证保留其历史范围，不充当 Runtime 结果。
 
 ## 2. 九类能力与边界
 

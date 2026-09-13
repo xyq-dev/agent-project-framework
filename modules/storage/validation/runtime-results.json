@@ -1,0 +1,293 @@
+{
+  "schema_version": "0.1",
+  "subject": "storage@0.1.0-dev",
+  "date_utc": "2026-09-09",
+  "base_commit": "a6556a41ee7bd35007cc9226b40c9679c8bdf3bc",
+  "branch": "feat/storage-runtime-v0.1",
+  "environment": {
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "os": "linux",
+    "arch": "x64",
+    "typescript": "5.9.3",
+    "node_types": "24.13.3",
+    "undici_types": "7.18.2"
+  },
+  "implementation_root": "implementations/typescript",
+  "implemented_scopes": [
+    "core",
+    "memory",
+    "local",
+    "oss"
+  ],
+  "not_implemented": [],
+  "independent_security_review": "PENDING",
+  "commands": [
+    {
+      "command": "npm ci --ignore-scripts --no-audit --no-fund --fetch-retries=0 --fetch-timeout=15000",
+      "exit_code": 0,
+      "provenance": "Previous implementation run; package-lock unchanged in security follow-up"
+    },
+    {
+      "command": "npm run typecheck",
+      "exit_code": 0,
+      "seconds": 6.19
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "seconds": 6.56
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "seconds": 12.21,
+      "tests": 112,
+      "pass": 112,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "command": "npm run test:contract",
+      "exit_code": 0,
+      "seconds": 10.58,
+      "tests": 42,
+      "pass": 42,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "command": "npm run test:failure",
+      "exit_code": 0,
+      "seconds": 9.04,
+      "tests": 43,
+      "pass": 43,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "command": "npm run test:security",
+      "exit_code": 0,
+      "seconds": 10.92,
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "package-lock.json",
+      "sha256": "b2010afd8bf40de1f5d6c0687d8462663e161dead34e43a0060cab2901c64087"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c78cabab09b9c3d004642cc52bcc1830c941c593d8c942b20f2e5709a90da9d5"
+    },
+    {
+      "path": "src/adapters/files.ts",
+      "sha256": "c7508eab2ec3f05b2bdf0e2ab3c1339fac280b788b8028bc187c7ed9a097918b"
+    },
+    {
+      "path": "src/adapters/lifecycle.ts",
+      "sha256": "0fbdd7fd0133afde5d28f9ad874f85964032f2491561b2f48dd0006ed7e851a3"
+    },
+    {
+      "path": "src/adapters/local.ts",
+      "sha256": "81484f1a67e6c879731ecdac46fa2f3cb75e54af6e36b17f57260955297dd7d1"
+    },
+    {
+      "path": "src/adapters/memory.ts",
+      "sha256": "424bb8975197d764f2135aa711bd3ea0691e7089405309874e8ee022dc3113a9"
+    },
+    {
+      "path": "src/adapters/oss-transport.ts",
+      "sha256": "ea86206759b1fc188bf0e54573640337de36f45cebb6969ad2e1b234290b27ef"
+    },
+    {
+      "path": "src/adapters/oss.ts",
+      "sha256": "f6297230a5135af1b33247b8b904ac5cb636803a78e27e2f8eb3abec7a3fccf5"
+    },
+    {
+      "path": "src/context.ts",
+      "sha256": "ddd9df666425aa0c7d93f2f649f3bc9ca8f1a7c096ee8e4039cd64a3a7ec147d"
+    },
+    {
+      "path": "src/core.ts",
+      "sha256": "7c73c6df08f604905c7156ec7ae4fafb0f49f0314e809a4dbde731faa909e8e0"
+    },
+    {
+      "path": "src/errors.ts",
+      "sha256": "cfc5c4c49dcd7d46178e58646e0e4b98bd2bd2db1de32594ccfe6befbfe697d9"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "0b63e136a260e9f8433d6a192aa9dca9fc8c98938e5124a2338640ce2ebe76aa"
+    },
+    {
+      "path": "src/streams.ts",
+      "sha256": "4b7d023deba9557ab93e9e5dd6892bbba25321f733022ff9723a3e97b0233c8f"
+    },
+    {
+      "path": "src/types.ts",
+      "sha256": "51b56660a62d3b4a164e6d8d471b4457dd570e8ab318245e88dd9c721b7b62a3"
+    },
+    {
+      "path": "src/validation.ts",
+      "sha256": "ed99830dc25d59f94fe742c963964b563babc25200e83ed6345eccda9014212d"
+    },
+    {
+      "path": "test/contract.test.ts",
+      "sha256": "daaf5f341f756645c20abab68f3dbd9c592276d6512d0d77f5eaa6e9040ba842"
+    },
+    {
+      "path": "test/failure.test.ts",
+      "sha256": "5d495064e020d36965cd6309af0e88905196cd542981f46e498d2c2c831e1ddf"
+    },
+    {
+      "path": "test/helpers.ts",
+      "sha256": "a77e3c986fb1e2af57913a5321fcf8d54b1b213dcfe2b7a9acaaa9c57c7d4aba"
+    },
+    {
+      "path": "test/local-contract.test.ts",
+      "sha256": "3925c7f5c03bbe0786405994ebaf48e81bf5fa5bc31e1f14a9812dfb3dabebc7"
+    },
+    {
+      "path": "test/local-crash-worker.ts",
+      "sha256": "8f92785102ecc18a862739ed5414282f4b3a264760733715ef6959e84ee3e847"
+    },
+    {
+      "path": "test/local-failure.test.ts",
+      "sha256": "a63721d4e8fc39b2f1b70eec16e852801ed17ba925ea482b5162964c1df2fa87"
+    },
+    {
+      "path": "test/local-fixture.ts",
+      "sha256": "aeaf8d9cad81a54719f6573e6b49b38f14ca89f980620822abb3474e7c1c3c30"
+    },
+    {
+      "path": "test/local-security.test.ts",
+      "sha256": "78c1884ceb93f343273828e7546a135ce80e17d0a72567a0de35c50b17dce703"
+    },
+    {
+      "path": "test/oss-cloud-smoke.ts",
+      "sha256": "022f42044017b5c7595c6588cd9aba92fc66188b7f5987eec743cb5c8e6106ba"
+    },
+    {
+      "path": "test/oss-contract.test.ts",
+      "sha256": "df86b447d57a33f578b51626d0047f266b02d5770b7e5d72236e245ff6fe016f"
+    },
+    {
+      "path": "test/oss-failure.test.ts",
+      "sha256": "8209c668907d8c6906fefef9bccd9463e9cd6c34f3b785bde9f0462a3e2f9fa0"
+    },
+    {
+      "path": "test/oss-fixture.ts",
+      "sha256": "cc5e586a14d72ef023db0350e1c63372029f311d01931db9292fb71003ba8145"
+    },
+    {
+      "path": "test/oss-security.test.ts",
+      "sha256": "26c6a1ea7a3ffc884532e0e732d9b36b03dd4b623bcdf9fdfc8a66c87e04b66b"
+    },
+    {
+      "path": "test/security.test.ts",
+      "sha256": "6b36ddbe1eeb9a1204a92036c65ee9c3ea53d2aec1ee98083f77d98928bf0b3a"
+    },
+    {
+      "path": "test/shared-contract.ts",
+      "sha256": "598979f1bee8dd9ca68cbd4e20ea6c020741a238b88c751008863745b18dadd6"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "b3ba619cf280f6e7090555f3086f6ae1157dae07c6bee1f00a25424ca07c8ed3"
+    }
+  ],
+  "independent_review_detail": {
+    "design": "PASS: Local ST-005 and OSS-001 conservative profile",
+    "implementation": "COMPLETED_BY_RECEIVED_MESSAGE: independent static review and 112 tests; all reported fixes confirmed; no unresolved high/critical found within reviewed Local/OSS offline source",
+    "record": "INDEPENDENT_SECURITY_REVIEW.md",
+    "formal_security_gate": "PENDING: report append interrupted by agent quota; real OSS evidence unavailable",
+    "message_record": "INDEPENDENT_REVIEW_TRANSCRIPT.md",
+    "reviewer": "/root/storage_security_review (GPT-5.6 Sol / xhigh)",
+    "independently_executed": [
+      {
+        "command": "npm test",
+        "exit_code": 0,
+        "tests": 112,
+        "pass": 112,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "exit_code": 0
+      }
+    ],
+    "source_manifest_sha256": "030e5c628f0de12c208cc01d71a144f5eac49905822c555a126d28dc0249b350",
+    "test_manifest_sha256": "8b137ef7cffb5f6a10ebbc02900b519ebcb748628d7af0e074cf9a74637731f4",
+    "manifest_verified_against_current_files": true
+  },
+  "test_profiles": {
+    "core_memory": 44,
+    "local_linux": 34,
+    "oss_offline_sdk_loopback": 34,
+    "real_oss": "NOT_RUN"
+  },
+  "offline_environment_limitations": [
+    "ali-oss unused ClusterClient import calls blocked os.networkInterfaces; test-only synchronous empty-interface stub restored immediately",
+    "Loopback HTTP validates protocol/socket ownership, not production TLS, OSS service or IAM",
+    "SIGKILL tests validate process crash, not power loss or hostile co-writer protection"
+  ],
+  "cloud_smoke_entry": "implementations/typescript/test/oss-cloud-smoke.ts",
+  "dependency_audit": {
+    "command": "npm audit --omit=dev --json",
+    "exit_code": 0,
+    "known_vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "sdk": "ali-oss@6.23.0",
+    "provenance": "Previous implementation audit on the unchanged lockfile; not repeated in security follow-up"
+  },
+  "static_checks": [
+    {
+      "command": "node modules/storage/validation/validate-spec.cjs",
+      "exit_code": 0,
+      "checks": 10,
+      "negative_fixtures": 13,
+      "mapped_cases": 14
+    },
+    {
+      "command": "node validation/validate-standard.cjs",
+      "exit_code": 0,
+      "checks": 9,
+      "negative_fixtures": 9,
+      "bootstrap_files": 46
+    }
+  ],
+  "security_followup": {
+    "baseline_commit": "36677e8cee9025c9f77541876609bd780f23a006",
+    "author_verified_fixes": [
+      "strict Memory cursor decoding",
+      "failed handle close seals adapter and prevents unlock/retry",
+      "raw input next and return settlement retains resource leases",
+      "cloud smoke cleanup runs after failed close",
+      "already-entered concurrent mutations stop at dispatch after close failure"
+    ],
+    "added_tests": 8,
+    "network_cancellation": [
+      "delayed DNS lookup",
+      "pending TLS handshake",
+      "partial upload"
+    ],
+    "log_completeness": "Intermediate snapshot full-run output lacked a summary and was excluded; final snapshot has complete 112/112, contract42/failure43/security27 summaries"
+  }
+}

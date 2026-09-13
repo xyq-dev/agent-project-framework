@@ -6,9 +6,9 @@
 
 M1 分三个可验收增量：
 
-- **M1-A（本次）**：规格、架构、数据/API 契约、测试计划、任务和交接。没有 Runtime、云资源或业务接入。
-- **M1-B**：TypeScript/Node Reference Core + Memory Adapter；仅本地测试，无网络。
-- **M1-C**：受控目录下的 Local Adapter、跨 Adapter Contract Tests、安全复核；完成这些才可能完成 M1。
+- **M1-A（已完成）**：规格、架构、数据/API 契约、测试计划、任务和交接；该历史增量没有 Runtime。
+- **M1-B（已实现）**：TypeScript/Node Reference Core + Memory Adapter；Core/Memory 44 项 Runtime 测试通过，见[实施报告](STORAGE_M1_B_IMPLEMENTATION_REPORT.md)。测试无网络。
+- **M1-C（Memory/Local 原始范围已验收；云扩展待验收）**：Local 34 项；OSS 保守 profile 34 项离线测试；合计 112 项。原始 ST-007 已获独立正式 Test/Security/Acceptance PASS；OSS 离线范围审查通过，真实云及全模块 Gate 仍待完成，见[正式验收记录](STORAGE_M1_ACCEPTANCE_REVIEW.md)。
 
 签名 URL 的**通用授权契约与不支持行为**在 M1 定义；真正签发/使用 URL 必须在后续云 Adapter 增量验证。multipart 仅保留发现入口，尚无上传会话协议。不得以文档存在替代实现或宣称全云兼容。
 
@@ -22,29 +22,29 @@ M1 分三个可验收增量：
 
 ## Capability Matrix
 
-下表均为**待实现目标**，不是当前支持列表。当前 `providers: []`、`compatibility.runtimes: []` 是事实。
+下表记录初始实现 profile：Memory/Local 已通过本地测试，OSS 仅通过 pinned SDK + loopback HTTP 测试。独立设计范围见 [审查记录](INDEPENDENT_SECURITY_REVIEW.md)；真实 OSS 验证 NOT_RUN。
 
-| Capability ID | Memory target (M1-B) | Local target (M1-C) | Future cloud adapter |
+| Capability ID | Memory (M1-B) | Local (M1-C) | OSS initial profile |
 | --- | --- | --- | --- |
-| `put` | required | required | evaluate |
-| `get` | required | required | evaluate |
-| `head` | required | required | evaluate |
-| `exists` | required | required | evaluate |
-| `delete` | required | required | evaluate |
-| `list` | required | required | evaluate |
-| `metadata` | required | required | evaluate |
-| `capability-negotiation` | required | required | required |
-| `copy` | required | required | negotiate |
-| `move` | false | false | separate guarded design |
-| `range-read` | required | required | negotiate |
-| `conditional-read` | required | required | negotiate |
-| `conditional-write` | required | required | negotiate |
-| `conditional-delete` | required | required | negotiate |
-| `signed-upload-url` | false | false | verified signer only |
-| `signed-download-url` | false | false | verified signer only |
-| `multipart` | false | false | separate session contract |
+| `put` | required | required | supported (offline) |
+| `get` | required | required | supported (offline) |
+| `head` | required | required | supported (offline) |
+| `exists` | required | required | supported (offline) |
+| `delete` | required | required | supported (offline) |
+| `list` | required | required | supported (offline) |
+| `metadata` | required | required | supported (offline) |
+| `capability-negotiation` | required | required | supported (offline) |
+| `copy` | required | required | supported (offline) |
+| `move` | false | false | false |
+| `range-read` | required | required | supported (offline) |
+| `conditional-read` | required | required | supported (offline) |
+| `conditional-write` | required | required | false |
+| `conditional-delete` | required | required | false |
+| `signed-upload-url` | false | false | false |
+| `signed-download-url` | false | false | false |
+| `multipart` | false | false | false |
 
-`false` 表示必须在消费 body/发请求前报 `unsupported-capability`，不能返回假 URL、静默覆盖、忽略 Range 或降级为全量操作。未来候选 Local、S3、R2、OSS、COS、MinIO 的名称只用于 Adapter 计划，必须各自验收。
+`false` 表示必须在消费 body/发请求前报 `unsupported-capability`，不能返回假 URL、静默覆盖、忽略 Range 或降级为全量操作。未来候选 S3、R2、COS、MinIO 的名称只用于 Adapter 计划，必须各自验收。
 
 ## Functional Requirements
 
@@ -70,7 +70,7 @@ M1 分三个可验收增量：
 - 可靠性：Reference Adapter 单对象操作线性化；多操作及 list 不构成事务。Memory 不持久，Local 仅承诺经测试的进程崩溃行为，不承诺断电持久性。
 - 内存/流：Core/Local 顺序消费 ByteSource，应用层缓存不随对象总大小增长；Memory 测试 Adapter 可缓存对象但受总预算约束。
 - 限制：默认对象 16 MiB，metadata 2 KiB，list 页 100/最大 1000；均是本模块的参考策略，不是云厂商上限。
-- 安全：本次只是设计。未来 Local root 防护、云 signer 或真实凭据工作单独按 `high` 路由，不沿用 medium 作为发布豁免。
+- 安全：Local/OSS 按 `high` 路由，设计已独立通过；Memory/Local 的 ST-007 正式 Gate 已通过，OSS 仅离线范围通过审查，真实云及全模块 Gate 仍 PENDING；未来云 signer 或真实凭据工作仍按 `high` 路由，不沿用 medium 作为发布豁免。
 - 可移植性：核心契约无语言绑定；第一实现 Profile 为 Node 24.x + TypeScript strict，不强制其它项目采用此栈。
 - 性能：M1 不设未经测量的吞吐/延迟承诺；验收要求取消、大小与超时测试可重复。
 
@@ -87,3 +87,5 @@ Module `0.1.0-dev`，Framework range `>=0.1.0-dev <0.2.0`。新接口尚无消�
 每条 REQ 都映射到 [TESTS.md](TESTS.md) 和 [ACCEPTANCE.md](ACCEPTANCE.md)；M1-A 文档检查与 Runtime Gate 分开记录。
 
 M1-A 范围无待用户选择的阻塞。License、Local 跨平台与云适配器真实兼容性保留到相应阶段，不把它们描述为已解决。
+
+OSS 默认 put/copy 因不支持条件写而在源、凭据、网络前拒绝；只有显式 `overwrite: true` 的无条件操作可执行。revision 使用 Enabled Versioning 的服务端版本 ID；不是 ETag。OSS 无条件 delete 不清除历史版本。
