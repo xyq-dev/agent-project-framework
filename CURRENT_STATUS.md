@@ -42,6 +42,6 @@ Local 仅 Node24/Linux 可信专属本地 root；OSS 真实 TLS/IAM/服务端和
 
 ## Open Questions / Handoff
 
-GitHub API 管理专题分支，无本地 checkout 可供核验或更改；main 基线 `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`，分支 `feat/storage-runtime-v0.1`。本轮文档提交父节点暨已审源码为 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`；文档提交 SHA 与回读结果绑定 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3)。不猜测包含本文件的提交 SHA。
+2026-09-13，[PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 已以 merge commit `6c89aeb1e6dbf359e0f2b04f533c29484976d7ad` 合并到 `main`；其已审源码提交仍为 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`。合并前核验 PR 可合并且分支无冲突。
 
-PR #1/#2 已合并；#3 保持草稿，当前未合并 main。尚需真实云验证与维护者的 License 决定。继续先读 AGENTS、PROJECT_CONTEXT、本文件、模块 STATUS、正式验收记录与 OSS_CLOUD_VALIDATION，不重做已通过的架构或已绑定证据的源码整改。
+PR #1/#2/#3 均已合并。Storage 仍处于 `TESTING`：真实云验证和维护者 License 决定尚未完成；合并不等于 Release 或生产验收。继续先读 AGENTS、PROJECT_CONTEXT、本文件、模块 STATUS、正式验收记录与 OSS_CLOUD_VALIDATION，不重做已通过的架构或已绑定证据的源码整改。

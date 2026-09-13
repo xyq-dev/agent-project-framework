@@ -36,7 +36,7 @@ M1-B Core/Memory、M1-C Local 与 OSS 保守初始 profile 已实现。2026-09-1
 
 1. 指定专用测试 bucket/region/本次 namespace、Linux宿主、凭据注入和精确版本清理负责人，不提交密钥。
 2. 执行 OSS_CLOUD_VALIDATION 的9项 smoke及8组矩阵，持久化脱敏实际结果和失败/清理记录。
-3. 独立审查真实云 Test/Security/Acceptance；满足后按用户授权推进 main。当前 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 保持草稿。
+3. 独立审查真实云 Test/Security/Acceptance；满足后再决定 Release。代码已通过 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 合并到 `main`，该合并不改变真实云 Gate 的 PENDING 状态。
 
 ## Gate Decisions
 
@@ -72,4 +72,4 @@ Spec/Architecture 已按 Local ST-005、OSS-001设计范围 PASS。全模块 Tes
 
 ## Handoff
 
-main基线 `a6556a41ee7bd35007cc9226b40c9679c8bdf3bc`；专题分支 `feat/storage-runtime-v0.1`。本次文档父提交/已审源码 `609b32724d70f3e1ce5225a2cb415b0e7918edd4`；交付SHA和回读绑定PR，无本地checkout。正式报告由独立审查者回复，协调者原样持久化；旧设计及消息记录保留来源，不改写为本日复跑。
+2026-09-13 `main` 通过 [PR #3](https://github.com/xyq-dev/agent-project-framework/pull/3) 接收 Storage，merge commit 为 `6c89aeb1e6dbf359e0f2b04f533c29484976d7ad`。正式报告由独立审查者回复，协调者原样持久化；旧设计及消息记录保留来源，不改写为本日复跑。下一接手点仍为授权测试宿主上的 OSS_CLOUD_VALIDATION。
